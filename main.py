@@ -16,7 +16,7 @@ test_surface3.fill('Black')
 #Player
 player_surf = pygame.image.load('char_python/heart.png').convert_alpha()
 player_rect = player_surf.get_rect(topleft = (400,370))
-player_gravity = 0
+#player_gravity = 0
 player_speed = 5
 
 
@@ -32,9 +32,9 @@ while True:
             pygame.quit()
             exit()
 
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_SPACE and player_rect.bottom >=370:
-                player_gravity = -10
+        # if event.type == pygame.KEYDOWN:
+        #     if event.key == pygame.K_SPACE and player_rect.bottom >=370:
+        #         player_gravity = -10
 
     #input
     keys = pygame.key.get_pressed()
@@ -42,6 +42,10 @@ while True:
         player_rect.x -= player_speed
     if keys[pygame.K_RIGHT]:
         player_rect.x += player_speed
+    if keys[pygame.K_UP]:
+        player_rect.y -= player_speed
+    if keys[pygame.K_DOWN]:
+        player_rect.y += player_speed
 
     # Giới hạn trong hộp trắng (200,200,400,200)
     if player_rect.left < 200:
@@ -60,9 +64,9 @@ while True:
     screen.blit(test_surface2,(205,205)) 
 
     #Player
-    player_gravity += 1
-    player_rect.y += player_gravity
-    if player_rect.y>370:player_rect.y = 370
+    #player_gravity += 1
+    #player_rect.y += player_gravity
+    #if player_rect.y>370:player_rect.y = 370
     screen.blit(player_surf,player_rect)
 
     
