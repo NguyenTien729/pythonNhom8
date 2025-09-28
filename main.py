@@ -19,6 +19,13 @@ player_rect = player_surf.get_rect(topleft = (400,370))
 player_gravity = 0
 player_speed = 5
 
+
+
+#enermy
+skull_surf = pygame.image.load('char_python/skull-export.png').convert_alpha()
+skull_rect = skull_surf.get_rect(topleft = (100,100))
+
+
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -59,6 +66,10 @@ while True:
     screen.blit(player_surf,player_rect)
 
     
+    #Enemy
+    screen.blit(skull_surf,skull_rect)
+
+
     pygame.display.update()
     clock.tick(60)
 
