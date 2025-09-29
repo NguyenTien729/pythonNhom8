@@ -20,17 +20,17 @@ mainbackground.fill('Black')
 
 
 #Player
-player_surf = pygame.image.load('char_python/heart.png').convert_alpha()
+player_surf = pygame.image.load('graphic/heart.png').convert_alpha()
 player_rect = player_surf.get_rect(topleft = (400,370))
 player_speed = 5
 
 
 
 #enermy
-skull_surf = pygame.image.load('char_python/gaster11.png').convert_alpha()
+skull_surf = pygame.image.load('graphic/beam4.png').convert_alpha()
 skull_rect = skull_surf.get_rect(topleft = (100,100))
 
-bone_surf = pygame.image.load('char_python/bone2.png').convert_alpha()
+bone_surf = pygame.image.load('graphic/bone.png').convert_alpha()
 bone_rect = bone_surf.get_rect(topleft = (200,200))
 bone_speed = 5
 
@@ -48,6 +48,7 @@ def draw_health_bar(surface, x, y, current_hp, max_hp, width=100, height=30):
     hp_rect = hp_text.get_rect(midright=(x - 5, y + height // 2))
     surface.blit(hp_text, hp_rect)
     #HP val
+
     hp_val = g_font.render(f"{current_hp}/{max_hp}", True, (255,255,255))  
     hp_val_rect = hp_val.get_rect(midleft=(x + width + 5, y + height // 2)) 
     surface.blit(hp_val, hp_val_rect)
