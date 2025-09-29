@@ -27,10 +27,17 @@ player_speed = 5
 
 
 #enermy
-skull_surf = pygame.image.load('char_python/skull-export.png').convert_alpha()
+skull_surf = pygame.image.load('char_python/gaster11.png').convert_alpha()
 skull_rect = skull_surf.get_rect(topleft = (100,100))
 
+bone_surf = pygame.image.load('char_python/bone2.png').convert_alpha()
+bone_rect = bone_surf.get_rect(topleft = (200,200))
+bone_speed = 5
 
+player_hp = 100   
+max_hp = 100
+last_hit_time = 0
+immunity_dur = 2000
 def draw_health_bar(surface, x, y, current_hp, max_hp, width=100, height=30):
     ratio = current_hp / max_hp
     if ratio < 0: ratio = 0
@@ -41,7 +48,7 @@ def draw_health_bar(surface, x, y, current_hp, max_hp, width=100, height=30):
     hp_rect = hp_text.get_rect(midright=(x - 5, y + height // 2))
     surface.blit(hp_text, hp_rect)
     #HP val
-    hp_val = g_font.render(f"{current_hp}\{max_hp}", True, (255,255,255))  
+    hp_val = g_font.render(f"{current_hp}/{max_hp}", True, (255,255,255))  
     hp_val_rect = hp_val.get_rect(midleft=(x + width + 5, y + height // 2)) 
     surface.blit(hp_val, hp_val_rect)
     
@@ -81,8 +88,7 @@ while True:
 
 
     #Vẽ thanh máu
-    player_hp = 75   # giả sử còn 75 máu
-    max_hp = 100
+    
     draw_health_bar(screen, 315, 420, player_hp, max_hp)
 
 
@@ -92,8 +98,21 @@ while True:
     
     #Enemy
     screen.blit(skull_surf,skull_rect)
+    screen.blit(bone_surf,bone_rect)
+
+    bone_rect.x -= bone_speed
+    if bone_rect.right<0:
+        bone_rect.left=800
+        bone_rect.y = 250
+    
+    cur_time = pygame.time.get_ticks()
+    if bone_rect.colliderect(player_rect):
+        if cur_time - last_hit_time > immunity_dur:
+            player_hp -= 5
+            last_hit_time = cur_time
 
 
+        
     pygame.display.update()
     clock.tick(60)
 
