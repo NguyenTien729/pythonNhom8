@@ -27,7 +27,7 @@ player_speed = 5
 
 
 #enermy
-skull_surf = pygame.image.load('char_python/gaster11.png').convert_alpha()
+skull_surf = pygame.image.load('char_python/beam1.png').convert_alpha()
 skull_rect = skull_surf.get_rect(topleft = (100,100))
 
 bone_surf = pygame.image.load('char_python/bone2.png').convert_alpha()
