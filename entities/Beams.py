@@ -30,11 +30,9 @@ class Beam:
         self.pivot_y = py
 
     def get_pivot_offset(self):
-        # Pivot trong image space (trước khi rotate)
         pivot_x = self.rect.width * self.pivot_x
         pivot_y = self.rect.height * self.pivot_y
 
-        # Offset từ center của image gốc đến pivot
         offset = Vector2(
             pivot_x - self.rect.width / 2,
             pivot_y - self.rect.height / 2
@@ -111,7 +109,7 @@ class Projectile:
             rotated_offset = offset.rotate(self.sprite.rotation)
 
             # World position của center = pivot world position - rotated offset
-            if self.abs_x <= 400:
+            if pivot_x <= 0.5:
                 rotated_image_center = Vector2(self.abs_x, self.abs_y) + rotated_offset
             else:
                 rotated_image_center = Vector2(self.abs_x, self.abs_y) - rotated_offset

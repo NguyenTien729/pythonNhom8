@@ -140,7 +140,7 @@ class GasterBlaster(pygame.sprite.Sprite):
 
         if self.beam:
             #lock beam
-            if not self.beam_frozen and (self.x < -100 or self.x > 900 or self.y < -20 or self.y > 520):
+            if not self.beam_frozen and (self.x < -100 or self.x > 900 or self.y < -100 or self.y > 600):
                 self.beam_frozen = True
 
             if not self.beam_frozen:
