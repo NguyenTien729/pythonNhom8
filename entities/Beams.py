@@ -97,7 +97,7 @@ class Projectile:
             rotated_offset_vector = pivot_offset_vector.rotate(-self.sprite.rotation)
 
             # 4. Tìm vị trí tâm của ảnh đã xoay để điểm pivot khớp với vị trí mục tiêu
-            rotated_image_center = target_pivot_pos - rotated_offset_vector
+            rotated_image_center = target_pivot_pos
 
             # 5. Lấy hình chữ nhật cuối cùng và vẽ nó ra
             final_rect = rotated_image.get_rect(center=rotated_image_center)
