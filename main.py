@@ -124,6 +124,7 @@ while True:
 
         # if player_hp == 95:
         #     game_active = False
+        
     else:
         screen.fill('Red')
         
