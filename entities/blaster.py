@@ -40,6 +40,8 @@ class GasterBlaster(pygame.sprite.Sprite):
         self.do_rotation = 0
         self.builder_spd = 0
 
+        self.beam_frozen = False
+
         self.angle_check = angle
         self.angle = angle % 360
         if start_angle is not None:
@@ -75,13 +77,20 @@ class GasterBlaster(pygame.sprite.Sprite):
         self.beam.blaster = True
 
     def calculate_beam_position(self):
-        self.beam.move_to_absolute(self.x, self.y)
-        self.beam.sprite.rotation = self.sprite_rotation - 90
+        # Công thức đúng cho hệ tọa độ với 0 độ là hướng LÊN TRÊN
+        angle_rad = math.radians(self.sprite_rotation)
         offset = 44 * self.y_scale
-        self.beam.move(
-            -offset * math.sin(math.radians(self.sprite_rotation)),
-            offset * math.cos(math.radians(self.sprite_rotation))
-        )
+
+        # dx = khoảng cách * sin(góc)
+        dx = offset * math.sin(angle_rad)
+        # dy = -khoảng cách * cos(góc) (dấu trừ vì trục Y đi xuống)
+        dy = -offset * math.cos(angle_rad)
+
+        # Vị trí cuối cùng của beam là tâm blaster + độ dời đã tính
+        self.beam.move_to_absolute(self.x + dx, self.y + dy)
+
+        # Phần còn lại giữ nguyên
+        self.beam.sprite.rotation = self.sprite_rotation - 90
 
         if self.angle_check >= 0:
             self.beam.sprite.set_pivot(1, 0.5)
@@ -102,7 +111,7 @@ class GasterBlaster(pygame.sprite.Sprite):
     def update_position(self, x: float, y: float):
         self.x = x
         self.y = y
-        if self.beam:
+        if self.beam and not self.beam_frozen:
             self.calculate_beam_position()
 
     def set(self, index: str):
@@ -131,24 +140,26 @@ class GasterBlaster(pygame.sprite.Sprite):
             self.do_rotation = lerp(self.do_rotation, self.angle, 6 / self.speed)
             self.sprite_rotation = self.do_rotation
 
-        #beam scale
-        if self.beam: #unknown
-            if self.shoot_delay < self.update_timer <= self.shoot_delay + 8:
-                self.beam.sprite.y_scale += 0.125 * self.x_scale
+        if self.beam:
+            #lock beam
+            if not self.beam_frozen and (self.x < -100 or self.x > 900 or self.y < -20 or self.y > 520):
+                self.beam_frozen = True
 
-            if self.update_timer > self.shoot_delay + 8 and self.update_timer > self.shoot_delay + 8 + self.hold_fire:
-                if self.beam.sprite.y_scale > 0:
-                    self.beam.sprite.y_scale -= 0.125 * self.x_scale
-                else:
-                    self.beam.sprite.y_scale = 0
+            if not self.beam_frozen:
+                # logic tăng/giảm y_scale như cũ
+                if self.shoot_delay < self.update_timer <= self.shoot_delay + 8:
+                    self.beam.sprite.y_scale += 0.125 * self.x_scale
+                if self.update_timer > self.shoot_delay + 8 and self.update_timer > self.shoot_delay + 8 + self.hold_fire:
+                    self.beam.sprite.y_scale = max(0, self.beam.sprite.y_scale - 0.125 * self.x_scale)
+                    self.beam.sprite.alpha = max(0, self.beam.sprite.alpha - 0.05)
+            else:
+                # FROZEN: giữ nguyên vị trí, chỉ fade
+                self.beam.sprite.alpha = max(0, int(self.beam.sprite.alpha - 5))
 
-                if self.update_timer > self.shoot_delay + self.hold_fire:
-                    self.beam.sprite.alpha -= 0.05
-
-                #destroy when out of window
-                if (self.x < -20 or self.x > 660 or self.y < -20 or self.y > 500) and self.beam.sprite.alpha == 0:
-                    self.destroy()
-                    return
+            # xoá khi mờ hẳn
+            if self.beam.sprite.alpha <= 0:
+                self.destroy()
+                return
 
         self.image = pygame.transform.rotate(self.sprite, -self.sprite_rotation)
         self.rect = self.image.get_rect(center=(self.x, self.y))
@@ -171,6 +182,11 @@ class GasterBlaster(pygame.sprite.Sprite):
             self.beam = None
         self.sprite = None
         self.image = None
+
+    def kill(self):
+        self.destroy()
+        super().kill()
+
 
 class MultiBlaster:
     def __init__(self):
