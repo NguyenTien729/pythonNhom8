@@ -77,19 +77,17 @@ class GasterBlaster(pygame.sprite.Sprite):
         self.beam.blaster = True
 
     def calculate_beam_position(self):
-        # Công thức đúng cho hệ tọa độ với 0 độ là hướng LÊN TRÊN
-        angle_rad = math.radians(self.sprite_rotation)
-        offset = 44 * self.y_scale
 
-        # dx = khoảng cách * sin(góc)
-        dx = offset * math.sin(angle_rad)
-        # dy = -khoảng cách * cos(góc) (dấu trừ vì trục Y đi xuống)
-        dy = -offset * math.cos(angle_rad)
+        self.beam.move_to_absolute(self.x, self.y)
 
-        # Vị trí cuối cùng của beam là tâm blaster + độ dời đã tính
-        self.beam.move_to_absolute(self.x + dx, self.y + dy)
+        distance = -44 * self.y_scale
+        dx = distance * math.sin(math.radians(self.sprite_rotation))
+        dy = -distance * math.cos(math.radians(self.sprite_rotation))
 
-        # Phần còn lại giữ nguyên
+        # beam_last_pos = blaster_center + moved_pos
+
+        self.beam.move(dx, dy)
+
         self.beam.sprite.rotation = self.sprite_rotation - 90
 
         if self.angle_check >= 0:
@@ -146,17 +144,16 @@ class GasterBlaster(pygame.sprite.Sprite):
                 self.beam_frozen = True
 
             if not self.beam_frozen:
-                # logic tăng/giảm y_scale như cũ
                 if self.shoot_delay < self.update_timer <= self.shoot_delay + 8:
                     self.beam.sprite.y_scale += 0.125 * self.x_scale
                 if self.update_timer > self.shoot_delay + 8 and self.update_timer > self.shoot_delay + 8 + self.hold_fire:
                     self.beam.sprite.y_scale = max(0, self.beam.sprite.y_scale - 0.125 * self.x_scale)
                     self.beam.sprite.alpha = max(0, self.beam.sprite.alpha - 0.05)
             else:
-                # FROZEN: giữ nguyên vị trí, chỉ fade
+                # FROZEN
                 self.beam.sprite.alpha = max(0, int(self.beam.sprite.alpha - 5))
 
-            # xoá khi mờ hẳn
+            # destroy
             if self.beam.sprite.alpha <= 0:
                 self.destroy()
                 return

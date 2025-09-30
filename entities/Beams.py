@@ -29,6 +29,18 @@ class Beam:
         self.pivot_x = px
         self.pivot_y = py
 
+    def get_pivot_offset(self):
+        # Pivot trong image space (trước khi rotate)
+        pivot_x = self.rect.width * self.pivot_x
+        pivot_y = self.rect.height * self.pivot_y
+
+        # Offset từ center của image gốc đến pivot
+        offset = Vector2(
+            pivot_x - self.rect.width / 2,
+            pivot_y - self.rect.height / 2
+        )
+        return offset
+
     def update(self):
         #Scale
         width = int(self.original_image.get_width() * self.scale_x * self.y_scale)
@@ -79,31 +91,34 @@ class Projectile:
 
     def animation(self, surf: pygame.Surface):
         if self.is_active:
-            self.sprite.update()  # Tạo ra ảnh self.sprite.image đã được xoay
+            self.sprite.update()
 
-            # 1. Lấy ảnh đã xoay và vị trí mục tiêu của điểm pivot
-            rotated_image = self.sprite.image
-            target_pivot_pos = Vector2(self.abs_x, self.abs_y)
+            # Pivot trong image CHƯA rotate (image gốc)
+            original_width = self.sprite.original_image.get_width() * self.sprite.scale_x * self.sprite.y_scale
+            original_height = self.sprite.original_image.get_height() * self.sprite.scale_y
 
-            # 2. Vector từ tâm của ảnh gốc tới điểm pivot của nó
-            original_rect = self.sprite.original_image.get_rect()
-            pivot_in_image = Vector2(self.sprite.pivot_x * original_rect.width,
-                                     self.sprite.pivot_y * original_rect.height)
-            image_center = Vector2(original_rect.center)
-            pivot_offset_vector = pivot_in_image - image_center
+            pivot_x = original_width * self.sprite.pivot_x
+            pivot_y = original_height * self.sprite.pivot_y
 
-            # 3. Xoay vector offset này cùng chiều và cùng góc với ảnh
-            # Ảnh được xoay bởi -self.sprite.rotation, nên vector cũng phải xoay như vậy
-            rotated_offset_vector = pivot_offset_vector.rotate(-self.sprite.rotation)
+            # Center của image gốc
+            center_x = original_width / 2
+            center_y = original_height / 2
 
-            # 4. Tìm vị trí tâm của ảnh đã xoay để điểm pivot khớp với vị trí mục tiêu
-            rotated_image_center = target_pivot_pos
+            # Offset từ center đến pivot (TRONG image space gốc)
+            offset = Vector2(pivot_x - center_x, pivot_y - center_y)
 
-            # 5. Lấy hình chữ nhật cuối cùng và vẽ nó ra
-            final_rect = rotated_image.get_rect(center = rotated_image_center)
+            # Rotate offset vector CÙNG góc với image
+            rotated_offset = offset.rotate(self.sprite.rotation)
 
-            surf.blit(rotated_image, final_rect)
+            # World position của center = pivot world position - rotated offset
+            if self.abs_x <= 400:
+                rotated_image_center = Vector2(self.abs_x, self.abs_y) + rotated_offset
+            else:
+                rotated_image_center = Vector2(self.abs_x, self.abs_y) - rotated_offset
 
+            # Blit
+            final_rect = self.sprite.image.get_rect(center=rotated_image_center)
+            surf.blit(self.sprite.image, final_rect)
 
 def create_projectile_abs(sprite_path: str, x: float, y: float):
     return Projectile(sprite_path, x, y)
