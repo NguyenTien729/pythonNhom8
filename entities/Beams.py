@@ -100,7 +100,7 @@ class Projectile:
             rotated_image_center = target_pivot_pos
 
             # 5. Lấy hình chữ nhật cuối cùng và vẽ nó ra
-            final_rect = rotated_image.get_rect(center=rotated_image_center)
+            final_rect = rotated_image.get_rect(center = rotated_image_center)
 
             surf.blit(rotated_image, final_rect)
 
