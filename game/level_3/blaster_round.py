@@ -30,11 +30,11 @@ def fire_vector(pivot: Vector2, pos: Vector2) -> float:
 class BlasterCircle:
     fire_radius = 150
     spawn_radius = 700
-    spawn_delay = 0.0025
+    spawn_delay = 0.10
 
-    def __init__(self, pivot, blaster, start_angle = 0, beam_alpha_speed = 0.6, beam_width = 0.7):
+    def __init__(self, pivot, blaster, start_angle = 0, beam_alpha_speed = 10, beam_width = 0.5):
         self.pivot = pivot
-        self.angle = 180
+        self.angle = -15
 
         spawn_offset = Vector2()
         spawn_offset.from_polar((self.spawn_radius, -start_angle - 30))
@@ -51,6 +51,8 @@ class BlasterCircle:
         self.beam_alpha_speed = beam_alpha_speed
         self.beam_width = beam_width
 
+        self.sound = pygame.mixer.Sound("sound/sans_battle/gaster_round_call.wav")
+        self.fire_sound = pygame.mixer.Sound("sound/sans_battle/gaster_round_fire.wav")
 
     def spawn_blaster(self):
         spawn_pos = rotate_on_pivot(self.pivot, self.angle, self.pos_1)
@@ -59,14 +61,14 @@ class BlasterCircle:
         angle = fire_vector(self.pivot, fire_pos)
         print(fire_pos)
         print(angle)
-        blaster = self.blaster.create_blaster(spawn_pos.x, spawn_pos.y, fire_pos.x, fire_pos.y, angle = angle, start_angle = angle - 30,
-                                              sound = pygame.mixer.Sound("sound/sans_battle/gaster_round_call.wav") ,fire_sound = pygame.mixer.Sound("sound/sans_battle/gaster_round_fire.wav"))
+        blaster = self.blaster.create_blaster(spawn_pos.x, spawn_pos.y, fire_pos.x, fire_pos.y, angle = angle, start_angle = angle - 270,
+                                              sound = self.sound ,fire_sound = self.fire_sound)
 
         blaster.beam_alpha_speed = self.beam_alpha_speed
         blaster.beam_width = self.beam_width
 
     def update(self, dt: float):
-        self.angle += 120 * dt * 40
+        self.angle += 180 * dt
 
         self.spawn_timer += dt
         if self.spawn_timer >= self.spawn_delay:

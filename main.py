@@ -7,7 +7,7 @@ from game.level_3.blaster_round import BlasterCircle
 
 pygame.init()
 screen_width = 800
-screen_height = 500
+screen_height = 600
 screen = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption('Undertail')
 clock = pygame.time.Clock()
@@ -48,7 +48,6 @@ blasters = MultiBlaster()
 arena_center = pygame.math.Vector2(400, 325)
 
 blaster_spawner = BlasterCircle(arena_center, blasters)
-dt = 0
 
 def draw_health_bar(surface, x, y, current_hp, max_hp, width=100, height=30):
     ratio = current_hp / max_hp
@@ -102,6 +101,8 @@ while True:
         if player_rect.bottom > 400:
             player_rect.bottom = 400
 
+        timer = pygame.time.get_ticks()
+
         # Vẽ thanh máu
         draw_health_bar(screen, 315, 420, player_hp, max_hp)
 
@@ -138,12 +139,10 @@ while True:
     else:
         screen.fill("Red")
 
-    dt = clock.tick() * .001
+    dt = min(clock.tick(60) * 0.001, 1 / 30)
     # print(dt)
 
-    if dt < 1:
-        blaster_spawner.update(dt)
-
+    blaster_spawner.update(dt)
     blasters.update()
     blasters.draw(screen)
 
