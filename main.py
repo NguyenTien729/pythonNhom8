@@ -137,7 +137,7 @@ while True:
     else:
         screen.fill("Red")
 
-    dt = clock.tick() * .001
+    dt = min(clock.tick(60) * 0.001, 1 / 30)
     # print(dt)
 
     # if dt < 10:
