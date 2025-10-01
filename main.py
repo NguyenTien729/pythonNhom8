@@ -70,13 +70,13 @@ while True:
 
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_UP:
-               blaster = blasters.create_blaster(-100, -100, 150, 325, -90, start_angle = 0)
+               blaster = blasters.create_blaster(-100, -100, 150, 325, -123, start_angle = 0)
             if event.key == pygame.K_DOWN:
-               blaster = blasters.create_blaster(900, -100, 650, 325, 90, start_angle = 0)
+               blaster = blasters.create_blaster(900, -100, 550, 150, 32, start_angle = 0)
             if event.key == pygame.K_RIGHT:
-                blaster = blasters.create_blaster(900, -100, 650, 325, 60, start_angle = 0)
+                blaster = blasters.create_blaster(900, -100, 650, 325, 47, start_angle = 0)
             if event.key == pygame.K_LEFT:
-                blaster = blasters.create_blaster(-100, 600, 150, 325, -120, start_angle = 0)
+                blaster = blasters.create_blaster(-100, 600, 150, 325, -146, start_angle = 0)
             
 
     # input
@@ -108,10 +108,6 @@ while True:
         screen.blit(mainbackground, (0, 0))
         screen.blit(test_surface, (250, 250))
         screen.blit(test_surface2, (255, 255))
-
-        
-
-        
 
         # Enemy
         screen.blit(skull_surf, skull_rect)
@@ -167,5 +163,3 @@ while True:
 
     pygame.display.update()
     clock.tick(60)
-
-
