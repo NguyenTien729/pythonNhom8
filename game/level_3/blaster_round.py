@@ -28,9 +28,9 @@ def fire_vector(pivot: Vector2, pos: Vector2) -> float:
     return angle
 
 class BlasterCircle:
-    fire_radius = 200
+    fire_radius = 150
     spawn_radius = 700
-    spawn_delay = 0.008
+    spawn_delay = 0.005
 
     def __init__(self, pivot, blaster, start_angle = 0, beam_alpha_speed = 0.6, beam_width = 0.7):
         self.pivot = pivot
@@ -65,7 +65,7 @@ class BlasterCircle:
         blaster.beam_width = self.beam_width
 
     def update(self, dt: float):
-        self.angle += 120 * dt * 15
+        self.angle += 120 * dt * 20
 
         self.spawn_timer += dt
         if self.spawn_timer >= self.spawn_delay:
