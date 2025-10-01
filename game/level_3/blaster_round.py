@@ -28,7 +28,7 @@ def fire_vector(pivot: Vector2, pos: Vector2) -> float:
     return angle
 
 class BlasterCircle:
-    fire_radius = 150
+    fire_radius = 250
     spawn_radius = 700
     spawn_delay = 0.10
 
