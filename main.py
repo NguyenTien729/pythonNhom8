@@ -32,7 +32,7 @@ player_speed = 5
 skull_surf = pygame.image.load('graphics/Sprites/blasters/beam.png').convert_alpha()
 skull_rect = skull_surf.get_rect(topleft=(100, 100))
 
-bone_surf = pygame.image.load('graphics/Sprites/bones/bone_1.png').convert_alpha()
+bone_surf = pygame.image.load('graphics/Sprites/bones/bone.png').convert_alpha()
 bone_rect = bone_surf.get_rect(topleft=(200, 200))
 bone_speed = 5
 
@@ -132,12 +132,33 @@ while True:
                     last_hit_time = cur_time
         if (cur_time - last_hit_time) < immunity_dur:
             #nhấp nháy lúc immunity
-            if (cur_time // 200) % 2 == 0:   
+            if (cur_time // 100) % 2 == 0:   
                 screen.blit(player_hit, player_rect)
             else:
                 screen.blit(player_surf, player_rect)
         else:
             screen.blit(player_surf, player_rect)
+
+        
+                
+        for blaster in blasters.blasters:
+            if blaster.beam and blaster.beam.is_active:
+                beam_img = blaster.beam.sprite.image
+                beam_rect = beam_img.get_rect(center=(blaster.beam.abs_x, blaster.beam.abs_y))
+
+                # Tạo mask từ hình ảnh beam và player
+                beam_mask = pygame.mask.from_surface(beam_img)
+                player_mask = pygame.mask.from_surface(player_surf)
+
+                offset = (player_rect.x - beam_rect.x, player_rect.y - beam_rect.y)
+
+                if beam_mask.overlap(player_mask, offset):
+                    if cur_time - last_hit_time > immunity_dur:
+                        player_hp -= 10
+                        last_hit_time = cur_time
+
+
+        
     else:
         screen.fill("Red")
 
