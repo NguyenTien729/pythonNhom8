@@ -150,7 +150,7 @@ class GasterBlaster(pygame.sprite.Sprite):
                     self.beam.sprite.y_scale += 0.125 * self.x_scale
                 if self.update_timer > self.shoot_delay + 8 and self.update_timer > self.shoot_delay + 8 + self.hold_fire:
                     self.beam.sprite.y_scale = max(0, self.beam.sprite.y_scale - 0.125 * self.x_scale)
-                    self.beam.sprite.alpha = max(0, self.beam.sprite.alpha - 0.125 * (self.beam_alpha_speed / 0.125))
+                    self.beam.sprite.alpha = max(0, self.beam.sprite.alpha - 0.5 * (self.beam_alpha_speed / 0.125))
             else:
                 # FROZEN
                 self.beam.sprite.alpha = max(0, int(self.beam.sprite.alpha - 5 * (self.beam_alpha_speed / 0.125)))
