@@ -6,8 +6,7 @@ from entities.blaster import MultiBlaster, GasterBlaster
 from game.level_3.blaster_round import BlasterCircle
 
 pygame.init()
-screen_width = 800
-screen_height = 500
+screen_width,screen_height = 1000,600
 screen = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption('Undertail')
 clock = pygame.time.Clock()
@@ -17,16 +16,29 @@ is_active = True
 g_font = pygame.font.Font("font/MonsterFriendBack.otf", 22)
 
 # Background
-test_surface = pygame.Surface((300, 150))
-test_surface.fill('White')
-test_surface2 = pygame.Surface((290, 140))
-test_surface2.fill('Black')
-mainbackground = pygame.Surface((800, 400))
-mainbackground.fill('Black')
+
+def draw_background(boxl,boxw):
+    wbox = pygame.Surface((boxl, boxw))
+    wbox.fill('White')
+    bbox = pygame.Surface((boxl-10, boxw-10))
+    bbox.fill('Black')
+    mainbackground = pygame.Surface((1000, 600))
+    mainbackground.fill('Black')
+    screen.blit(mainbackground, (0, 0))
+    screen.blit(wbox, (((1000-boxl)//2), (480-boxw)))
+    screen.blit(bbox, (((1000-boxl)//2)+5, (480-boxw)+5))
+    if player_rect.left < ((1000-boxl)//2)+5:
+        player_rect.left = ((1000-boxl)//2)+5
+    if player_rect.right > ((1000-boxl)//2)+boxl-5:
+        player_rect.right = ((1000-boxl)//2)+boxl-5
+    if player_rect.top < 485-boxw:
+        player_rect.top = 485-boxw
+    if player_rect.bottom > 475:
+        player_rect.bottom = 475
 
 # Player
 player_surf = pygame.image.load('graphics/Sprites/player/heart.png').convert_alpha()
-player_rect = player_surf.get_rect(topleft=(400, 370))
+player_rect = player_surf.get_rect(topleft=(500, 470))
 player_hit = pygame.image.load('graphics/Sprites/player/heart_hit1.png').convert_alpha()
 player_speed = 5
 
@@ -34,26 +46,26 @@ player_speed = 5
 skull_surf = pygame.image.load('graphics/Sprites/blasters/beam.png').convert_alpha()
 skull_rect = skull_surf.get_rect(topleft=(100, 100))
 
-bone_surf = pygame.image.load('graphics/Sprites/bones/bone_1.png').convert_alpha()
-bone_rect = bone_surf.get_rect(topleft=(200, 200))
+bone_surf = pygame.image.load('graphics/Sprites/bones/bone.png').convert_alpha()
+bone_rect = bone_surf.get_rect(topleft=(1000, 400))
 bone_speed = 5
 
-player_hp = 100
-max_hp = 100
+player_hp = 50
+max_hp = 50
 last_hit_time = 0
 immunity_dur = 2000
 
 #lv1 blaster
 blasters = MultiBlaster()
-arena_center = pygame.math.Vector2(400, 325)
+arena_center = pygame.math.Vector2(500, 300)
 
 blaster_spawner = BlasterCircle(arena_center, blasters)
 
-def draw_health_bar(surface, x, y, current_hp, max_hp, width=100, height=30):
+def draw_health_bar(surface, x, y, current_hp, max_hp, width=40, height=25):
     ratio = current_hp / max_hp
     if ratio < 0: ratio = 0
-    box_rect = pygame.Rect(0, 0, 800, 500)
-    pygame.draw.rect(surface, (0,0,0), box_rect)  
+    # box_rect = pygame.Rect(0, 0, 1000, 600)
+    # pygame.draw.rect(surface, (0,0,0), box_rect)  
     pygame.draw.rect(surface, (255, 255, 0), (x, y, width, height))
     pygame.draw.rect(surface, (255, 0, 0), (x, y, width * ratio, height))
     # HP text
@@ -62,7 +74,7 @@ def draw_health_bar(surface, x, y, current_hp, max_hp, width=100, height=30):
     surface.blit(hp_text, hp_rect)
     #HP value
     hp_val = g_font.render(f"{current_hp}/{max_hp}", True, (255, 255, 255))
-    hp_val_rect = hp_val.get_rect(midleft=(x + width + 5, y + height // 2))
+    hp_val_rect = hp_val.get_rect(midleft=(x + width + 30, y + height // 2))
     surface.blit(hp_val, hp_val_rect)
 
 
@@ -72,9 +84,9 @@ while True:
             pygame.quit()
             exit()
 
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_UP:
-               blaster = blasters.create_blaster(-100, -100, 150, 325, -123, start_angle = 0)
+        # if event.type == pygame.KEYDOWN:
+        #     if event.key == pygame.K_UP:
+        #        blaster = blasters.create_blaster(-100, -100, 150, 325, -123, start_angle = 0)
 
     clock = pygame.time.Clock()
 
@@ -91,32 +103,20 @@ while True:
             player_rect.y += player_speed
 
 
-        # Khung
-        if player_rect.left < 250:
-            player_rect.left = 250
-        if player_rect.right > 550:
-            player_rect.right = 550
-        if player_rect.top < 250:
-            player_rect.top = 250
-        if player_rect.bottom > 400:
-            player_rect.bottom = 400
-
-        # Vẽ thanh máu
-        draw_health_bar(screen, 315, 420, player_hp, max_hp)
-
         # background
-        screen.blit(mainbackground, (0, 0))
-        screen.blit(test_surface, (250, 250))
-        screen.blit(test_surface2, (255, 255))
-
+        draw_background(500,200)
+        # Vẽ thanh máu
+        draw_health_bar(screen, 435, 500, player_hp, max_hp)
+        
+        
         # Enemy
         screen.blit(skull_surf, skull_rect)
         screen.blit(bone_surf, bone_rect)
 
         bone_rect.x -= bone_speed
         if bone_rect.right < 0:
-            bone_rect.left = 800
-            bone_rect.y = 250
+            bone_rect.left = 1000
+            bone_rect.y = 400
 
         # Player
         screen.blit(player_surf, player_rect)
@@ -140,8 +140,8 @@ while True:
     dt = clock.tick() * .001
     # print(dt)
 
-    if dt < 10:
-        blaster_spawner.update(dt)
+    # if dt < 10:
+    #     blaster_spawner.update(dt)
 
     blasters.update()
     blasters.draw(screen)
