@@ -31,6 +31,8 @@ class GasterBlaster(pygame.sprite.Sprite):
         self.y2 = y2
         self.x_scale = 1
         self.y_scale = 1
+        self.beam_alpha_speed = 0.125
+        self.beam_width = 1.0
 
         self.shoot_delay = 40
         self.speed = 40
@@ -65,7 +67,7 @@ class GasterBlaster(pygame.sprite.Sprite):
 
     def spawn_beam(self):
         self.beam = create_projectile_abs(self.beam_sprite, 0, 0)
-        self.beam.sprite.scale(2, 2 * self.y_scale)
+        self.beam.sprite.scale(2, 2 * self.y_scale * self.beam_width)
         self.beam.p_collision = True
         self.beam.sprite.y_scale = 1.75 * self.x_scale
 
@@ -148,10 +150,10 @@ class GasterBlaster(pygame.sprite.Sprite):
                     self.beam.sprite.y_scale += 0.125 * self.x_scale
                 if self.update_timer > self.shoot_delay + 8 and self.update_timer > self.shoot_delay + 8 + self.hold_fire:
                     self.beam.sprite.y_scale = max(0, self.beam.sprite.y_scale - 0.125 * self.x_scale)
-                    self.beam.sprite.alpha = max(0, self.beam.sprite.alpha - 0.05)
+                    self.beam.sprite.alpha = max(0, self.beam.sprite.alpha - 0.125 * (self.beam_alpha_speed / 0.125))
             else:
                 # FROZEN
-                self.beam.sprite.alpha = max(0, int(self.beam.sprite.alpha - 5))
+                self.beam.sprite.alpha = max(0, int(self.beam.sprite.alpha - 5 * (self.beam_alpha_speed / 0.125)))
 
             # destroy
             if self.beam.sprite.alpha <= 0:

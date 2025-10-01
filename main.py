@@ -3,6 +3,8 @@ from sys import exit
 
 from entities.blaster import MultiBlaster, GasterBlaster
 
+from game.level_3.blaster_round import BlasterCircle
+
 pygame.init()
 screen_width = 800
 screen_height = 500
@@ -43,7 +45,9 @@ immunity_dur = 2000
 
 #lv1 blaster
 blasters = MultiBlaster()
+arena_center = pygame.math.Vector2(400, 325)
 
+blaster_spawner = BlasterCircle(arena_center, blasters)
 
 def draw_health_bar(surface, x, y, current_hp, max_hp, width=100, height=30):
     ratio = current_hp / max_hp
@@ -71,13 +75,8 @@ while True:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_UP:
                blaster = blasters.create_blaster(-100, -100, 150, 325, -123, start_angle = 0)
-            if event.key == pygame.K_DOWN:
-               blaster = blasters.create_blaster(900, -100, 550, 150, 32, start_angle = 0)
-            if event.key == pygame.K_RIGHT:
-                blaster = blasters.create_blaster(900, -100, 650, 325, 47, start_angle = 0)
-            if event.key == pygame.K_LEFT:
-                blaster = blasters.create_blaster(-100, 600, 150, 325, -146, start_angle = 0)
-            
+
+    clock = pygame.time.Clock()
 
     # input
     if is_active:
@@ -90,6 +89,7 @@ while True:
             player_rect.y -= player_speed
         if keys[pygame.K_DOWN]:
             player_rect.y += player_speed
+
 
         # Khung
         if player_rect.left < 250:
@@ -136,6 +136,12 @@ while True:
             screen.blit(player_surf, player_rect)
     else:
         screen.fill("Red")
+
+    dt = clock.tick() * .001
+    # print(dt)
+
+    if dt < 10:
+        blaster_spawner.update(dt)
 
     blasters.update()
     blasters.draw(screen)
