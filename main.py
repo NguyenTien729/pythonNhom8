@@ -15,10 +15,7 @@ is_active = True
 g_font = pygame.font.Font("font/MonsterFriendBack.otf", 22)
 
 # Background
-test_surface = pygame.Surface((300, 150))
-test_surface.fill('White')
-test_surface2 = pygame.Surface((290, 140))
-test_surface2.fill('Black')
+boxlen,boxwidth = 150,150
 mainbackground = pygame.Surface((800, 400))
 mainbackground.fill('Black')
 
@@ -32,9 +29,10 @@ player_speed = 5
 skull_surf = pygame.image.load('graphics/Sprites/blasters/beam.png').convert_alpha()
 skull_rect = skull_surf.get_rect(topleft=(100, 100))
 
-bone_surf = pygame.image.load('graphics/Sprites/bones/bone.png').convert_alpha()
-bone_rect = bone_surf.get_rect(topleft=(200, 200))
-bone_speed = 5
+bone_surf1 = pygame.image.load('graphics/Sprites/bones/bone.png').convert_alpha()
+bone_rect1 = bone_surf1.get_rect(topleft=(800, 300))
+
+bone_speed = 2
 
 player_hp = 100
 max_hp = 100
@@ -68,15 +66,15 @@ while True:
             pygame.quit()
             exit()
 
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_UP:
-               blaster = blasters.create_blaster(-100, -100, 150, 325, -123, start_angle = 0)
-            if event.key == pygame.K_DOWN:
-               blaster = blasters.create_blaster(900, -100, 550, 150, 32, start_angle = 0)
-            if event.key == pygame.K_RIGHT:
-                blaster = blasters.create_blaster(900, -100, 650, 325, 47, start_angle = 0)
-            if event.key == pygame.K_LEFT:
-                blaster = blasters.create_blaster(-100, 600, 150, 325, -146, start_angle = 0)
+        # if event.type == pygame.KEYDOWN:
+        #     if event.key == pygame.K_UP:
+        #        blaster = blasters.create_blaster(-100, -100, 150, 325, -123, start_angle = 0)
+        #     if event.key == pygame.K_DOWN:
+        #        blaster = blasters.create_blaster(900, -100, 550, 150, 32, start_angle = 0)
+        #     if event.key == pygame.K_RIGHT:
+        #         blaster = blasters.create_blaster(900, -100, 650, 325, 47, start_angle = 0)
+        #     if event.key == pygame.K_LEFT:
+        #         blaster = blasters.create_blaster(-100, 600, 150, 325, -146, start_angle = 0)
             
 
     # input
@@ -91,38 +89,45 @@ while True:
         if keys[pygame.K_DOWN]:
             player_rect.y += player_speed
 
-        # Khung
-        if player_rect.left < 250:
-            player_rect.left = 250
-        if player_rect.right > 550:
-            player_rect.right = 550
-        if player_rect.top < 250:
-            player_rect.top = 250
-        if player_rect.bottom > 400:
-            player_rect.bottom = 400
+        
 
         # Vẽ thanh máu
         draw_health_bar(screen, 315, 420, player_hp, max_hp)
 
+        box = pygame.Surface((boxlen, boxwidth))
+        box.fill('White')
+        box2 = pygame.Surface((boxlen-10, boxwidth-10))
+        box2.fill('Black')
         # background
         screen.blit(mainbackground, (0, 0))
-        screen.blit(test_surface, (250, 250))
-        screen.blit(test_surface2, (255, 255))
+        screen.blit(box, (((800-boxlen)//2), (400-boxwidth)))
+        screen.blit(box2, (((800-boxlen)//2)+5, (400-boxwidth)+5))
+        
+        # Khung
+        if player_rect.left < ((800-boxlen)//2)+5:
+            player_rect.left = ((800-boxlen)//2)+5
+        if player_rect.right > ((800-boxlen)//2)+boxlen-5:
+            player_rect.right = ((800-boxlen)//2)+boxlen-5
+        if player_rect.top < (400-boxwidth)+5:
+            player_rect.top = (400-boxwidth)+5
+        if player_rect.bottom > 395:
+            player_rect.bottom = 395
 
         # Enemy
         screen.blit(skull_surf, skull_rect)
-        screen.blit(bone_surf, bone_rect)
 
-        bone_rect.x -= bone_speed
-        if bone_rect.right < 0:
-            bone_rect.left = 800
-            bone_rect.y = 250
+        screen.blit(bone_surf1, bone_rect1)
+        bone_rect1.x -= bone_speed
+        if bone_rect1.right < 0:
+            bone_rect1.left = 800
+            bone_rect1.y = 250
+        
 
         # Player
         screen.blit(player_surf, player_rect)
 
         cur_time = pygame.time.get_ticks()
-        if bone_rect.colliderect(player_rect):
+        if bone_rect1.colliderect(player_rect):
                 if cur_time - last_hit_time > immunity_dur:
                     player_hp -= 5
                     last_hit_time = cur_time
