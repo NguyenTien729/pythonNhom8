@@ -120,7 +120,7 @@ while True:
 
         # Player
         screen.blit(player_surf, player_rect)
-
+        #bonehit
         cur_time = pygame.time.get_ticks()
         if bone_rect.colliderect(player_rect):
                 if cur_time - last_hit_time > immunity_dur:
@@ -134,14 +134,27 @@ while True:
                 screen.blit(player_surf, player_rect)
         else:
             screen.blit(player_surf, player_rect)
+        #beamhit
+        for blaster in blasters.blasters:
+            if blaster.beam and blaster.beam.is_active:
+                beam_img = blaster.beam.sprite.image
+                beam_rect = beam_img.get_rect(center=(blaster.beam.abs_x, blaster.beam.abs_y))
+                beam_mask = pygame.mask.from_surface(beam_img)
+                player_mask = pygame.mask.from_surface(player_surf)
+                offset = (player_rect.x - beam_rect.x, player_rect.y - beam_rect.y)
+                if beam_mask.overlap(player_mask, offset):
+                    if cur_time - last_hit_time > immunity_dur:
+                        player_hp -= 10
+                        last_hit_time = cur_time
+
     else:
         screen.fill("Red")
 
     dt = min(clock.tick(60) * 0.001, 1 / 30)
     # print(dt)
 
-    # if dt < 10:
-    #     blaster_spawner.update(dt)
+    if dt < 10:
+        blaster_spawner.update(dt)
 
     blasters.update()
     blasters.draw(screen)
