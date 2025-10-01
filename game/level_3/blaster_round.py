@@ -30,20 +30,20 @@ def fire_vector(pivot: Vector2, pos: Vector2) -> float:
 class BlasterCircle:
     fire_radius = 150
     spawn_radius = 700
-    spawn_delay = 0.005
+    spawn_delay = 0.0025
 
     def __init__(self, pivot, blaster, start_angle = 0, beam_alpha_speed = 0.6, beam_width = 0.7):
         self.pivot = pivot
         self.angle = 180
 
-        # offset = Vector2()
-        # offset.from_polar((self.spawn_radius, -start_angle - 30))
+        spawn_offset = Vector2()
+        spawn_offset.from_polar((self.spawn_radius, -start_angle - 30))
 
-        offset_2 = Vector2()
-        offset_2.from_polar((self.fire_radius, -start_angle))
+        fire_offset = Vector2()
+        fire_offset.from_polar((self.fire_radius, -start_angle))
 
-        # self.pos_1 = pivot + offset
-        self.pos_2 = pivot + offset_2
+        self.pos_1 = pivot + spawn_offset
+        self.pos_2 = pivot + fire_offset
 
         self.blaster = blaster
         self.spawn_timer = 0
@@ -53,19 +53,20 @@ class BlasterCircle:
 
 
     def spawn_blaster(self):
-        # spawn_pos = rotate_on_pivot(self.pivot, self.angle, self.pos_1)
+        spawn_pos = rotate_on_pivot(self.pivot, self.angle, self.pos_1)
 
         fire_pos = rotate_on_pivot(self.pivot, self.angle, self.pos_2)
         angle = fire_vector(self.pivot, fire_pos)
         print(fire_pos)
         print(angle)
-        blaster = self.blaster.create_blaster(-100, -100, fire_pos.x, fire_pos.y, angle = angle, start_angle = angle - 30)
+        blaster = self.blaster.create_blaster(spawn_pos.x, spawn_pos.y, fire_pos.x, fire_pos.y, angle = angle, start_angle = angle - 30,
+                                              sound = pygame.mixer.Sound("sound/sans_battle/gaster_round_call.wav") ,fire_sound = pygame.mixer.Sound("sound/sans_battle/gaster_round_fire.wav"))
 
         blaster.beam_alpha_speed = self.beam_alpha_speed
         blaster.beam_width = self.beam_width
 
     def update(self, dt: float):
-        self.angle += 120 * dt * 20
+        self.angle += 120 * dt * 40
 
         self.spawn_timer += dt
         if self.spawn_timer >= self.spawn_delay:

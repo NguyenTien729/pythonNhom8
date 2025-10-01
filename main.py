@@ -48,6 +48,7 @@ blasters = MultiBlaster()
 arena_center = pygame.math.Vector2(400, 325)
 
 blaster_spawner = BlasterCircle(arena_center, blasters)
+dt = 0
 
 def draw_health_bar(surface, x, y, current_hp, max_hp, width=100, height=30):
     ratio = current_hp / max_hp
@@ -140,7 +141,7 @@ while True:
     dt = clock.tick() * .001
     # print(dt)
 
-    if dt < 10:
+    if dt < 1:
         blaster_spawner.update(dt)
 
     blasters.update()
