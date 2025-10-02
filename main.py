@@ -46,7 +46,7 @@ player_speed = 5
 skull_surf = pygame.image.load('graphics/Sprites/blasters/beam.png').convert_alpha()
 skull_rect = skull_surf.get_rect(topleft=(100, 100))
 
-bone_surf = pygame.image.load('graphics/Sprites/bones/bone.png').convert_alpha()
+bone_surf = pygame.image.load('graphics/Sprites/bones/bone_long1.png').convert_alpha()
 bone_rect = bone_surf.get_rect(topleft=(1000, 400))
 bone_speed = 5
 
@@ -156,11 +156,11 @@ while True:
     dt = min(clock.tick(60) * 0.001, 1 / 30)
     # print(dt)
 
-    if dt < 10:
-        blaster_spawner.update(dt)
+    # if dt < 10:
+    #     blaster_spawner.update(dt)
 
-    blasters.update()
-    blasters.draw(screen)
+    # blasters.update()
+    # blasters.draw(screen)
 
     pygame.display.update()
     clock.tick(120)
