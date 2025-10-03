@@ -3,11 +3,6 @@ import math
 import pygame
 from pygame import Vector2
 
-from entities.blaster import MultiBlaster
-
-blasters = MultiBlaster()
-
-
 def rotate_on_pivot(pivot, angle, origin):
     offset = pivot + (origin - pivot).rotate(-angle)
 

@@ -3,12 +3,6 @@ import random
 
 from pygame import Vector2
 
-from entities.blaster import MultiBlaster
-
-blasters = MultiBlaster()
-
-
-
 def fire_vector(pivot: Vector2, pos: Vector2) -> float:
     vector = pivot - pos
     angle = math.degrees(math.atan2(vector.x, -vector.y)) + 180

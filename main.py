@@ -4,10 +4,11 @@ from sys import exit
 from pygame import Vector2
 
 from entities.blaster import MultiBlaster, GasterBlaster
+from game.level_3.blaster_floor import BlasterFloor
 
 from game.level_3.blaster_round import BlasterCircle
 from game.level_3.random_blaster import RandomBlaster
-from entities.stand_floor import CallFloor
+from entities.stand_floor import CallFloor, MultiFloor
 
 pygame.init()
 screen_width, screen_height = 1000, 600
@@ -64,11 +65,50 @@ immunity_dur = 2000
 
 # lv1 blaster
 blasters = MultiBlaster()
+floors = MultiFloor()
+
 # arena_center = pygame.math.Vector2(500, 380)
 #
 # blaster_spawner = RandomBlaster(center, 750, 250, 230, 530, blasters)
 
-floor = CallFloor(1, 1, screen, player_rect, (300, 400), "right", 5)
+# current_level = 1
+# level_duration = 5000
+# level_start_time = pygame.time.get_ticks()
+#
+# multi_floor_1 = MultiFloor()
+# multi_floor_2 = MultiFloor()
+# multi_floor_3 = MultiFloor()
+#
+# multi_floor_1.create_floor(1, 1, screen, player_rect, (300, 350), "right")
+# multi_floor_1.create_floor(1, 1, screen, player_rect, (700, 250), "right", 7)  # Block nhanh hơn
+#
+# multi_floor_2.create_floor(1, 1, screen, player_rect, (500, 350), "left")
+# multi_floor_2.create_floor(1, 1, screen, player_rect, (250, 200), "left", 6)
+#
+# multi_floor_3.create_floor(1, 1, screen, player_rect, (500, 400), "up")
+# multi_floor_3.create_floor(1, 1, screen, player_rect, (350, 250), "up")
+#
+# level_data = {
+#     1: multi_floor_1,
+#     2: multi_floor_2,
+#     3: multi_floor_3
+# }
+
+test1 = MultiBlaster()
+
+
+blaster_spawner = BlasterFloor(screen, player_rect, blasters, floors)
+
+# def change_level(next_level):
+#     global current_level, player_rect, level_start_time
+#
+#     if next_level in level_data:
+#         current_level = next_level
+#
+#         level_start_time = pygame.time.get_ticks()
+#
+#         print(f"Chuyển sang Dạng Tấn công {current_level}")
+
 
 
 def draw_health_bar(surface, x, y, current_hp, max_hp, width=40, height=25):
@@ -100,10 +140,11 @@ while True:
 
         # if event.type == pygame.KEYDOWN:
         #     if event.key == pygame.K_UP:
-        #        blaster = blasters.create_blaster(-100, -100, 150, 325, -123, start_angle = 0)
+        #        blaster = blasters.create_blaster(-100, -100, 250, 380, -90, start_angle = 0)
 
     clock = pygame.time.Clock()
 
+    dt = min(clock.tick(60) * 0.001, 1 / 30)
     # input
     if is_active:
         keys = pygame.key.get_pressed()
@@ -132,14 +173,22 @@ while True:
             bone_rect.left = 1000
             bone_rect.y = 400
 
+        # current_multi_floor = level_data.get(current_level)
+        # if current_multi_floor:
+        #     current_multi_floor.update()
+
         # Player
         screen.blit(player_surf, player_rect)
 
         center = Vector2(player_rect.center)
         # blaster_spawner.pivot = center
-        floor.update()
+
+        blaster_spawner.update(dt)
 
         cur_time = pygame.time.get_ticks()
+        # if current_level <= 3 and (cur_time - level_start_time) >= level_duration:
+        #     change_level(current_level + 1)
+
         # nhấp nháy lúc immunity
         if (cur_time - last_hit_time) < immunity_dur:
             if (cur_time // 200) % 2 == 0:
@@ -170,14 +219,16 @@ while True:
     else:
         screen.fill("Red")
 
-    dt = min(clock.tick(60) * 0.001, 1 / 30)
     # print(dt)
 
     # if dt < 10:
     #     blaster_spawner.update(dt)
     #
-    # blasters.update()
-    # blasters.draw(screen)
+    floors.update()
+    floors.draw(screen)
+
+    blasters.update()
+    blasters.draw(screen)
 
     pygame.display.update()
     clock.tick(60)

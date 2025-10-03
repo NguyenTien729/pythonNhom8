@@ -2,17 +2,20 @@ from typing import Optional
 
 import pygame
 
-class CallFloor:
+class CallFloor(pygame.sprite.Sprite):
     def __init__(self, height, width, screen ,player_rect, pos, direction: str, speed = 5, sprite_prefix: Optional[str] = None):
+        super().__init__()
+
         self.screen = screen
         self.height = height
         self.width = width
         self.pos = pos
         self.speed = speed
 
-        self.sprite_prefix = sprite_prefix or "graphics/sprites/bones/floor3.png"
-        self.sprite = pygame.image.load(self.sprite_prefix)
+        self.sprite_prefix = sprite_prefix or "graphics/sprites/bones/floor1.png"
+        self.sprite = pygame.image.load(self.sprite_prefix).convert_alpha()
         self.sprite = pygame.transform.scale_by(self.sprite,(self.width,self.height))
+        self.image = self.sprite
 
         self.rect = self.sprite.get_rect(center = pos)
         self.old_rect = self.rect.copy()
@@ -67,4 +70,25 @@ class CallFloor:
         self.move()
         self.collision()
         self.draw()
+
+class MultiFloor:
+    def __init__(self):
+        self.floors = pygame.sprite.Group()
+
+    def create_floor(self, height, width, screen ,player_rect, pos, direction: str, speed = 5, sprite_prefix: Optional[str] = None):
+        floor = CallFloor(height, width, screen, player_rect, pos, direction, speed, sprite_prefix)
+        self.floors.add(floor)
+        return floor
+
+    def update(self):
+        self.floors.update()
+
+
+    def destroy_all(self):
+        for floor in self.floors:
+            floor.destroy_all()
+        self.floors.empty()
+
+    def draw(self, surface: pygame.Surface):
+        self.floors.draw(surface)
 
