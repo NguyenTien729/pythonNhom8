@@ -39,12 +39,12 @@ class RandomBlaster:
 
         x1 = random.randint(self.x_left, self.x_right)
         y1 = random.randint(self.y_top, self.y_bottom)
-        if x1 < (self.x_right - self.x_left) / 2:
+        if x1 < (self.x_right - self.x_left) / 2 + self.x_left:
             x2 = x1 - 500
         else:
             x2 = x1 + 500
 
-        if y1 < (self.y_top - self.y_bottom) / 2:
+        if y1 < (self.y_bottom - self.y_top) / 2 + self.y_top:
             y2 = y1 - 300
         else:
             y2 = y1 + 300
