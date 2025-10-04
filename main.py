@@ -6,6 +6,7 @@ from pygame import Vector2
 from entities.blaster import MultiBlaster
 from entities.stand_floor import MultiFloor
 from game.level_3.Sand import CallBoss
+from game.player.player import Player
 
 pygame.init()
 screen_width, screen_height = 1000, 600
@@ -23,7 +24,6 @@ def lerp (a: float, b: float, t: float) -> float:
 # Background
 
 def draw_background(boxl, boxw):
-    global box_rect
     wbox = pygame.Surface((boxl, boxw))
     wbox.fill('White')
 
@@ -43,24 +43,11 @@ def draw_background(boxl, boxw):
     screen.blit(wbox, (box_x - 5,box_y - 5))
     screen.blit(bbox, (box_x, box_y))
 
-    if player_rect.left < box_rect.left:
-        player_rect.left = box_rect.left
-    if player_rect.right > box_rect.right:
-        player_rect.right = box_rect.right
-    if player_rect.top < box_rect.top:
-        player_rect.top = box_rect.top
-    if player_rect.bottom > box_rect.bottom:
-        player_rect.bottom = box_rect.bottom
-
     return box_rect
 
 
 # Player
-player_surf = pygame.image.load('graphics/Sprites/player/heart.png').convert_alpha()
-player_rect = player_surf.get_rect(topleft=(500, 470))
-center = Vector2(player_rect.center)
-player_hit = pygame.image.load('graphics/Sprites/player/heart_hit1.png').convert_alpha()
-player_speed = 5
+player = Player(500, 470)
 
 # enermy
 skull_surf = pygame.image.load('graphics/Sprites/blasters/beam.png').convert_alpha()
@@ -77,7 +64,7 @@ immunity_dur = 2000
 
 floors = MultiFloor()
 blasters = MultiBlaster()
-boss_lv_3 = CallBoss(screen, player_rect, blasters, floors)
+boss_lv_3 = CallBoss(screen, player.rect, blasters, floors)
 
 arena_width = 400
 arena_height = 200
@@ -121,18 +108,6 @@ while True:
     dt = min(clock.tick(60) * 0.001, 1 / 30)
     # input
     if is_active:
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_LEFT]:
-            player_rect.x -= player_speed
-        if keys[pygame.K_RIGHT]:
-            player_rect.x += player_speed
-
-        if keys[pygame.K_UP]:
-            player_rect.y -= player_speed
-        if keys[pygame.K_DOWN]:
-            player_rect.y += player_speed
-
-
 
         # background
         final_box_width, final_box_height = boss_lv_3.arena_state()
@@ -142,8 +117,14 @@ while True:
 
         box_rect = draw_background(arena_width, arena_height)
 
+        player.update(floors.floors, box_rect)
+
+        if player.rect.left < box_rect.left: player.rect.left = box_rect.left
+        if player.rect.right > box_rect.right: player.rect.right = box_rect.right
+        if player.rect.top < box_rect.top: player.rect.top = box_rect.top
+        if player.rect.bottom > box_rect.bottom: player.rect.bottom = box_rect.bottom
+
         # Vẽ thanh máu
-        draw_health_bar(screen, 435, 500, player_hp, max_hp)
 
         # Enemy
         screen.blit(skull_surf, skull_rect)
@@ -155,41 +136,29 @@ while True:
             bone_rect.y = 400
 
         # Player
-        screen.blit(player_surf, player_rect)
-
-        center = Vector2(player_rect.center)
+        center = Vector2(player.rect.center)
         # blaster_spawner.pivot = center
 
-        boss_lv_3.update(dt, box_rect)
+        boss_lv_3.update(dt, box_rect, player)
 
-        cur_time = pygame.time.get_ticks()
+        if bone_rect.colliderect(player.rect):
+            player.damaged(5)
 
-        # nhấp nháy lúc immunity
-        if (cur_time - last_hit_time) < immunity_dur:
-            if (cur_time // 200) % 2 == 0:
-                screen.blit(player_hit, player_rect)
-            else:
-                screen.blit(player_surf, player_rect)
-        else:
-            screen.blit(player_surf, player_rect)
-            # bonehit
-            if bone_rect.colliderect(player_rect):
-                if cur_time - last_hit_time > immunity_dur:
-                    player_hp -= 5
-                    last_hit_time = cur_time
+        # Va chạm với beam
+        player_mask = pygame.mask.from_surface(player.image)
+        for blaster in blasters.blasters:
+            if blaster.beam and blaster.beam.is_active:
+                beam_img = blaster.beam.sprite.image
+                beam_rect = beam_img.get_rect(center=(blaster.beam.abs_x, blaster.beam.abs_y))
+                beam_mask = pygame.mask.from_surface(beam_img)
+                offset = (player.rect.x - beam_rect.x, player.rect.y - beam_rect.y)
+                if beam_mask.overlap(player_mask, offset):
+                    player.damaged(10)
 
-            # beamhit
-            for blaster in blasters.blasters:
-                if blaster.beam and blaster.beam.is_active:
-                    beam_img = blaster.beam.sprite.image
-                    beam_rect = beam_img.get_rect(center=(blaster.beam.abs_x, blaster.beam.abs_y))
-                    beam_mask = pygame.mask.from_surface(beam_img)
-                    player_mask = pygame.mask.from_surface(player_surf)
-                    offset = (player_rect.x - beam_rect.x, player_rect.y - beam_rect.y)
-                    if beam_mask.overlap(player_mask, offset):
-                        if cur_time - last_hit_time > immunity_dur:
-                            player_hp -= 10
-                            last_hit_time = cur_time
+        # VẼ MỌI THỨ
+        screen.blit(bone_surf, bone_rect)
+        player.draw(screen)
+        draw_health_bar(screen, 435, 500, player.player_hp, player.max_hp)
 
     else:
         screen.fill("Red")

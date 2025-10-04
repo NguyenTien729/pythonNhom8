@@ -43,8 +43,8 @@ class BlasterFloor:
         blaster.beam_alpha_speed = self.beam_alpha_speed
 
     def spawn_floor(self):
-        floor_up = self.floor.create_floor(1, 1, self.screen, self.player_rect, (-50, self.floor_pos_1), "right", speed = 5, sprite_prefix = self.image)
-        floor_down = self.floor.create_floor(1, 1, self.screen, self.player_rect, (1050, self.floor_pos_2), "left", speed = 5, sprite_prefix = self.image)
+        floor_up = self.floor.create_floor(1, 1, self.screen, (-50, self.floor_pos_1), "right", speed = 5, sprite_prefix = self.image)
+        floor_down = self.floor.create_floor(1, 1, self.screen, (1050, self.floor_pos_2), "left", speed = 5, sprite_prefix = self.image)
 
 
     def update(self, dt):

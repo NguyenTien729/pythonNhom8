@@ -43,7 +43,7 @@ class CallBoss(pygame.sprite.Sprite):
         self.blaster_random = RandomBlaster(self.center,  750, 250, 230, 530, self.blasters)
 
         self.attack_patterns = [self.blaster_floor, self.blaster_random, self.blaster_circle]
-        self.index = 0
+        self.index = -1
         self.mod = self.attack_patterns[self.index]
         self.change_mod = False
         self.is_win = False
@@ -60,15 +60,15 @@ class CallBoss(pygame.sprite.Sprite):
     # def animation(self):
 
 
-    def update(self, dt: float, box_rect: pygame.Rect):
+    def update(self, dt: float, box_rect: pygame.Rect, player):
 
         if self.is_win:
             return
 
-        if self.index == 2:
-            self.blasters.beam_width = 0.7
+        if self.index == 0:
+            player.set_gravity(True)
         else:
-            self.blasters.beam_width = 1
+            player.set_gravity(False)
 
         self.box_rect = box_rect
         self.center = Vector2(self.box_rect.center)
@@ -99,7 +99,7 @@ class CallBoss(pygame.sprite.Sprite):
 
     def arena_state(self):
         #floor
-        if self.index == 0:
+        if self.index == -1:
             final_box_width = 400
             final_box_height = 200
         #random
