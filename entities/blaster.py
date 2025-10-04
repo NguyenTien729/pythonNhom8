@@ -17,7 +17,7 @@ class GasterBlaster(pygame.sprite.Sprite):
         super().__init__()
         self.beam = None
         self.sprite_prefix = sprite_prefix or "graphics/Sprites/blasters/spr_gasterblaster_"
-        self.beam_sprite = beam_sprite or "graphics/Sprites/blasters/beam"
+        self.beam_sprite = beam_sprite or "graphics/Sprites/blasters/beam1"
 
         self.sprite = pygame.image.load(self.sprite_prefix + "0.png").convert_alpha()
         self.sprite = pygame.transform.scale_by(self.sprite, 2.0)
@@ -67,9 +67,10 @@ class GasterBlaster(pygame.sprite.Sprite):
 
     def spawn_beam(self):
         self.beam = create_projectile_abs(self.beam_sprite, 0, 0)
-        self.beam.sprite.scale(2, 2 * self.y_scale * self.beam_width)
+        self.beam.sprite.scale(2 * self.x_scale * self.beam_width, self.y_scale)
         self.beam.p_collision = True
-        self.beam.sprite.y_scale = 1.75 * self.x_scale
+        self.beam.sprite.y_scale = 1.5 * self.x_scale
+        self.beam.sprite.x_scale = 1.75 * self.x_scale
 
         if self.fire_sound:
             self.fire_sound.play()
@@ -147,16 +148,17 @@ class GasterBlaster(pygame.sprite.Sprite):
 
             if not self.beam_frozen:
                 if self.shoot_delay < self.update_timer <= self.shoot_delay + 8:
-                    self.beam.sprite.y_scale += 0.125 * self.x_scale
+                    self.beam.sprite.x_scale += 0.1 * self.x_scale
                 if self.update_timer > self.shoot_delay + 8 and self.update_timer > self.shoot_delay + 8 + self.hold_fire:
-                    self.beam.sprite.y_scale = max(0, self.beam.sprite.y_scale - 0.125 * self.x_scale)
-                    self.beam.sprite.alpha = max(0, self.beam.sprite.alpha - 0.5 * (self.beam_alpha_speed / 0.125))
+                    self.beam.sprite.x_scale = max(0, self.beam.sprite.x_scale - 0.1 * self.x_scale)
+                    self.beam.sprite.alpha = max(0, self.beam.sprite.alpha - 0.25 * (self.beam_alpha_speed / 0.125))
             else:
                 # FROZEN
                 self.beam.sprite.alpha = max(0, int(self.beam.sprite.alpha - 5 * (self.beam_alpha_speed / 0.125)))
+                self.beam.sprite.x_scale = max(0, self.beam.sprite.x_scale - 0.1 * self.x_scale)
 
             # destroy
-            if self.beam.sprite.alpha <= 0:
+            if self.beam.sprite.alpha <= 0 or self.beam.sprite.x_scale <= 0:
                 self.destroy()
                 return
 

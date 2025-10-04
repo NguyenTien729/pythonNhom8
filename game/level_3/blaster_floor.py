@@ -1,9 +1,5 @@
 import random
-
-from entities.stand_floor import CallFloor, MultiFloor
-import pygame
-
-from entities.blaster import MultiBlaster
+from typing import Optional
 
 y2 = [305, 380, 455]
 
@@ -11,11 +7,13 @@ class BlasterFloor:
     blaster_delay = 1.5
     floor_delay = 0.5
 
-    def __init__(self, screen, player_rect, blasters, floors):
+    def __init__(self, screen, player_rect, blasters, floors, beam_alpha_speed: Optional[int] = 0.125):
         self.screen = screen
         self.player_rect = player_rect
         self.blaster = blasters
         self.blaster_is_left = True
+
+        self.beam_alpha_speed = beam_alpha_speed
 
         self.blaster_timer = 0
         self.floor_timer = 0
@@ -41,6 +39,8 @@ class BlasterFloor:
 
 
         blaster = self.blaster.create_blaster(x, -100, x2, random.choice(y2), angle = angle, start_angle = 60)
+
+        blaster.beam_alpha_speed = self.beam_alpha_speed
 
     def spawn_floor(self):
         floor_up = self.floor.create_floor(1, 1, self.screen, self.player_rect, (-50, self.floor_pos_1), "right", speed = 5, sprite_prefix = self.image)

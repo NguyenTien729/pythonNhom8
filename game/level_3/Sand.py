@@ -24,7 +24,11 @@ class CallBoss(pygame.sprite.Sprite):
         self.blasters = blasters
         self.floors = floors
 
-        # self.idle = pygame.image.load('images/idle.png')
+        self.beam_width = 1
+
+        self.face_idle = pygame.image.load('graphics/characters/sans/spr_sansb_face_0.png')
+        self.body_idle = pygame.image.load('graphics/characters/sans/spr_sansb_torso_0.png')
+        self.legs_idle = pygame.image.load('graphics/characters/sans/spr_sansb_legs_0.png')
         # self.frames = [pygame.image.load("frame1"),
         #                pygame.image.load("frame2"),
         #               pygame.image.load("frame3")]
@@ -32,14 +36,14 @@ class CallBoss(pygame.sprite.Sprite):
         # self.image = self.idle
         # self.rect = self.image.get_rect()
 
-        self.blaster_floor = BlasterFloor(self.screen, self.player_rect, self.blasters, self.floors)
+        self.blaster_floor = BlasterFloor(self.screen, self.player_rect, self.blasters, self.floors, 2)
 
-        self.blaster_circle = BlasterCircle((500, 380), self.blasters)
+        self.blaster_circle = BlasterCircle((500, 380), self.blasters, beam_width = self.beam_width)
 
         self.blaster_random = RandomBlaster(self.center,  750, 250, 230, 530, self.blasters)
 
         self.attack_patterns = [self.blaster_floor, self.blaster_random, self.blaster_circle]
-        self.index = -1
+        self.index = 0
         self.mod = self.attack_patterns[self.index]
         self.change_mod = False
         self.is_win = False
@@ -57,6 +61,12 @@ class CallBoss(pygame.sprite.Sprite):
 
         if self.is_win:
             return
+
+        if self.index == 2:
+            self.blasters.beam_width = 0.7
+        else:
+            self.blasters.beam_width = 1
+
         self.box_rect = box_rect
         self.center = Vector2(self.box_rect.center)
 
@@ -85,12 +95,15 @@ class CallBoss(pygame.sprite.Sprite):
 
 
     def arena_state(self):
+        #floor
         if self.index == 0:
             final_box_width = 400
             final_box_height = 200
+        #random
         elif self.index == 1:
             final_box_width = 400
             final_box_height = 200
+        #circle
         elif self.index == 2:
             final_box_width = 200
             final_box_height = 200

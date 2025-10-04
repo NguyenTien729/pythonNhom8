@@ -12,7 +12,8 @@ class Beam:
         self.rotation = 0
         self.scale_x = 1.0
         self.scale_y = 1.0
-        self.y_scale = 1.0 #beam width
+        self.y_scale = 1.0
+        self.x_scale = 1.0
         self.alpha = 255
 
         self.pivot_x = 0.5
@@ -42,7 +43,7 @@ class Beam:
     def update(self):
         #Scale
         width = int(self.original_image.get_width() * self.scale_x * self.y_scale)
-        height = int(self.original_image.get_height() * self.scale_y)
+        height = int(self.original_image.get_height() * self.x_scale)
         scaled_image = pygame.transform.scale(self.original_image, (width, height))
 
         #Rotate
