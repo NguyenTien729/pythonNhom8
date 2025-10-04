@@ -1,13 +1,7 @@
 import math
-from math import radians
 
 import pygame
 from pygame import Vector2
-
-from entities.blaster import MultiBlaster
-
-blasters = MultiBlaster()
-
 
 def rotate_on_pivot(pivot, angle, origin):
     offset = pivot + (origin - pivot).rotate(-angle)
@@ -16,10 +10,8 @@ def rotate_on_pivot(pivot, angle, origin):
 
 def fire_vector(pivot: Vector2, pos: Vector2) -> float:
     vector = pivot - pos
-    # Tính góc chuẩn rồi xoay -90° để chuyển từ East sang North
     angle = math.degrees(math.atan2(vector.x, -vector.y)) + 180
 
-    # Chuẩn hóa về [-180, 180) như Blaster
     while angle >= 180:
         angle -= 360
     while angle < -180:
@@ -30,9 +22,9 @@ def fire_vector(pivot: Vector2, pos: Vector2) -> float:
 class BlasterCircle:
     fire_radius = 250
     spawn_radius = 700
-    spawn_delay = 0.10
+    spawn_delay = 0.12
 
-    def __init__(self, pivot, blaster, start_angle = 0, beam_alpha_speed = 10, beam_width = 0.5):
+    def __init__(self, pivot, blaster, beam_width, start_angle = 0, beam_alpha_speed = 7):
         self.pivot = pivot
         self.angle = -15
 
@@ -59,8 +51,7 @@ class BlasterCircle:
 
         fire_pos = rotate_on_pivot(self.pivot, self.angle, self.pos_2)
         angle = fire_vector(self.pivot, fire_pos)
-        print(fire_pos)
-        print(angle)
+
         blaster = self.blaster.create_blaster(spawn_pos.x, spawn_pos.y, fire_pos.x, fire_pos.y, angle = angle, start_angle = angle - 270,
                                               sound = self.sound ,fire_sound = self.fire_sound)
 
