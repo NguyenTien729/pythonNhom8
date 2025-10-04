@@ -76,7 +76,7 @@ class GasterBlaster(pygame.sprite.Sprite):
 
         #unknown
         self.calculate_beam_position()
-        self.beam.blaster = True
+        self.beam.blasters = True
 
     def calculate_beam_position(self):
 

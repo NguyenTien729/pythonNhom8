@@ -9,6 +9,7 @@ from game.level_3.blaster_floor import BlasterFloor
 from game.level_3.blaster_round import BlasterCircle
 from game.level_3.random_blaster import RandomBlaster
 from entities.stand_floor import CallFloor, MultiFloor
+from game.level_3.Sand import CallBoss
 
 pygame.init()
 screen_width, screen_height = 1000, 600
@@ -29,6 +30,7 @@ def draw_background(boxl, boxw):
     bbox = pygame.Surface((boxl - 10, boxw - 10))
     bbox.fill('Black')
     mainbackground = pygame.Surface((1000, 600))
+    mainbackground_rect = mainbackground.get_rect()
     mainbackground.fill('Black')
     screen.blit(mainbackground, (0, 0))
     screen.blit(wbox, (((1000 - boxl) // 2), (480 - boxw)))
@@ -63,9 +65,7 @@ max_hp = 50
 last_hit_time = 0
 immunity_dur = 2000
 
-# lv1 blaster
-blasters = MultiBlaster()
-floors = MultiFloor()
+# lv1 blaste
 
 # arena_center = pygame.math.Vector2(500, 380)
 #
@@ -94,10 +94,10 @@ floors = MultiFloor()
 #     3: multi_floor_3
 # }
 
-test1 = MultiBlaster()
+floors = MultiFloor()
+blasters = MultiBlaster()
+boss_lv_3 = CallBoss(screen, player_rect, blasters, floors)
 
-
-blaster_spawner = BlasterFloor(screen, player_rect, blasters, floors)
 
 # def change_level(next_level):
 #     global current_level, player_rect, level_start_time
@@ -141,8 +141,8 @@ while True:
         # if event.type == pygame.KEYDOWN:
         #     if event.key == pygame.K_UP:
         #        blaster = blasters.create_blaster(-100, -100, 250, 380, -90, start_angle = 0)
-
     clock = pygame.time.Clock()
+
 
     dt = min(clock.tick(60) * 0.001, 1 / 30)
     # input
@@ -158,9 +158,11 @@ while True:
         if keys[pygame.K_DOWN]:
             player_rect.y += player_speed
 
+        arena_width = 400
+        arena_height = 200
 
         # background
-        draw_background(400, 200)
+        draw_background(arena_width, arena_height)
         # Vẽ thanh máu
         draw_health_bar(screen, 435, 500, player_hp, max_hp)
 
@@ -183,7 +185,7 @@ while True:
         center = Vector2(player_rect.center)
         # blaster_spawner.pivot = center
 
-        blaster_spawner.update(dt)
+        boss_lv_3.update(dt)
 
         cur_time = pygame.time.get_ticks()
         # if current_level <= 3 and (cur_time - level_start_time) >= level_duration:
@@ -224,11 +226,7 @@ while True:
     # if dt < 10:
     #     blaster_spawner.update(dt)
     #
-    floors.update()
-    floors.draw(screen)
 
-    blasters.update()
-    blasters.draw(screen)
 
     pygame.display.update()
     clock.tick(60)

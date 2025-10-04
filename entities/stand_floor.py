@@ -37,6 +37,10 @@ class CallFloor(pygame.sprite.Sprite):
     def draw(self):
         self.screen.blit(self.sprite, self.rect)
 
+    def destroy(self):
+        if self.rect.right > 1100 or self.rect.left < -100:
+            self.kill()
+
 
     def collision(self):
 
@@ -86,7 +90,7 @@ class MultiFloor:
 
     def destroy_all(self):
         for floor in self.floors:
-            floor.destroy_all()
+            floor.destroy()
         self.floors.empty()
 
     def draw(self, surface: pygame.Surface):
