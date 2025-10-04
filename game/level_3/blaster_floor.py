@@ -8,7 +8,7 @@ from entities.blaster import MultiBlaster
 y2 = [305, 380, 455]
 
 class BlasterFloor:
-    blaster_delay = 1
+    blaster_delay = 1.5
     floor_delay = 0.5
 
     def __init__(self, screen, player_rect, blasters, floors):
@@ -53,7 +53,7 @@ class BlasterFloor:
 
         if self.blaster_timer >= self.blaster_delay:
             self.spawn_blaster()
-            self.blaster_timer = 0
+            self.blaster_timer = 0.5
 
         if self.floor_timer >= self.floor_delay:
             self.spawn_floor()

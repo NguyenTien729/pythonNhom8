@@ -3,12 +3,8 @@ from sys import exit
 
 from pygame import Vector2
 
-from entities.blaster import MultiBlaster, GasterBlaster
-from game.level_3.blaster_floor import BlasterFloor
-
-from game.level_3.blaster_round import BlasterCircle
-from game.level_3.random_blaster import RandomBlaster
-from entities.stand_floor import CallFloor, MultiFloor
+from entities.blaster import MultiBlaster
+from entities.stand_floor import MultiFloor
 from game.level_3.Sand import CallBoss
 
 pygame.init()
@@ -21,28 +17,42 @@ is_active = True
 # font
 g_font = pygame.font.Font("font/MonsterFriendBack.otf", 22)
 
+def lerp (a: float, b: float, t: float) -> float:
+    return a + (b - a) * t
 
 # Background
 
 def draw_background(boxl, boxw):
+    global box_rect
     wbox = pygame.Surface((boxl, boxw))
     wbox.fill('White')
-    bbox = pygame.Surface((boxl - 10, boxw - 10))
+
+    box_x = ((1000 - boxl) // 2) + 5
+    box_y = 485 - boxw
+    box_width = boxl - 10
+    box_height = boxw - 10
+
+    bbox = pygame.Surface((box_width, box_height))
     bbox.fill('Black')
     mainbackground = pygame.Surface((1000, 600))
-    mainbackground_rect = mainbackground.get_rect()
     mainbackground.fill('Black')
+
+    box_rect = pygame.Rect(box_x, box_y, box_width, box_height)
+
     screen.blit(mainbackground, (0, 0))
-    screen.blit(wbox, (((1000 - boxl) // 2), (480 - boxw)))
-    screen.blit(bbox, (((1000 - boxl) // 2) + 5, (480 - boxw) + 5))
-    if player_rect.left < ((1000 - boxl) // 2) + 5:
-        player_rect.left = ((1000 - boxl) // 2) + 5
-    if player_rect.right > ((1000 - boxl) // 2) + boxl - 5:
-        player_rect.right = ((1000 - boxl) // 2) + boxl - 5
-    if player_rect.top < 485 - boxw:
-        player_rect.top = 485 - boxw
-    if player_rect.bottom > 475:
-        player_rect.bottom = 475
+    screen.blit(wbox, (box_x - 5,box_y - 5))
+    screen.blit(bbox, (box_x, box_y))
+
+    if player_rect.left < box_rect.left:
+        player_rect.left = box_rect.left
+    if player_rect.right > box_rect.right:
+        player_rect.right = box_rect.right
+    if player_rect.top < box_rect.top:
+        player_rect.top = box_rect.top
+    if player_rect.bottom > box_rect.bottom:
+        player_rect.bottom = box_rect.bottom
+
+    return box_rect
 
 
 # Player
@@ -65,51 +75,14 @@ max_hp = 50
 last_hit_time = 0
 immunity_dur = 2000
 
-# lv1 blaste
-
-# arena_center = pygame.math.Vector2(500, 380)
-#
-# blaster_spawner = RandomBlaster(center, 750, 250, 230, 530, blasters)
-
-# current_level = 1
-# level_duration = 5000
-# level_start_time = pygame.time.get_ticks()
-#
-# multi_floor_1 = MultiFloor()
-# multi_floor_2 = MultiFloor()
-# multi_floor_3 = MultiFloor()
-#
-# multi_floor_1.create_floor(1, 1, screen, player_rect, (300, 350), "right")
-# multi_floor_1.create_floor(1, 1, screen, player_rect, (700, 250), "right", 7)  # Block nhanh hơn
-#
-# multi_floor_2.create_floor(1, 1, screen, player_rect, (500, 350), "left")
-# multi_floor_2.create_floor(1, 1, screen, player_rect, (250, 200), "left", 6)
-#
-# multi_floor_3.create_floor(1, 1, screen, player_rect, (500, 400), "up")
-# multi_floor_3.create_floor(1, 1, screen, player_rect, (350, 250), "up")
-#
-# level_data = {
-#     1: multi_floor_1,
-#     2: multi_floor_2,
-#     3: multi_floor_3
-# }
-
 floors = MultiFloor()
 blasters = MultiBlaster()
 boss_lv_3 = CallBoss(screen, player_rect, blasters, floors)
 
-
-# def change_level(next_level):
-#     global current_level, player_rect, level_start_time
-#
-#     if next_level in level_data:
-#         current_level = next_level
-#
-#         level_start_time = pygame.time.get_ticks()
-#
-#         print(f"Chuyển sang Dạng Tấn công {current_level}")
-
-
+arena_width = 400
+arena_height = 200
+final_box_width = 400
+final_box_height = 200
 
 def draw_health_bar(surface, x, y, current_hp, max_hp, width=40, height=25):
     ratio = current_hp / max_hp
@@ -129,6 +102,7 @@ def draw_health_bar(surface, x, y, current_hp, max_hp, width=40, height=25):
 
 
 while True:
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
@@ -158,11 +132,16 @@ while True:
         if keys[pygame.K_DOWN]:
             player_rect.y += player_speed
 
-        arena_width = 400
-        arena_height = 200
+
 
         # background
-        draw_background(arena_width, arena_height)
+        final_box_width, final_box_height = boss_lv_3.arena_state()
+
+        arena_width = lerp(arena_width, final_box_width, 0.05)
+        arena_height = lerp(arena_height, final_box_height, 0.05)
+
+        box_rect = draw_background(arena_width, arena_height)
+
         # Vẽ thanh máu
         draw_health_bar(screen, 435, 500, player_hp, max_hp)
 
@@ -175,21 +154,15 @@ while True:
             bone_rect.left = 1000
             bone_rect.y = 400
 
-        # current_multi_floor = level_data.get(current_level)
-        # if current_multi_floor:
-        #     current_multi_floor.update()
-
         # Player
         screen.blit(player_surf, player_rect)
 
         center = Vector2(player_rect.center)
         # blaster_spawner.pivot = center
 
-        boss_lv_3.update(dt)
+        boss_lv_3.update(dt, box_rect)
 
         cur_time = pygame.time.get_ticks()
-        # if current_level <= 3 and (cur_time - level_start_time) >= level_duration:
-        #     change_level(current_level + 1)
 
         # nhấp nháy lúc immunity
         if (cur_time - last_hit_time) < immunity_dur:
@@ -220,13 +193,6 @@ while True:
 
     else:
         screen.fill("Red")
-
-    # print(dt)
-
-    # if dt < 10:
-    #     blaster_spawner.update(dt)
-    #
-
 
     pygame.display.update()
     clock.tick(60)

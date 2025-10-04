@@ -15,6 +15,8 @@ class CallBoss(pygame.sprite.Sprite):
     def __init__(self, screen, player_rect, blasters: MultiBlaster, floors: MultiFloor):
         super().__init__()
         self.screen = screen
+        self.box_rect = pygame.Rect(0, 0, 0, 0)
+        self.box_center = Vector2(self.box_rect.center)
         self.player_rect = player_rect
         self.center = Vector2(self.player_rect.center)
         self.start_time = pygame.time.get_ticks()
@@ -37,7 +39,7 @@ class CallBoss(pygame.sprite.Sprite):
         self.blaster_random = RandomBlaster(self.center,  750, 250, 230, 530, self.blasters)
 
         self.attack_patterns = [self.blaster_floor, self.blaster_random, self.blaster_circle]
-        self.index = 1
+        self.index = -1
         self.mod = self.attack_patterns[self.index]
         self.change_mod = False
         self.is_win = False
@@ -51,9 +53,12 @@ class CallBoss(pygame.sprite.Sprite):
         self.index = (self.index + 1) % len(self.attack_patterns)
         self.mod = self.attack_patterns[self.index]
 
-    def update(self, dt: float):
+    def update(self, dt: float, box_rect: pygame.Rect):
+
         if self.is_win:
             return
+        self.box_rect = box_rect
+        self.center = Vector2(self.box_rect.center)
 
         self.blaster_random.pivot = Vector2(self.player_rect.center)
 
@@ -79,3 +84,17 @@ class CallBoss(pygame.sprite.Sprite):
         self.blasters.draw(self.screen)
 
 
+    def arena_state(self):
+        if self.index == 0:
+            final_box_width = 400
+            final_box_height = 200
+        elif self.index == 1:
+            final_box_width = 400
+            final_box_height = 200
+        elif self.index == 2:
+            final_box_width = 200
+            final_box_height = 200
+        else:
+            final_box_width = 400
+            final_box_height = 200
+        return final_box_width, final_box_height
