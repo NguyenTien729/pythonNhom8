@@ -46,7 +46,7 @@ player_speed = 5
 skull_surf = pygame.image.load('graphics/Sprites/blasters/beam.png').convert_alpha()
 skull_rect = skull_surf.get_rect(topleft=(100, 100))
 
-bone_surf = pygame.image.load('graphics/Sprites/bones/bone_long1.png').convert_alpha()
+bone_surf = pygame.image.load('graphics/Sprites/bones/bone_wall_down1.png').convert_alpha()
 bone_rect = bone_surf.get_rect(topleft=(1000, 400))
 bone_speed = 5
 
@@ -77,6 +77,54 @@ def draw_health_bar(surface, x, y, current_hp, max_hp, width=40, height=25):
     hp_val_rect = hp_val.get_rect(midleft=(x + width + 30, y + height // 2))
     surface.blit(hp_val, hp_val_rect)
 
+# Khai báo trạng thái
+vel_x, vel_y = 0, 0
+gravity_enabled = True
+is_jumping = False
+jump_height = 0
+max_jump_height = 75
+gravity_dir = 'd'  # mặc định trọng lực hướng xuống
+
+def gravity():
+    global vel_x, vel_y, is_jumping, jump_height, player_rect
+
+    accel = 1
+    if not gravity_enabled:
+        return
+
+    if is_jumping:  # đang nhảy ngược lại trọng lực
+        step = 75
+        if gravity_dir == 'u':
+            player_rect.y += step
+        elif gravity_dir == 'd':
+            player_rect.y -= step
+        elif gravity_dir == 'l':
+            player_rect.x += step
+        elif gravity_dir == 'r':
+            player_rect.x -= step
+
+        jump_height += step
+        if jump_height >= max_jump_height:
+            is_jumping = False
+            jump_height = 0
+    else:  # bị kéo bởi gravity
+        if gravity_dir == 'u':
+            vel_y -= accel
+        elif gravity_dir == 'd':
+            vel_y += accel
+        elif gravity_dir == 'l':
+            vel_x -= accel
+        elif gravity_dir == 'r':
+            vel_x += accel
+
+    max_speed = 10
+    vel_x = max(-max_speed, min(max_speed, vel_x))
+    vel_y = max(-max_speed, min(max_speed, vel_y))
+    # Cộng vận tốc vào vị trí
+    player_rect.x += vel_x
+    player_rect.y += vel_y
+
+
 
 while True:
     for event in pygame.event.get():
@@ -84,10 +132,26 @@ while True:
             pygame.quit()
             exit()
 
-        # if event.type == pygame.KEYDOWN:
-        #     if event.key == pygame.K_UP:
-        #        blaster = blasters.create_blaster(-100, -100, 150, 325, -123, start_angle = 0)
+        if event.type == pygame.KEYDOWN:   # chỉ KEYDOWN mới có event.key
+            if event.key == pygame.K_g:  # bật/tắt gravity
+                gravity_enabled = not gravity_enabled
 
+            if event.key == pygame.K_SPACE and not is_jumping:
+                is_jumping = True
+                jump_height = 0
+
+            if event.key == pygame.K_w:
+                gravity_dir = 'u'
+            if event.key == pygame.K_s:
+                gravity_dir = 'd'
+            if event.key == pygame.K_a:
+                gravity_dir = 'l'
+            if event.key == pygame.K_d:
+                gravity_dir = 'r'
+
+    # if event.type == pygame.KEYDOWN:
+            #     if event.key == pygame.K_UP:
+            #        blaster = blasters.create_blaster(-100, -100, 150, 325, -123, start_angle = 0)
     clock = pygame.time.Clock()
 
     # input
@@ -102,9 +166,11 @@ while True:
         if keys[pygame.K_DOWN]:
             player_rect.y += player_speed
 
+        #gravity
+        gravity()
 
         # background
-        draw_background(400,200)
+        draw_background(200,200)
         # Vẽ thanh máu
         draw_health_bar(screen, 435, 500, player_hp, max_hp)
         
