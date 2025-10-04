@@ -66,9 +66,12 @@ player_speed = 5
 skull_surf = pygame.image.load('graphics/Sprites/blasters/beam.png').convert_alpha()
 skull_rect = skull_surf.get_rect(topleft=(100, 100))
 
-bone_surf = pygame.image.load('graphics/Sprites/bones/bone.png').convert_alpha()
-bone_rect = bone_surf.get_rect(topleft=(1000, 400))
-bone_speed = 5
+bone_surf = pygame.image.load('graphics/Sprites/bones/wavy_bone_down.png').convert_alpha()
+bone_rect = bone_surf.get_rect(topleft=(1000, 285))
+bone_surf2 = pygame.image.load('graphics/Sprites/bones/wavy_bone_up.png').convert_alpha()
+bone_rect2 = bone_surf2.get_rect(topleft=(1000, 360))
+
+bone_speed = 10
 
 player_hp = 50
 max_hp = 50
@@ -148,11 +151,13 @@ while True:
         # Enemy
         screen.blit(skull_surf, skull_rect)
         screen.blit(bone_surf, bone_rect)
-
+        screen.blit(bone_surf2, bone_rect2)
         bone_rect.x -= bone_speed
+        bone_rect2.x -= bone_speed
+
         if bone_rect.right < 0:
             bone_rect.left = 1000
-            bone_rect.y = 400
+            bone_rect.y = 300
 
         # Player
         screen.blit(player_surf, player_rect)
