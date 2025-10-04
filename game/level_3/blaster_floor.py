@@ -58,6 +58,3 @@ class BlasterFloor:
         if self.floor_timer >= self.floor_delay:
             self.spawn_floor()
             self.floor_timer = 0
-
-
-

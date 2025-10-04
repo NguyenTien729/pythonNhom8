@@ -3,6 +3,7 @@ import random
 
 from pygame import Vector2
 
+
 def fire_vector(pivot: Vector2, pos: Vector2) -> float:
     vector = pivot - pos
     angle = math.degrees(math.atan2(vector.x, -vector.y)) + 180
@@ -42,14 +43,13 @@ class RandomBlaster:
             y2 = y1 - 300
         else:
             y2 = y1 + 300
-        
+
         start_angle = random.randint(-180, 180)
-        
+
         vector = Vector2(x1, y1)
-        angle = fire_vector(self.pivot ,vector)
+        angle = fire_vector(self.pivot, vector)
 
-        blaster = self.blaster.create_blaster(x2, y2, x1, y1, angle = angle, start_angle = start_angle)
-
+        blaster = self.blaster.create_blaster(x2, y2, x1, y1, angle=angle, start_angle=start_angle)
 
     def update(self, dt: float):
         self.spawn_timer += dt
@@ -57,4 +57,3 @@ class RandomBlaster:
         if self.spawn_timer >= self.time_delay:
             self.spawn_blaster()
             self.spawn_timer -= self.time_delay
-

@@ -57,6 +57,9 @@ class CallBoss(pygame.sprite.Sprite):
         self.index = (self.index + 1) % len(self.attack_patterns)
         self.mod = self.attack_patterns[self.index]
 
+    # def animation(self):
+
+
     def update(self, dt: float, box_rect: pygame.Rect):
 
         if self.is_win:
