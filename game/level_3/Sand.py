@@ -70,7 +70,7 @@ class CallBoss(pygame.sprite.Sprite):
 
         self.blaster_random = RandomBlaster(self.center,  750, 250, 230, 530, self.blasters)
 
-        self.gravity_bone = GravityBone(self.screen, 100, 1.5, player, player_rect,self.box_rect)
+        self.gravity_bone = GravityBone(self.screen, 100, 1, player, player_rect,self.box_rect)
 
         self.attack_patterns = [self.blaster_floor, self.blaster_random, self.blaster_circle, self.gravity_bone]
         self.index = 2
@@ -122,8 +122,12 @@ class CallBoss(pygame.sprite.Sprite):
         if isinstance(self.mod, GravityBone):
             self.mod.rect_box(box_rect)
             self.mod.bone_stab.update(dt)
+            self.screen.set_clip(box_rect)
+
             for stab in self.mod.bone_stab:
                 stab.draw()
+
+            self.screen.set_clip(None)
 
         if isinstance(self.mod, GravityBone) or isinstance(self.mod, BlasterFloor):
             player.set_gravity(True)

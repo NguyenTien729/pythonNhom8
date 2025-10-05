@@ -14,6 +14,8 @@ class GravityBone:
         self.player_rect = player_rect
         self.box_rect = box_rect
 
+        self.slam_sound = pygame.mixer.Sound('sound/sans_battle/undertale-impact-slam.mp3')
+
         self.bone_stab= pygame.sprite.GroupSingle()
 
         self.side = ['left', 'right', 'top', 'bottom']
@@ -22,11 +24,11 @@ class GravityBone:
         self.duration = 1.0
 
         self.pull_start_time = 0.0
-        self.attack_time = 0.25
+        self.attack_time = 0.175
         self.float_time = 0.6
 
         self.is_attack = False
-
+        self.have_played = False
         self.player.gravity = self.strong_gravity
 
     def update(self, dt):
@@ -36,11 +38,15 @@ class GravityBone:
             self.player.gravity = self.strong_gravity
             self.player.gravity_direction = self.current_side
             self.player.hold_jump_force = 0
+            if self.player.rect.bottom <= self.box_rect.bottom or self.player.rect.top >= self.box_rect.top or self.player.rect.left <= self.box_rect.left or self.player.rect.right >= self.box_rect.right:
+                if not self.have_played:
+                    self.slam_sound.play()
+                    self.have_played = True
         elif self.attack_time <= self.timer < self.float_time:
             if not self.is_attack:
                 self.is_attack = True
                 self.player.gravity = self.default_gravity
-                self.player.hold_jump_force = 2.5
+                self.player.hold_jump_force = 2.15
                 bone_stab = BoneStab(self.screen, self.box_rect, self.current_side, 30, 250)
                 self.bone_stab.add(bone_stab)
         elif self.float_time <= self.timer:
@@ -57,6 +63,7 @@ class GravityBone:
 
             self.player.gravity = self.strong_gravity
             self.player.gravity_direction = self.current_side
+            self.have_played = False
 
     def rect_box(self, rect):
         self.box_rect = rect

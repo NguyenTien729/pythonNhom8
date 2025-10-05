@@ -21,6 +21,9 @@ class BoneStab(pygame.sprite.Sprite):
 
         self.rect = self.image.get_rect()
 
+        self.bone_sound = pygame.mixer.Sound('sound/sans_battle/bone-undertale-sound-effect.mp3')
+        self.warning_sound = pygame.mixer.Sound('sound/sans_battle/warning_undertale_sound.wav')
+
         self.movement = Vector2(0, 0)
         self.pos = Vector2(0, 0)
         self.target_pos = Vector2(0, 0)
@@ -32,6 +35,9 @@ class BoneStab(pygame.sprite.Sprite):
         self.warning_timer = self.warning_duration
         self.delay =0.175
         self.delay_timer = self.delay
+
+        self.have_played_bone = False
+        self.have_played_warning = False
 
         self.pos_calculate()
 
@@ -80,6 +86,9 @@ class BoneStab(pygame.sprite.Sprite):
 
     def update(self, dt: float):
         if self.state == 0:
+            if not self.have_played_warning:
+                self.warning_sound.play()
+                self.have_played_warning = True
             self.warning_timer -= dt
             if self.warning_timer <= 0:
                 self.state = 1
@@ -97,6 +106,9 @@ class BoneStab(pygame.sprite.Sprite):
                 self.pos.y = max(next_pos.y, self.target_pos.y)
 
             if self.pos == self.target_pos:
+                if not self.have_played_bone:
+                    self.bone_sound.play()
+                    self.have_played_bone = True
                 self.delay_timer -= dt
                 if self.delay_timer <= 0:
                     self.state = 2
@@ -117,6 +129,8 @@ class BoneStab(pygame.sprite.Sprite):
             if self.pos == self.initial_pos:
                 self.kill()
             self.rect.center = self.pos
+            self.have_played_bone = False
+            self.have_played_warning = False
 
     def draw(self):
         if self.state == 0:
