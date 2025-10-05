@@ -36,6 +36,18 @@ class CallBoss(pygame.sprite.Sprite):
         self.face_idle = pygame.image.load('graphics/characters/sans/spr_sansb_face_0.png')
         self.face_idle = pygame.transform.scale_by(self.face_idle, 2.5)
 
+        self.hand_down_frames = [pygame.image.load('graphics/characters/sans/spr_sansb_handdown_0.png'),
+                                 pygame.image.load('graphics/characters/sans/spr_sansb_handdown_1.png'),
+                                 pygame.image.load('graphics/characters/sans/spr_sansb_handdown_2.png'),
+                                 pygame.image.load('graphics/characters/sans/spr_sansb_handdown_3.png'),
+                                 pygame.image.load('graphics/characters/sans/spr_sansb_handdown_4.png'),]
+
+        self.hand_right_frames = [pygame.image.load('graphics/characters/sans/spr_sansb_rightstrike_0.png'),
+                                  pygame.image.load('graphics/characters/sans/spr_sansb_rightstrike_1.png'),
+                                  pygame.image.load('graphics/characters/sans/spr_sansb_rightstrike_2.png'),
+                                  pygame.image.load('graphics/characters/sans/spr_sansb_rightstrike_3.png'),
+                                  pygame.image.load('graphics/characters/sans/spr_sansb_rightstrike_4.png')]
+
         self.leg_rect = self.legs_idle.get_rect()
         self.body_rect = self.body_idle.get_rect()
         self.face_rect = self.face_idle.get_rect()

@@ -156,7 +156,6 @@ while True:
                     player.damaged(10)
 
         # VẼ MỌI THỨ
-        screen.blit(bone_surf, bone_rect)
         player.draw(screen)
         draw_health_bar(screen, 435, 500, player.player_hp, player.max_hp)
 
