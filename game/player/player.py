@@ -21,51 +21,101 @@ class Player(pygame.sprite.Sprite):
 
         self.speed = 5
         self.gravity = 1
+        self.gravity_direction = 'bottom'
         self.velocity = Vector2(0, 0)
         self.acceleration = Vector2(0, 0)
+        self.max_velocity = 18
 
         self.initial_jump = -5
-        self.hold_jump_force = 1.5
-        self.jump_time_max = 9
+        self.hold_jump_force = 2.15
+        self.jump_time_max = 5
         self.jump_timer = 0
 
         self.is_gravity = False
         self.is_on_ground = False
+        self.avatar_face_right = False
 
     def input(self):
         keys = pygame.key.get_pressed()
-        position = Vector2(0, 0)
 
-        if keys[pygame.K_LEFT]:
-            position.x -= 1
-        if keys[pygame.K_RIGHT]:
-            position.x += 1
+        if self.is_gravity:
+            if self.gravity_direction in ['top', 'bottom']:
+                if keys[pygame.K_LEFT]:
+                    self.velocity.x = -self.speed
+                elif keys[pygame.K_RIGHT]:
+                    self.velocity.x = self.speed
+                else:
+                    self.velocity.x = 0
 
-        if not self.is_gravity:
+            elif self.gravity_direction in ['left', 'right']:
+                if keys[pygame.K_LEFT]:
+                    self.velocity.y = -self.speed
+                elif keys[pygame.K_RIGHT]:
+                    self.velocity.y = self.speed
+                else:
+                    self.velocity.y = 0
+
+            if (keys[pygame.K_UP] or keys[pygame.K_SPACE]) and self.is_on_ground:
+                self.jump()
+
+        else:
+            position = Vector2(0, 0)
+
+            if keys[pygame.K_LEFT]:
+                position.x -= 1
+            if keys[pygame.K_RIGHT]:
+                position.x += 1
             if keys[pygame.K_UP]:
                 position.y -= 1
             if keys[pygame.K_DOWN]:
                 position.y += 1
-        else:
-            if (keys[pygame.K_UP] or keys[pygame.K_SPACE]) and self.is_on_ground:
-                self.jump()
 
-        if position.magnitude() != 0:
-            position = position.normalize()
+            if position.magnitude() != 0:
+                position = position.normalize()
 
-        self.rect.x += position.x * self.speed
+            self.velocity = position * self.speed
 
-        if not self.is_gravity:
-            self.rect.y += position.y * self.speed
+    def change_gravity_direction(self, direction: str):
+        if self.gravity_direction != direction:
+            self.gravity_direction = direction
+            self.velocity = Vector2(0, 0)
 
     def apply_gravity(self):
         if self.is_gravity:
-            self.velocity.y += self.gravity
-            self.rect.y += self.velocity.y
+            if self.gravity_direction == 'bottom':
+                self.velocity.y += self.gravity
+            elif self.gravity_direction == 'top':
+                self.velocity.y -= self.gravity
+            elif self.gravity_direction == 'left':
+                self.velocity.x -= self.gravity
+            elif self.gravity_direction == 'right':
+                self.velocity.x += self.gravity
+
+            if self.gravity_direction == 'bottom':
+                if self.velocity.y > self.max_velocity:
+                    self.velocity.y = self.max_velocity
+            elif self.gravity_direction == 'top':
+                if self.velocity.y < -self.max_velocity:
+                    self.velocity.y = -self.max_velocity
+            elif self.gravity_direction == 'left':
+                if self.velocity.x < -self.max_velocity:
+                    self.velocity.x = -self.max_velocity
+            elif self.gravity_direction == 'right':
+                if self.velocity.x > self.max_velocity:
+                    self.velocity.x = self.max_velocity
+
 
     def jump(self):
         if self.is_on_ground:
-            self.velocity.y = self.initial_jump
+            if self.gravity_direction == 'bottom':
+                self.velocity.y = self.initial_jump
+            elif self.gravity_direction == 'top':
+                self.velocity.y = -self.initial_jump
+            elif self.gravity_direction == 'left':
+                self.velocity.x = -self.initial_jump
+            elif self.gravity_direction == 'right':
+                self.velocity.x = self.initial_jump
+
             self.is_on_ground = False
             self.jump_timer = 0
 
@@ -76,78 +126,120 @@ class Player(pygame.sprite.Sprite):
             self.image = self.image_gravity
         else:
             self.image = self.image_normal
-
-        if not self.is_gravity:
-            self.velocity.y = 0
+            self.velocity = Vector2(0, 0)
 
     def damaged(self, amount):
         current_time = pygame.time.get_ticks()
         if current_time - self.last_hit_time > self.immunity_dur:
             self.player_hp -= amount
             self.last_hit_time = current_time
+            self.is_invulnerable = True
+
+    def collision(self, floors):
+        self.rect.x += self.velocity.x
+        self.rect.y += self.velocity.y
+
+        self.is_on_ground = False
+
+        for floor in floors:
+            if self.rect.colliderect(floor.rect):
+                over_lap_x = min(self.rect.right, floor.rect.right) - max(self.rect.left, floor.rect.left)
+                over_lap_y = min(self.rect.bottom, floor.rect.bottom) - max(self.rect.top, floor.rect.top)
+                if over_lap_x < over_lap_y:
+                    if self.velocity.y >= 0:
+                        if self.rect.centerx < floor.rect.centerx:
+                            self.rect.right = floor.rect.left
+                        else:
+                            self.rect.left = floor.rect.right
+                else:
+                    if self.velocity.y >= 0:
+                        self.rect.bottom = floor.rect.top
+                        self.velocity.y = 0
+                        self.is_on_ground = True
+                        self.jump_timer = 0
+                        offset_x = floor.rect.x - floor.old_rect.x
+                        self.rect.x += offset_x
+                    elif self.velocity.y < 0:
+                        self.rect.top = floor.rect.bottom
+                        self.velocity.y = 0
+
+        if self.is_on_ground:
+            self.jump_timer = 0
 
     def update(self, floors, box_rect):
         self.input()
 
-        current_time = pygame.time.get_ticks()
-        if current_time - self.last_hit_time > self.immunity_dur:
+        if self.is_invulnerable and pygame.time.get_ticks() - self.last_hit_time > self.immunity_dur:
             self.is_invulnerable = False
-        else:
-            self.is_invulnerable = True
+
+        if self.is_gravity:
+            self.apply_gravity()
+
+        if self.velocity.x > 0:
+            self.avatar_face_right = True
+        elif self.velocity.x < 0:
+            self.avatar_face_right = False
 
         keys = pygame.key.get_pressed()
 
-        if self.is_gravity and (keys[pygame.K_SPACE] or keys[pygame.K_UP]) and self.jump_timer < self.jump_time_max:
-            self.velocity.y -= self.hold_jump_force
-            self.jump_timer += 1
+        if self.is_gravity and self.jump_timer < self.jump_time_max:
+            if keys[pygame.K_UP] or keys[pygame.K_SPACE]:
+                if self.gravity_direction == 'bottom':
+                    self.velocity.y -= self.hold_jump_force
+                elif self.gravity_direction == 'top':
+                    self.velocity.y += self.hold_jump_force
+                elif self.gravity_direction == 'left':
+                    self.velocity.x += self.hold_jump_force
+                elif self.gravity_direction == 'right':
+                    self.velocity.x -= self.hold_jump_force
+                self.jump_timer += 1
 
-        self.apply_gravity()
-
-        self.is_on_ground = False
-        if self.is_gravity:
-            for floor in floors:
-                if self.rect.colliderect(floor.rect):
-                    over_lap_x = min(self.rect.right, floor.rect.right) - max(self.rect.left, floor.rect.left)
-                    over_lap_y = min(self.rect.bottom, floor.rect.bottom) - max(self.rect.top, floor.rect.top)
-                    if over_lap_x < over_lap_y:
-                        if self.velocity.y >= 0:
-                            if self.rect.centerx < floor.rect.centerx:
-                                self.rect.right = floor.rect.left
-                            else:
-                                self.rect.left = floor.rect.right
-                    else:
-                        if self.velocity.y >= 0:
-                            self.rect.bottom = floor.rect.top
-                            self.velocity.y = 0
-                            self.is_on_ground = True
-                            self.jump_timer = 0
-                            offset_x = floor.rect.x - floor.old_rect.x
-                            self.rect.x += offset_x
-                        elif self.velocity.y < 0:
-                            self.rect.top = floor.rect.bottom
-                            self.velocity.y = 0
-        if self.rect.top <= box_rect.top:
-            if self.is_gravity:
-                self.velocity.y = 0
+        self.collision(floors)
 
         if self.rect.bottom >= box_rect.bottom:
-            if self.is_gravity:
+            self.rect.bottom = box_rect.bottom
+            if self.is_gravity and self.gravity_direction == 'bottom':
                 self.velocity.y = 0
+                self.is_on_ground = True
+                self.jump_timer = 0
+        if self.rect.top <= box_rect.top:
+            self.rect.top = box_rect.top
+            if self.is_gravity and self.gravity_direction == 'top':
+                self.velocity.y = 0
+                self.is_on_ground = True
+                self.jump_timer = 0
+        if self.rect.right >= box_rect.right:
+            self.rect.right = box_rect.right
+            if self.is_gravity and self.gravity_direction == 'right':
+                self.velocity.x = 0
+                self.is_on_ground = True
+                self.jump_timer = 0
+        if self.rect.left <= box_rect.left:
+            self.rect.left = box_rect.left
+            if self.is_gravity and self.gravity_direction == 'left':
+                self.velocity.x = 0
                 self.is_on_ground = True
                 self.jump_timer = 0
 
     def draw(self, surface):
-        if not self.is_invulnerable:
-            current_image = self.image_gravity if self.is_gravity else self.image_normal
-            surface.blit(current_image, self.rect)
+        original_image = self.image_normal
+        if self.is_gravity:
+            original_image = self.image_gravity
+
+        if self.is_invulnerable and (pygame.time.get_ticks() // 200) % 2 == 0:
+            original_image = self.image_hit
+
+        rotated_image = original_image
+        if self.gravity_direction == 'top':
+            rotated_image = pygame.transform.flip(original_image, False, True)
+        elif self.gravity_direction == 'left':
+            rotated_image = pygame.transform.rotate(original_image, -90)
+        elif self.gravity_direction == 'right':
+            rotated_image = pygame.transform.rotate(original_image, 90)
+
+        if self.gravity_direction in ['top', 'bottom'] and not self.avatar_face_right:
+            final_image = pygame.transform.flip(rotated_image, True, False)
         else:
-            cur_time = pygame.time.get_ticks()
-            if (cur_time - self.last_hit_time) < self.immunity_dur:
-                if (cur_time // 200) % 2 == 0:
-                 surface.blit(self.image_hit, self.rect)
-                else:
-                    current_image = self.image_gravity if self.is_gravity else self.image_normal
-                    surface.blit(current_image, self.rect)
+            final_image = rotated_image
 
-
-
+        surface.blit(final_image, self.rect)

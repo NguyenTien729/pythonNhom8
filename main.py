@@ -62,7 +62,7 @@ bone_speed = 10
 
 floors = MultiFloor()
 blasters = MultiBlaster()
-boss_lv_3 = CallBoss(screen, player.rect, blasters, floors)
+boss_lv_3 = CallBoss(screen, player, player.rect, blasters, floors)
 
 arena_width = 400
 arena_height = 200
@@ -110,8 +110,8 @@ while True:
         # background
         final_box_width, final_box_height = boss_lv_3.arena_state()
 
-        arena_width = lerp(arena_width, final_box_width, 0.05)
-        arena_height = lerp(arena_height, final_box_height, 0.05)
+        arena_width = lerp(arena_width, final_box_width, 0.15)
+        arena_height = lerp(arena_height, final_box_height, 0.15)
 
         box_rect = draw_background(arena_width, arena_height)
 
@@ -125,9 +125,9 @@ while True:
         # Vẽ thanh máu
 
         # Enemy
-        screen.blit(skull_surf, skull_rect)
-        screen.blit(bone_surf, bone_rect)
-        screen.blit(bone_surf2, bone_rect2)
+        # screen.blit(skull_surf, skull_rect)
+        # screen.blit(bone_surf, bone_rect)
+        # screen.blit(bone_surf2, bone_rect2)
         bone_rect.x -= bone_speed
         bone_rect2.x -= bone_speed
 

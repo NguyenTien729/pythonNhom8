@@ -4,6 +4,7 @@ from pygame import Vector2
 
 from entities.blaster import MultiBlaster
 from entities.stand_floor import MultiFloor
+from game.level_3.gravity_bone import GravityBone
 from game.level_3.random_blaster import RandomBlaster
 from game.level_3.blaster_round import BlasterCircle
 from game.level_3.blaster_floor import BlasterFloor
@@ -15,7 +16,7 @@ class CallBoss(pygame.sprite.Sprite):
     phase_time = 8
     change_phase_time = 2
 
-    def __init__(self, screen, player_rect, blasters: MultiBlaster, floors: MultiFloor):
+    def __init__(self, screen, player, player_rect, blasters: MultiBlaster, floors: MultiFloor):
         super().__init__()
         self.screen = screen
         self.box_rect = pygame.Rect(0, 0, 0, 0)
@@ -69,8 +70,10 @@ class CallBoss(pygame.sprite.Sprite):
 
         self.blaster_random = RandomBlaster(self.center,  750, 250, 230, 530, self.blasters)
 
-        self.attack_patterns = [self.blaster_floor, self.blaster_random, self.blaster_circle]
-        self.index = -1
+        self.gravity_bone = GravityBone(self.screen, 100, 1.5, player, player_rect,self.box_rect)
+
+        self.attack_patterns = [self.blaster_floor, self.blaster_random, self.blaster_circle, self.gravity_bone]
+        self.index = 2
         self.mod = self.attack_patterns[self.index]
         self.change_mod = False
         self.is_win = False
@@ -116,10 +119,21 @@ class CallBoss(pygame.sprite.Sprite):
         if self.is_win:
             return
 
-        if self.index == 0:
+        if isinstance(self.mod, GravityBone):
+            self.mod.rect_box(box_rect)
+            self.mod.bone_stab.update(dt)
+            for stab in self.mod.bone_stab:
+                stab.draw()
+
+        if isinstance(self.mod, GravityBone) or isinstance(self.mod, BlasterFloor):
             player.set_gravity(True)
         else:
             player.set_gravity(False)
+
+        if not isinstance(self.mod, GravityBone):
+            player.change_gravity_direction('bottom')
+            player.gravity = 1
+            player.hold_jump_force = 2.25
 
         self.box_rect = box_rect
         self.center = Vector2(self.box_rect.center)
@@ -154,15 +168,18 @@ class CallBoss(pygame.sprite.Sprite):
 
     def arena_state(self):
         #floor
-        if self.index == -1:
+        if isinstance(self.mod, BlasterFloor):
             final_box_width = 400
             final_box_height = 200
         #random
-        elif self.index == 1:
+        elif isinstance(self.mod, RandomBlaster):
             final_box_width = 400
             final_box_height = 200
         #circle
-        elif self.index == 2:
+        elif isinstance(self.mod, BlasterCircle):
+            final_box_width = 200
+            final_box_height = 200
+        elif isinstance(self.mod, GravityBone):
             final_box_width = 200
             final_box_height = 200
         else:
