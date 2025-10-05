@@ -6,7 +6,7 @@ class Player(pygame.sprite.Sprite):
     def __init__(self, x, y):
         super().__init__()
         self.image_normal = pygame.image.load('graphics/sprites/player/heart.png').convert_alpha()
-        self.image_gravity = pygame.image.load('graphics/sprites/player/heart_blue.png').convert_alpha()
+        self.image_gravity = pygame.image.load('graphics/sprites/player/heart_blue-export.png').convert_alpha()
         self.image_hit = pygame.image.load('graphics/Sprites/player/heart_hit1.png').convert_alpha()
 
         self.max_hp = 50
@@ -19,8 +19,8 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(center = (x, y))
         self.center = Vector2(self.rect.center)
 
-        self.speed = 5
-        self.gravity = 1
+        self.speed = 7
+        self.gravity = 1.1
         self.velocity = Vector2(0, 0)
         self.acceleration = Vector2(0, 0)
 

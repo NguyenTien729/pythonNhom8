@@ -2,7 +2,7 @@ import pygame
 from sys import exit
 
 from pygame import Vector2
-
+# from entities.blaster import BoneWave
 from entities.blaster import MultiBlaster
 from entities.stand_floor import MultiFloor
 from game.level_3.Sand import CallBoss
@@ -57,8 +57,8 @@ bone_surf = pygame.image.load('graphics/Sprites/bones/wavy_bone_down.png').conve
 bone_rect = bone_surf.get_rect(topleft=(1000, 285))
 bone_surf2 = pygame.image.load('graphics/Sprites/bones/wavy_bone_up.png').convert_alpha()
 bone_rect2 = bone_surf2.get_rect(topleft=(1000, 360))
-
 bone_speed = 10
+
 
 floors = MultiFloor()
 blasters = MultiBlaster()
@@ -72,8 +72,6 @@ final_box_height = 200
 def draw_health_bar(surface, x, y, current_hp, max_hp, width=40, height=25):
     ratio = current_hp / max_hp
     if ratio < 0: ratio = 0
-    # box_rect = pygame.Rect(0, 0, 1000, 600)
-    # pygame.draw.rect(surface, (0,0,0), box_rect)
     pygame.draw.rect(surface, (255, 255, 0), (x, y, width, height))
     pygame.draw.rect(surface, (255, 0, 0), (x, y, width * ratio, height))
     # HP text
@@ -97,9 +95,6 @@ while True:
             mouse_pos = pygame.mouse.get_pos()
             print(mouse_pos)
 
-        # if event.type == pygame.KEYDOWN:
-        #     if event.key == pygame.K_UP:
-        #        blaster = blasters.create_blaster(-100, -100, 250, 380, -90, start_angle = 0)
     clock = pygame.time.Clock()
 
 
@@ -125,15 +120,12 @@ while True:
         # Vẽ thanh máu
 
         # Enemy
-        screen.blit(skull_surf, skull_rect)
-        screen.blit(bone_surf, bone_rect)
-        screen.blit(bone_surf2, bone_rect2)
-        bone_rect.x -= bone_speed
-        bone_rect2.x -= bone_speed
+        # screen.blit(skull_surf, skull_rect)
+        # screen.blit(bone_surf, bone_rect)
+        # screen.blit(bone_surf2, bone_rect2)
+        # bone_rect.x -= bone_speed
 
-        if bone_rect.right < 0:
-            bone_rect.left = 1000
-            bone_rect.y = 300
+       
 
         # Player
         center = Vector2(player.rect.center)
@@ -141,8 +133,6 @@ while True:
 
         boss_lv_3.update(dt, box_rect, player)
 
-        if bone_rect.colliderect(player.rect):
-            player.damaged(5)
 
         # Va chạm với beam
         player_mask = pygame.mask.from_surface(player.image)
@@ -156,6 +146,7 @@ while True:
                     player.damaged(10)
 
         # VẼ MỌI THỨ
+        
         player.draw(screen)
         draw_health_bar(screen, 435, 500, player.player_hp, player.max_hp)
 
