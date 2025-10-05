@@ -60,11 +60,6 @@ bone_rect2 = bone_surf2.get_rect(topleft=(1000, 360))
 
 bone_speed = 10
 
-player_hp = 50
-max_hp = 50
-last_hit_time = 0
-immunity_dur = 2000
-
 floors = MultiFloor()
 blasters = MultiBlaster()
 boss_lv_3 = CallBoss(screen, player.rect, blasters, floors)
