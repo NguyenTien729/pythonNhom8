@@ -21,7 +21,7 @@ class GravityBone:
         self.side = ['left', 'right', 'top', 'bottom']
         self.current_side = random.choice(self.side)
         self.timer = 0
-        self.duration = 1.0
+        self.duration = 0.75
 
         self.pull_start_time = 0.0
         self.attack_time = 0.175
