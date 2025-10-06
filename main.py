@@ -50,13 +50,14 @@ def draw_background(boxl, boxw):
 player = Player(500, 470)
 
 # enermy
-skull_surf = pygame.image.load('graphics/Sprites/blasters/beam.png').convert_alpha()
-skull_rect = skull_surf.get_rect(topleft=(100, 100))
+
 
 bone_surf = pygame.image.load('graphics/Sprites/bones/wavy_bone_down.png').convert_alpha()
 bone_rect = bone_surf.get_rect(topleft=(1000, 285))
+bone_mask = pygame.mask.from_surface(bone_surf)
 bone_surf2 = pygame.image.load('graphics/Sprites/bones/wavy_bone_up.png').convert_alpha()
 bone_rect2 = bone_surf2.get_rect(topleft=(1000, 360))
+bone_mask2 = pygame.mask.from_surface(bone_surf2)
 
 bone_speed = 10
 
@@ -97,14 +98,11 @@ while True:
             mouse_pos = pygame.mouse.get_pos()
             print(mouse_pos)
 
-        # if event.type == pygame.KEYDOWN:
-        #     if event.key == pygame.K_UP:
-        #        blaster = blasters.create_blaster(-100, -100, 250, 380, -90, start_angle = 0)
     clock = pygame.time.Clock()
 
 
     dt = min(clock.tick(60) * 0.001, 1 / 30)
-    # input
+
     if is_active:
 
         # background
@@ -122,30 +120,30 @@ while True:
         if player.rect.top < box_rect.top: player.rect.top = box_rect.top
         if player.rect.bottom > box_rect.bottom: player.rect.bottom = box_rect.bottom
 
-        # Vẽ thanh máu
-
-        # Enemy
-        # screen.blit(skull_surf, skull_rect)
-        # screen.blit(bone_surf, bone_rect)
-        # screen.blit(bone_surf2, bone_rect2)
-        bone_rect.x -= bone_speed
-        bone_rect2.x -= bone_speed
-
-        if bone_rect.right < 0:
-            bone_rect.left = 1000
-            bone_rect.y = 300
-
+      
         # Player
         center = Vector2(player.rect.center)
         # blaster_spawner.pivot = center
 
         boss_lv_3.update(dt, box_rect, player)
-
         if bone_rect.colliderect(player.rect):
             player.damaged(5)
 
-        # Va chạm với beam
+        # hitbox
         player_mask = pygame.mask.from_surface(player.image)
+        #bonewave
+        # screen.blit(bone_surf, bone_rect)
+        # screen.blit(bone_surf2, bone_rect2)
+        # bone_rect.x -= bone_speed
+        # bone_rect2.x -= bone_speed
+        # offset1 = (bone_rect.x - player.rect.x, bone_rect.y - player.rect.y)
+        # if player_mask.overlap(bone_mask, offset1):
+        #     player.damaged(5)
+        # offset2 = (bone_rect2.x - player.rect.x, bone_rect2.y - player.rect.y)
+        # if player_mask.overlap(bone_mask2, offset2):
+        #     player.damaged(5)
+        
+        #blaster
         for blaster in blasters.blasters:
             if blaster.beam and blaster.beam.is_active:
                 beam_img = blaster.beam.sprite.image
