@@ -11,7 +11,6 @@ from game.level_3.blaster_floor import BlasterFloor
 
 import pygame
 
-
 class CallBoss(pygame.sprite.Sprite):
     phase_time = 8
     change_phase_time = 2
@@ -37,24 +36,38 @@ class CallBoss(pygame.sprite.Sprite):
         self.face_idle = pygame.image.load('graphics/characters/sans/spr_sansb_face_0.png')
         self.face_idle = pygame.transform.scale_by(self.face_idle, 2.5)
 
+        self.body_image = self.body_idle
+        self.idle_mask = pygame.mask.from_surface(self.body_idle)
+        self.idle_x = self.idle_mask.centroid()[0]
+        self.idle_y = self.idle_mask.centroid()[1]
+        self.offset_x = 0.0
+        self.offset_y = 0.0
+
         self.hand_down_frames = [pygame.image.load('graphics/characters/sans/spr_sansb_handdown_0.png'),
                                  pygame.image.load('graphics/characters/sans/spr_sansb_handdown_1.png'),
                                  pygame.image.load('graphics/characters/sans/spr_sansb_handdown_2.png'),
                                  pygame.image.load('graphics/characters/sans/spr_sansb_handdown_3.png'),
-                                 pygame.image.load('graphics/characters/sans/spr_sansb_handdown_4.png'),]
-
+                                 pygame.image.load('graphics/characters/sans/spr_sansb_handdown_4.png')]
         self.hand_right_frames = [pygame.image.load('graphics/characters/sans/spr_sansb_rightstrike_0.png'),
                                   pygame.image.load('graphics/characters/sans/spr_sansb_rightstrike_1.png'),
                                   pygame.image.load('graphics/characters/sans/spr_sansb_rightstrike_2.png'),
                                   pygame.image.load('graphics/characters/sans/spr_sansb_rightstrike_3.png'),
                                   pygame.image.load('graphics/characters/sans/spr_sansb_rightstrike_4.png')]
 
+        self.animation_index = 0
+        self.animation_index_reverse = 4
+        self.animation_timer = 0.0
+        self.animation_time = 0.1
+        self.animation_paused = False
+        self.timer = 0
+        self.duration = 1.1
+
         self.leg_rect = self.legs_idle.get_rect()
         self.body_rect = self.body_idle.get_rect()
         self.face_rect = self.face_idle.get_rect()
 
         self.wiggle_time = 0.0
-        self.wiggle_amplitude_head = 1.2
+        self.wiggle_amplitude_head = 1.1
         self.wiggle_amplitude_body = 1.5
         self.wiggle_speed_x = 8
         self.wiggle_speed_y = 16
@@ -73,8 +86,8 @@ class CallBoss(pygame.sprite.Sprite):
         self.gravity_bone = GravityBone(self.screen, 100, 1, player, player_rect,self.box_rect)
 
         self.attack_patterns = [self.blaster_floor, self.blaster_random, self.blaster_circle, self.gravity_bone]
-        self.index = 2
-        self.mod = self.attack_patterns[self.index]
+        self.attack_index = 2
+        self.mod = self.attack_patterns[self.attack_index]
         self.change_mod = False
         self.is_win = False
 
@@ -87,22 +100,88 @@ class CallBoss(pygame.sprite.Sprite):
         offset_x = math.sin(self.wiggle_time * self.wiggle_speed_x)
         offset_y = math.cos(self.wiggle_time * self.wiggle_speed_y)
 
-        self.body_rect.centerx = int(self.body_x + offset_x * self.wiggle_amplitude_body)
         self.face_rect.centerx = int(self.face_x + offset_x * self.wiggle_amplitude_head)
-
-        self.body_rect.centery = int(self.body_y + offset_y * self.wiggle_amplitude_body)
         self.face_rect.centery = int(self.face_y + offset_y * self.wiggle_amplitude_head)
+        if not isinstance(self.mod, GravityBone):
+            self.body_rect.centerx = int(self.body_x + offset_x * self.wiggle_amplitude_body)
+            self.body_rect.centery = int(self.body_y + offset_y * self.wiggle_amplitude_body)
 
     def attack_mod(self):
         self.floors.destroy_all()
         self.blasters.destroy_all()
-        self.index = (self.index + 1) % len(self.attack_patterns)
-        self.mod = self.attack_patterns[self.index]
+        self.attack_index = (self.attack_index + 1) % len(self.attack_patterns)
+        self.mod = self.attack_patterns[self.attack_index]
 
-    def animation(self):
-        self.leg_rect = self.legs_idle.get_rect(midbottom = (self.box_rect.midtop[0], self.box_rect.midtop[1] - 20))
-        self.body_rect = self.body_idle.get_rect(midbottom = (self.leg_rect.midtop[0], self.leg_rect.midtop[1] + 25))
-        self.face_rect = self.face_idle.get_rect(midbottom = (self.body_rect.midtop[0], self.body_rect.midtop[1] + 20))
+        self.animation_index = 0
+        self.animation_timer = 0.0
+
+    def animation(self, dt: float, player):
+
+        global offset_x
+        if isinstance(self.mod, GravityBone):
+            current_time = self.mod.timer
+            self.animation_timer += dt
+
+            if self.mod.pull_start_time < current_time < self.mod.float_time:
+                if not self.animation_paused:
+                    self.animation_timer = 0.0
+                    self.animation_index += 1
+                    self.animation_index_reverse -= 1
+                    if self.animation_index == 4 or self.animation_index_reverse == 0:
+                        self.animation_paused = True
+            elif current_time <= self.mod.pull_start_time:
+                self.animation_paused = False
+                self.animation_index = 0
+                self.animation_index_reverse = 0
+
+            if player.gravity_direction in ['top', 'bottom']:
+                previous_mask = pygame.mask.from_surface(self.body_image)
+                previous_y = previous_mask.centroid()[1]
+
+                if player.gravity_direction == 'top':
+                    self.body_image = self.hand_down_frames[self.animation_index_reverse]
+                elif player.gravity_direction == 'bottom':
+                    self.body_image = self.hand_down_frames[self.animation_index]
+
+                self.body_image = pygame.transform.scale_by(self.body_image, 2.5)
+                self.body_rect = self.body_image.get_rect(bottomleft = (self.box_rect.midtop[0] - 77, self.box_rect.midtop[1] - 25))
+
+                current_mask = pygame.mask.from_surface(self.body_image)
+                current_y = current_mask.centroid()[1]
+                if current_y != previous_y and player.gravity_direction == 'top':
+                    self.offset_y = current_y - previous_y - 12
+                elif current_y != previous_y and player.gravity_direction == 'bottom':
+                    self.offset_y = previous_y - current_y - 8
+
+                self.face_rect = self.face_idle.get_rect(midbottom=(self.body_rect.midtop[0] - 2, self.body_rect.centery + self.offset_y))
+
+                print(self.offset_y)
+
+            elif player.gravity_direction in ['left', 'right']:
+                previous_mask = pygame.mask.from_surface(self.body_image)
+                previous_x = previous_mask.centroid()[0]
+
+                if player.gravity_direction == 'left':
+                    self.body_image = self.hand_right_frames[self.animation_index_reverse]
+                elif player.gravity_direction == 'right':
+                    self.body_image = self.hand_right_frames[self.animation_index]
+
+                self.body_image = pygame.transform.scale_by(self.body_image, 2.5)
+                self.body_rect = self.body_image.get_rect(bottomleft = (self.box_rect.midtop[0] - 77, self.box_rect.midtop[1] - 20))
+
+                current_mask = pygame.mask.from_surface(self.body_image)
+                current_x = current_mask.centroid()[0]
+                if current_x != previous_x and player.gravity_direction == 'left':
+                    self.offset_x = current_x - previous_x + 3
+                elif current_x != previous_x and player.gravity_direction == 'right':
+                    self.offset_x = previous_x - current_x - 15
+                self.face_rect = self.face_idle.get_rect(bottomleft = (self.body_rect.bottomleft[0] + 47.5 + self.offset_x, self.body_rect.centery - 40))
+
+        else:
+            self.leg_rect = self.legs_idle.get_rect(midbottom = (self.box_rect.midtop[0], self.box_rect.midtop[1] - 20))
+            self.body_image = self.body_idle
+            self.body_rect = self.body_image.get_rect(midbottom = (self.leg_rect.midtop[0], self.leg_rect.midtop[1] + 25))
+            self.face_rect = self.face_idle.get_rect(midbottom=(self.body_rect.midtop[0], self.body_rect.midtop[1] + 20))
 
         self.body_x = self.body_rect.centerx
         self.face_x = self.face_rect.centerx
@@ -111,8 +190,9 @@ class CallBoss(pygame.sprite.Sprite):
         self.face_y = self.face_rect.centery
 
     def draw(self):
-        self.screen.blit(self.legs_idle, self.leg_rect)
-        self.screen.blit(self.body_idle, self.body_rect)
+        if not isinstance(self.mod, GravityBone):
+            self.screen.blit(self.legs_idle, self.leg_rect)
+        self.screen.blit(self.body_image, self.body_rect)
         self.screen.blit(self.face_idle, self.face_rect)
 
     def update(self, dt: float, box_rect: pygame.Rect, player):
@@ -142,7 +222,7 @@ class CallBoss(pygame.sprite.Sprite):
         self.box_rect = box_rect
         self.center = Vector2(self.box_rect.center)
 
-        self.animation()
+        self.animation(dt, player)
         self.wiggle_animation(dt)
         self.draw()
 
@@ -169,17 +249,13 @@ class CallBoss(pygame.sprite.Sprite):
         self.blasters.update()
         self.blasters.draw(self.screen)
 
-
     def arena_state(self):
-        #floor
         if isinstance(self.mod, BlasterFloor):
             final_box_width = 400
             final_box_height = 200
-        #random
         elif isinstance(self.mod, RandomBlaster):
             final_box_width = 400
             final_box_height = 200
-        #circle
         elif isinstance(self.mod, BlasterCircle):
             final_box_width = 200
             final_box_height = 200
