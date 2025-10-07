@@ -93,7 +93,7 @@ class CallBoss(pygame.sprite.Sprite):
 
         self.bone_parten_column = BonePatternColumn(self.screen,self.box_rect,player)
 
-        # self.attack_patterns = [self.blaster_floor, self.bone_parten_middle, self.blaster_random, self.blaster_circle, self.gravity_bone, self.bone_parten_sideway]
+        # self.attack_patterns = [self.blaster_floor, self.bone_parten_middle, self.blaster_random, self.blaster_circle, self.gravity_bone, self.bone_parten_sideway,self.bone_parten_column]
         self.attack_patterns = [self.bone_parten_column]
         self.attack_index = 0
         self.mod = self.attack_patterns[self.attack_index]
@@ -240,7 +240,7 @@ class CallBoss(pygame.sprite.Sprite):
 
 
         #gọi gravity
-        if isinstance(self.mod, GravityBone) or isinstance(self.mod, BlasterFloor) or isinstance(self.mod, BonePatternMiddle):
+        if isinstance(self.mod, GravityBone) or isinstance(self.mod, BlasterFloor) or isinstance(self.mod, BonePatternMiddle) or isinstance(self.mod, BonePatternColumn):
             player.set_gravity(True)
         else:
             player.set_gravity(False)
