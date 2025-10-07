@@ -89,8 +89,8 @@ class CallBoss(pygame.sprite.Sprite):
 
         self.bone_parten_sideway = BonePatternSideway(self.screen,self.box_rect,player)
 
-        # self.attack_patterns = [self.blaster_floor, self.bone_parten_middle, self.blaster_random, self.blaster_circle, self.gravity_bone, self.bone_parten_sideway]
-        self.attack_patterns = [self.bone_parten_sideway]
+        self.attack_patterns = [self.blaster_floor, self.bone_parten_middle, self.blaster_random, self.blaster_circle, self.gravity_bone, self.bone_parten_sideway]
+        # self.attack_patterns = [self.bone_parten_sideway]
         self.attack_index = 0
         self.mod = self.attack_patterns[self.attack_index]
         self.change_mod = False
