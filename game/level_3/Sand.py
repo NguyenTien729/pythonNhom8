@@ -84,7 +84,7 @@ class CallBoss(pygame.sprite.Sprite):
 
         self.gravity_bone = GravityBone(self.screen, 100, 1, player, player_rect,self.box_rect)
 
-        self.bone_parten_middle = BonePatternMiddle(self.screen,self.box_rect,player)
+        self.bone_parten_middle = BonePatternMiddle(self.screen,self.box_rect,player, self.floors)
 
         # self.attack_patterns = [self.blaster_floor, self.bone_parten_middle, self.blaster_random, self.blaster_circle, self.gravity_bone]
         self.attack_patterns = [self.bone_parten_middle]
@@ -115,6 +115,10 @@ class CallBoss(pygame.sprite.Sprite):
         self.blasters.destroy_all()
         self.attack_index = (self.attack_index + 1) % len(self.attack_patterns)
         self.mod = self.attack_patterns[self.attack_index]
+
+        #reset bone_pattern_middle
+        if hasattr(self.mod, 'reset'):
+            self.mod.reset()
 
         self.animation_index = 0
         self.animation_timer = 0.0
@@ -182,7 +186,7 @@ class CallBoss(pygame.sprite.Sprite):
                     self.offset_x = previous_x - current_x - 15
                 self.face_rect = self.face_idle.get_rect(bottomleft = (self.body_rect.bottomleft[0] + 47.5 + self.offset_x, self.body_rect.centery - 40))
 
-        else:
+        elif not isinstance(self.mod, GravityBone) or self.change_mod:
             self.leg_rect = self.legs_idle.get_rect(midbottom = (self.box_rect.midtop[0], self.box_rect.midtop[1] - 20))
             self.body_image = self.body_idle
             self.body_rect = self.body_image.get_rect(midbottom = (self.leg_rect.midtop[0], self.leg_rect.midtop[1] + 25))
@@ -221,14 +225,14 @@ class CallBoss(pygame.sprite.Sprite):
             self.screen.set_clip(None)
 
         #gọi gravity
-        if isinstance(self.mod, GravityBone) or isinstance(self.mod, BlasterFloor):
+        if isinstance(self.mod, GravityBone) or isinstance(self.mod, BlasterFloor) or isinstance(self.mod, BonePatternMiddle):
             player.set_gravity(True)
         else:
             player.set_gravity(False)
 
         if not isinstance(self.mod, GravityBone):
             player.change_gravity_direction('bottom')
-            player.gravity = 1
+            player.gravity = 1.25
             player.hold_jump_force = 2.25
 
         self.box_rect = box_rect
@@ -239,23 +243,27 @@ class CallBoss(pygame.sprite.Sprite):
         self.draw()
 
         self.blaster_random.pivot = Vector2(self.player_rect.center)
-
+        #đổi dạng attack
         if self.change_mod:
             self.swap_time += dt
+            #time delay trước khi đổi
             if self.swap_time >= self.change_phase_time:
                 self.swap_time = 0
                 self.change_mod = False
                 self.attack_mod()
+
         else:
             self.mod.update(dt)
-
+            #thời gian cho 1 attack
             self.attack_time += dt
             if self.attack_time >= self.phase_time:
                 self.attack_time = 0
                 self.change_mod = True
 
+        change_floor_direction = isinstance(self.mod, BonePatternMiddle)
+
         #hàm cập nhật vật thể
-        self.floors.update()
+        self.floors.update(change_floor_direction)
         self.floors.draw(self.screen)
 
         self.blasters.update()
@@ -273,6 +281,9 @@ class CallBoss(pygame.sprite.Sprite):
             final_box_height = 200
         elif isinstance(self.mod, GravityBone):
             final_box_width = 200
+            final_box_height = 200
+        elif isinstance(self.mod, BonePatternMiddle):
+            final_box_width = 500
             final_box_height = 200
         else:
             final_box_width = 400

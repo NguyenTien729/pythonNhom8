@@ -9,7 +9,7 @@ class CallFloor(pygame.sprite.Sprite):
         self.screen = screen
         self.speed = speed
 
-        self.sprite_prefix = sprite_prefix or "graphics/sprites/bones/floor1.png"
+        self.sprite_prefix = sprite_prefix or "graphics/sprites/bones/floor2.png"
         self.sprite = pygame.image.load(self.sprite_prefix).convert_alpha()
         self.sprite = pygame.transform.scale_by(self.sprite,(width, height))
         self.image = self.sprite
@@ -29,6 +29,15 @@ class CallFloor(pygame.sprite.Sprite):
             self.rect.y -= self.speed
         elif self.direction == "down":
             self.rect.y += self.speed
+
+    def change_direction(self, on: bool):
+        if on:
+            if self.direction == "right" and self.rect.right >= 740:
+                self.rect.right = 740
+                self.direction = "left"
+            elif self.direction == "left" and self.rect.left <= 255:
+                self.rect.left = 255
+                self.direction = "right"
 
     def draw(self):
         self.screen.blit(self.sprite, self.rect)
@@ -52,9 +61,11 @@ class MultiFloor:
         self.floors.add(floor)
         return floor
 
-    def update(self):
-        self.floors.update()
+    def update(self, on: Optional[bool] = False):
+        for floor in self.floors:
+            floor.change_direction(on)
 
+        self.floors.update()
 
     def destroy_all(self):
         for floor in self.floors:
