@@ -27,13 +27,13 @@ class BonePatternColumn:
         self.player = player
 
         # Load ảnh xương trên và dưới
-        self.bone_top_img = pygame.image.load("graphics/Sprites/bones/bone_gap_upper2.png").convert_alpha()
-        self.bone_bottom_img = pygame.image.load("graphics/Sprites/bones/bone_gap_below2.png").convert_alpha()
+        self.bone_top_img = pygame.image.load("graphics/Sprites/bones/bone_gap_below2.png").convert_alpha()
+        self.bone_bottom_img = pygame.image.load("graphics/Sprites/bones/bone_gap_upper2.png").convert_alpha()
 
         self.bones = pygame.sprite.Group()
 
         # Mỗi cột có 2 xương dọc cách nhau
-        self.column_y_offsets = [-65, 50]
+        self.column_y_offsets = [-50, 65]
 
         # Cấu hình 2 cột
         self.columns = [
