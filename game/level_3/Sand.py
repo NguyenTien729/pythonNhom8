@@ -9,6 +9,7 @@ from game.level_3.random_blaster import RandomBlaster
 from game.level_3.blaster_round import BlasterCircle
 from game.level_3.blaster_floor import BlasterFloor
 from game.level_3.bone_pattern_middle import BonePatternMiddle
+from game.level_3.bone_pattern_sideway import BonePatternSideway
 
 import pygame
 
@@ -86,8 +87,10 @@ class CallBoss(pygame.sprite.Sprite):
 
         self.bone_parten_middle = BonePatternMiddle(self.screen,self.box_rect,player, self.floors)
 
-        # self.attack_patterns = [self.blaster_floor, self.bone_parten_middle, self.blaster_random, self.blaster_circle, self.gravity_bone]
-        self.attack_patterns = [self.bone_parten_middle]
+        self.bone_parten_sideway = BonePatternSideway(self.screen,self.box_rect,player)
+
+        # self.attack_patterns = [self.blaster_floor, self.bone_parten_middle, self.blaster_random, self.blaster_circle, self.gravity_bone, self.bone_parten_sideway]
+        self.attack_patterns = [self.bone_parten_sideway]
         self.attack_index = 0
         self.mod = self.attack_patterns[self.attack_index]
         self.change_mod = False
@@ -212,6 +215,8 @@ class CallBoss(pygame.sprite.Sprite):
         if isinstance(self.mod, BonePatternMiddle):
             self.mod.rect_box(box_rect)
 
+        if isinstance(self.mod, BonePatternSideway):
+            self.mod.rect_box(box_rect)
 
         #cắt ảnh ngoài arena
         if isinstance(self.mod, GravityBone):
@@ -275,6 +280,12 @@ class CallBoss(pygame.sprite.Sprite):
             final_box_height = 200
         elif isinstance(self.mod, RandomBlaster):
             final_box_width = 400
+            final_box_height = 200
+        elif isinstance(self.mod, BonePatternMiddle):
+            final_box_width = 400
+            final_box_height = 200
+        elif isinstance(self.mod, BonePatternSideway):
+            final_box_width = 200
             final_box_height = 200
         elif isinstance(self.mod, BlasterCircle):
             final_box_width = 200
