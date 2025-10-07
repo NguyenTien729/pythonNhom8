@@ -24,7 +24,7 @@ class BonePatternSideway:
         self.box_rect = box_rect
         self.player = player
 
-        self.bone_image = pygame.image.load("graphics/Sprites/bones/bone_sideway.png").convert_alpha()
+        self.bone_image = pygame.image.load("graphics/sprites/bones/bone_sideway.png").convert_alpha()
         self.bone_mask = pygame.mask.from_surface(self.bone_image)
         self.bones = pygame.sprite.Group()
 
@@ -43,9 +43,6 @@ class BonePatternSideway:
         speed = 4
         bone = Bone(self.bone_image, (x, y), speed, direction, self.box_rect)
         self.bones.add(bone)
-
-
- 
 
     def update(self, dt):
         #update timer cho xương

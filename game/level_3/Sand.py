@@ -213,7 +213,8 @@ class CallBoss(pygame.sprite.Sprite):
             return
         
         if isinstance(self.mod, BonePatternMiddle):
-            self.mod.rect_box(box_rect)
+            if self.mod.box_rect != box_rect:
+                self.mod.rect_box(box_rect)
 
         if isinstance(self.mod, BonePatternSideway):
             self.mod.rect_box(box_rect)
@@ -228,6 +229,8 @@ class CallBoss(pygame.sprite.Sprite):
                 stab.draw()
 
             self.screen.set_clip(None)
+
+
 
         #gọi gravity
         if isinstance(self.mod, GravityBone) or isinstance(self.mod, BlasterFloor) or isinstance(self.mod, BonePatternMiddle):
@@ -279,9 +282,6 @@ class CallBoss(pygame.sprite.Sprite):
             final_box_width = 400
             final_box_height = 200
         elif isinstance(self.mod, RandomBlaster):
-            final_box_width = 400
-            final_box_height = 200
-        elif isinstance(self.mod, BonePatternMiddle):
             final_box_width = 400
             final_box_height = 200
         elif isinstance(self.mod, BonePatternSideway):

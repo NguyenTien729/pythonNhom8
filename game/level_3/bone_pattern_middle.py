@@ -1,9 +1,6 @@
 import pygame
-import random
-
 
 class Bone(pygame.sprite.Sprite):
-    """Một xương di chuyển dọc trong arena."""
     def __init__(self, image, start_pos, speed, direction, arena_rect):
         super().__init__()
         self.image = image
@@ -15,77 +12,152 @@ class Bone(pygame.sprite.Sprite):
 
     def update(self, dt):
         self.rect.y += self.speed * self.direction * dt * 60
-
-        # Nếu ra khỏi box, xóa xương để tránh quá tải
         if self.rect.top > self.arena_rect.bottom + 10 or self.rect.bottom < self.arena_rect.top - 10:
             self.kill()
 
 
 class BonePatternMiddle:
-    """3 cột xương chạy dọc (giữa lên, hai bên xuống)."""
-    bone_delay = 0.4  # delay giữa các xương trong cùng 1 cột
+    bone_delay = 0.4
 
-    def __init__(self, screen, box_rect, player):
+    def __init__(self, screen, box_rect, players, floors):
         self.screen = screen
         self.box_rect = box_rect
-        self.player = player
+        self.player = players
+        self.floor = floors
 
         # Load sprite xương
-        self.bone_image = pygame.image.load("graphics/Sprites/bones/bone.png").convert_alpha()
+        self.bone_image = pygame.image.load("graphics/Sprites/bones/spr_s_boneloop_0.png").convert_alpha()
         self.bone_mask = pygame.mask.from_surface(self.bone_image)
-
-        # Nhóm sprite chứa tất cả xương
         self.bones = pygame.sprite.Group()
-
-        # Vị trí x cho 3 cột
-        self.spawn_x_positions = [400, 500, 600]
+        #bonefloor
+        self.floor_bones = pygame.sprite.Group()
+        self.floor_bone_image = pygame.image.load("graphics/sprites/bones/spr_s_boneloop_0.png").convert_alpha()
 
         # Hướng di chuyển tương ứng: ngoài ↓, giữa ↑, ngoài ↓
+        self.spawn_x_positions = [500, 600, 700]
         self.directions = [1, -1, 1]
-
-        # Bộ đếm thời gian riêng cho từng cột
         self.column_timers = [0, 0, 0]
 
-        # Âm thanh spawn (tùy chọn)
-        self.spawn_sound = pygame.mixer.Sound("sound/sans_battle/undertale-impact-slam.mp3")
+        self.floor_spawned = False
+
+        self.floor_image = "graphics/sprites/bones/floor1.png"
+        self.has_spawned_floor = False
+        self.floor_direction = "left"
+        self.floor_timer = 0
+        self.floor_delay = 0.4
 
     def spawn_bone(self, x, direction):
-        """Sinh 1 xương tại cột cụ thể."""
-        if direction == 1:  # đi xuống
+        if direction == 1:
             y = self.box_rect.top - 20
-        else:  # đi lên
+        else:
             y = self.box_rect.bottom + 20
-
         speed = 4
         bone = Bone(self.bone_image, (x, y), speed, direction, self.box_rect)
         self.bones.add(bone)
-        self.spawn_sound.play()
+        # self.spawn_sound.play()
+
+    def spawn_floor(self):
+        self.floor.create_floor(1, 1, self.screen, (290, 400), self.floor_direction, speed=2.5, sprite_prefix=self.floor_image)
+
+    def spawn_floor_bones(self):
+        if self.floor_spawned:
+            return
+
+        start_y = self.box_rect.bottom
+        image = self.floor_bone_image
+        x = self.box_rect.left
+
+        #lấp đầy box bằng bone tạo thành floor
+        while x < self.box_rect.right + 100:
+            bone = MovingFloorBone(image, (x + 20, start_y), 2, self.box_rect, self.floor_bones)
+            self.floor_bones.add(bone)
+            x += 20
+        self.floor_spawned = True
 
     def update(self, dt):
-        """Cập nhật tất cả logic."""
-        # Cập nhật timer cho từng cột và spawn xương
+        self.floor_timer += dt
+
+        self.screen.set_clip(self.box_rect)
+
+        #bone floor
+        self.spawn_floor_bones()
+        if self.floor_timer >= self.floor_delay:
+            self.floor_bones.update(dt)
+
+        #update timer cho xương
         for i in range(3):
             self.column_timers[i] += dt
             if self.column_timers[i] >= self.bone_delay:
                 self.spawn_bone(self.spawn_x_positions[i], self.directions[i])
                 self.column_timers[i] = 0
-
-        # Cập nhật vị trí xương
         self.bones.update(dt)
-
-        # Vẽ xương
         for bone in self.bones:
             if self.box_rect.colliderect(bone.rect):
                 self.screen.blit(bone.image, bone.rect)
 
+        #vẽ floor
+        if not self.has_spawned_floor:
+            if self.floor_timer >= self.floor_delay:
+                self.spawn_floor()
+                #vị trí player khi vào màn
+                self.player.rect.centerx = 290
+                self.player.rect.centery = 390
+                self.player.is_on_ground = True
+                self.has_spawned_floor = True
+
         # Kiểm tra va chạm pixel-perfect
+        for floor in self.floor_bones:
+            self.screen.blit(floor.image, floor.rect)
+        #hitbox
         player_mask = pygame.mask.from_surface(self.player.image)
         for bone in self.bones:
             offset = (bone.rect.x - self.player.rect.x, bone.rect.y - self.player.rect.y)
             if player_mask.overlap(bone.mask, offset):
                 self.player.damaged(5)
                 break
+        for floor in self.floor_bones:
+            offset = (floor.rect.x - self.player.rect.x, floor.rect.y - self.player.rect.y)
+            if player_mask.overlap(floor.mask, offset):
+                self.player.damaged(5)
+                break
 
-    def rect_box(self, rect):
-        """Cập nhật lại vùng box khi thay đổi."""
+        self.screen.set_clip(None)
+
+    #reset nếu có gọi lại
+    def reset(self):
+        self.has_spawned_floor = False
+        self.floor_timer = 0
+        self.bones.empty()
+        self.column_timers = [0, 0, 0]
+
+    def rect_box(self, rect, reset_spawn=False):
+        # chỉ reset khi thực sự muốn
         self.box_rect = rect
+        if reset_spawn:
+            self.floor_spawned = False
+            self.has_spawned_floor = False
+
+class MovingFloorBone(pygame.sprite.Sprite):
+    def __init__(self, image, start_pos, speed, box_rect, group):
+        super().__init__()
+        self.image = image
+        self.rect = self.image.get_rect(midtop=start_pos)
+        self.speed = speed
+        self.box_rect = box_rect
+        self.mask = pygame.mask.from_surface(self.image)
+
+        self.y = start_pos[1]
+        self.group = group
+        self.bone_width = image.get_width()
+
+    def update(self, dt):
+        #speed floor bone
+        self.rect.x += self.speed * dt * 60
+        self.rect.centery = self.y
+
+        # Nếu bone ra ngoài hoàn toàn
+        if self.rect.left >= self.box_rect.right + 50:
+            # tìm bone ngoài cùng bên trái
+            leftmost = min(self.group, key=lambda b: b.rect.left)
+            # đặt bone này ngay sau bone bên trái (liền mạch)
+            self.rect.left = leftmost.rect.left - self.bone_width - 8
