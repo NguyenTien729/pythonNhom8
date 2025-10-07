@@ -39,9 +39,6 @@ class CallBoss(pygame.sprite.Sprite):
         self.face_idle = pygame.transform.scale_by(self.face_idle, 2.5)
 
         self.body_image = self.body_idle
-        self.idle_mask = pygame.mask.from_surface(self.body_idle)
-        self.idle_x = self.idle_mask.centroid()[0]
-        self.idle_y = self.idle_mask.centroid()[1]
         self.offset_x = 0.0
         self.offset_y = 0.0
 
@@ -78,7 +75,7 @@ class CallBoss(pygame.sprite.Sprite):
         self.body_y = 0
         self.face_y = 0
 
-
+        #khai gọi dạng tấn công
         self.blaster_floor = BlasterFloor(self.screen, self.player_rect, self.blasters, self.floors, 2)
 
         self.blaster_circle = BlasterCircle((500, 380), self.blasters, beam_width = self.beam_width)
@@ -99,6 +96,7 @@ class CallBoss(pygame.sprite.Sprite):
         self.attack_time = 8
         self.swap_time = 0
 
+    #dao động đầu và thân boss
     def wiggle_animation(self, dt: float):
         self.wiggle_time += dt
 
@@ -111,6 +109,7 @@ class CallBoss(pygame.sprite.Sprite):
             self.body_rect.centerx = int(self.body_x + offset_x * self.wiggle_amplitude_body)
             self.body_rect.centery = int(self.body_y + offset_y * self.wiggle_amplitude_body)
 
+    # đổi dạng tấn công
     def attack_mod(self):
         self.floors.destroy_all()
         self.blasters.destroy_all()
@@ -122,11 +121,12 @@ class CallBoss(pygame.sprite.Sprite):
 
     def animation(self, dt: float, player):
 
-        global offset_x
+        #animation cho gravitybone
         if isinstance(self.mod, GravityBone):
             current_time = self.mod.timer
             self.animation_timer += dt
 
+            #chỉ chạy 1 lần mỗi lần đổi gravity
             if self.mod.pull_start_time < current_time < self.mod.float_time:
                 if not self.animation_paused:
                     self.animation_timer = 0.0
@@ -153,14 +153,13 @@ class CallBoss(pygame.sprite.Sprite):
 
                 current_mask = pygame.mask.from_surface(self.body_image)
                 current_y = current_mask.centroid()[1]
+                #tính vị trí cổ dựa trên khoảng cách khác nhau của 2 ảnh gần nhất
                 if current_y != previous_y and player.gravity_direction == 'top':
                     self.offset_y = current_y - previous_y - 12
                 elif current_y != previous_y and player.gravity_direction == 'bottom':
                     self.offset_y = previous_y - current_y - 8
 
                 self.face_rect = self.face_idle.get_rect(midbottom=(self.body_rect.midtop[0] - 2, self.body_rect.centery + self.offset_y))
-
-                print(self.offset_y)
 
             elif player.gravity_direction in ['left', 'right']:
                 previous_mask = pygame.mask.from_surface(self.body_image)
@@ -176,6 +175,7 @@ class CallBoss(pygame.sprite.Sprite):
 
                 current_mask = pygame.mask.from_surface(self.body_image)
                 current_x = current_mask.centroid()[0]
+                #tính vị trí cổ dựa trên khoảng cách khác nhau của 2 ảnh gần nhất
                 if current_x != previous_x and player.gravity_direction == 'left':
                     self.offset_x = current_x - previous_x + 3
                 elif current_x != previous_x and player.gravity_direction == 'right':
@@ -194,6 +194,7 @@ class CallBoss(pygame.sprite.Sprite):
         self.body_y = self.body_rect.centery
         self.face_y = self.face_rect.centery
 
+    #vẽ boss
     def draw(self):
         if not isinstance(self.mod, GravityBone):
             self.screen.blit(self.legs_idle, self.leg_rect)
@@ -208,6 +209,7 @@ class CallBoss(pygame.sprite.Sprite):
             self.mod.rect_box(box_rect)
 
 
+        #cắt ảnh ngoài arena
         if isinstance(self.mod, GravityBone):
             self.mod.rect_box(box_rect)
             self.mod.bone_stab.update(dt)
@@ -218,6 +220,7 @@ class CallBoss(pygame.sprite.Sprite):
 
             self.screen.set_clip(None)
 
+        #gọi gravity
         if isinstance(self.mod, GravityBone) or isinstance(self.mod, BlasterFloor):
             player.set_gravity(True)
         else:
@@ -251,7 +254,7 @@ class CallBoss(pygame.sprite.Sprite):
                 self.attack_time = 0
                 self.change_mod = True
 
-
+        #hàm cập nhật vật thể
         self.floors.update()
         self.floors.draw(self.screen)
 

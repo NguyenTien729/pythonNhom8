@@ -8,7 +8,6 @@ class Beam:
         self.image = image.copy()
         self.rect = self.image.get_rect()
 
-        #Properties
         self.rotation = 0
         self.scale_x = 1.0
         self.scale_y = 1.0
@@ -92,30 +91,29 @@ class Projectile:
         if self.is_active:
             self.sprite.update()
 
-            # Pivot trong image CHƯA rotate (image gốc)
+            # pivot trong image chưa quay
             original_width = self.sprite.original_image.get_width() * self.sprite.scale_x * self.sprite.y_scale
             original_height = self.sprite.original_image.get_height() * self.sprite.scale_y
 
             pivot_x = original_width * self.sprite.pivot_x
             pivot_y = original_height * self.sprite.pivot_y
 
-            # Center của image gốc
+            # tâm ảnh gốc
             center_x = original_width / 2
             center_y = original_height / 2
 
-            # Offset từ center đến pivot (TRONG image space gốc)
+            #offset từ tâm với pivot
             offset = Vector2(pivot_x - center_x, pivot_y - center_y)
 
-            # Rotate offset vector CÙNG góc với image
+            # xoay offset cùng góc blaster
             rotated_offset = offset.rotate(self.sprite.rotation)
 
-            # World position của center = pivot world position - rotated offset
+            # tâm beam dựatreenn vị trí xoay
             if pivot_x <= 0.5:
                 rotated_image_center = Vector2(self.abs_x, self.abs_y) + rotated_offset
             else:
                 rotated_image_center = Vector2(self.abs_x, self.abs_y) - rotated_offset
 
-            # Blit
             final_rect = self.sprite.image.get_rect(center=rotated_image_center)
             surf.blit(self.sprite.image, final_rect)
 

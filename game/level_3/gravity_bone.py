@@ -34,6 +34,7 @@ class GravityBone:
     def update(self, dt):
         self.timer += dt
 
+        #hút mạnh khi mới vào đòn đánh
         if self.pull_start_time <= self.timer <= self.attack_time:
             self.player.gravity = self.strong_gravity
             self.player.gravity_direction = self.current_side
@@ -42,6 +43,7 @@ class GravityBone:
                 if not self.have_played:
                     self.slam_sound.play()
                     self.have_played = True
+        #cho phép player nhảy né
         elif self.attack_time <= self.timer < self.float_time:
             if not self.is_attack:
                 self.is_attack = True
@@ -55,6 +57,7 @@ class GravityBone:
             self.player.velocity.y = 0
             self.player.hold_jump_force = 0
 
+        #reset đòn
         if self.timer >= self.duration:
             self.timer = 0
             self.bone_stab.empty()

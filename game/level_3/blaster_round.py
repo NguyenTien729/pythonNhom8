@@ -2,12 +2,12 @@ import math
 
 import pygame
 from pygame import Vector2
-
+#hàm tính vị trí đích dựa trên việc xoay quanh 1 tâm
 def rotate_on_pivot(pivot, angle, origin):
     offset = pivot + (origin - pivot).rotate(-angle)
 
     return offset
-
+#góc bắn từ vị trí gọi đến đích
 def fire_vector(pivot: Vector2, pos: Vector2) -> float:
     vector = pivot - pos
     angle = math.degrees(math.atan2(vector.x, -vector.y)) + 180
@@ -47,8 +47,9 @@ class BlasterCircle:
         self.fire_sound = pygame.mixer.Sound("sound/sans_battle/gaster_round_fire.wav")
 
     def spawn_blaster(self):
+        #vị trí gọi
         spawn_pos = rotate_on_pivot(self.pivot, self.angle, self.pos_1)
-
+        #vị trí bay tới
         fire_pos = rotate_on_pivot(self.pivot, self.angle, self.pos_2)
         angle = fire_vector(self.pivot, fire_pos)
 

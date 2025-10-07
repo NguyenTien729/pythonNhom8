@@ -43,10 +43,11 @@ class BoneStab(pygame.sprite.Sprite):
 
     def pos_calculate(self):
         if self.side == 'left':
+            #khai báo ví trí gọi và đích của xương
             self.initial_pos.x = self.box_rect.left - self.rect.width / 2
             self.initial_pos.y = self.box_rect.centery
             self.target_pos = (self.box_rect.left - 20, self.box_rect.centery)
-
+            #vị trí vẽ cảnh báo
             self.warning_rect.height = self.box_rect.height
             self.warning_rect.width = self.height
             self.warning_rect.topleft = self.box_rect.topleft
@@ -85,6 +86,7 @@ class BoneStab(pygame.sprite.Sprite):
         self.rect.center = self.pos
 
     def update(self, dt: float):
+        #vẽ cảnh báo ban đầu và chuẩn bị tấn công
         if self.state == 0:
             if not self.have_played_warning:
                 self.warning_sound.play()
@@ -92,10 +94,10 @@ class BoneStab(pygame.sprite.Sprite):
             self.warning_timer -= dt
             if self.warning_timer <= 0:
                 self.state = 1
-
+        #bắt đầu đâm xương lên
         elif self.state == 1:
             next_pos = self.pos + self.movement * self.speed * dt
-
+            #lấy vị trí dừng cuối của xương
             if self.movement.x > 0:
                 self.pos.x = min(next_pos.x, self.target_pos.x)
             elif self.movement.x < 0:
@@ -104,7 +106,7 @@ class BoneStab(pygame.sprite.Sprite):
                 self.pos.y = min(next_pos.y, self.target_pos.y)
             elif self.movement.y < 0:
                 self.pos.y = max(next_pos.y, self.target_pos.y)
-
+            #delay chờ rút xương về
             if self.pos == self.target_pos:
                 if not self.have_played_bone:
                     self.bone_sound.play()
@@ -113,7 +115,7 @@ class BoneStab(pygame.sprite.Sprite):
                 if self.delay_timer <= 0:
                     self.state = 2
             self.rect.center = self.pos
-
+        #rút xương
         elif self.state == 2:
             next_pos = self.pos - self.movement * self.speed * dt
 
