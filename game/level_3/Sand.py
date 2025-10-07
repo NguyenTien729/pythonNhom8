@@ -10,6 +10,8 @@ from game.level_3.blaster_round import BlasterCircle
 from game.level_3.blaster_floor import BlasterFloor
 from game.level_3.bone_pattern_middle import BonePatternMiddle
 from game.level_3.bone_pattern_sideway import BonePatternSideway
+from game.level_3.bone_parten_column import BonePatternColumn
+
 
 import pygame
 
@@ -89,8 +91,10 @@ class CallBoss(pygame.sprite.Sprite):
 
         self.bone_parten_sideway = BonePatternSideway(self.screen,self.box_rect,player)
 
-        self.attack_patterns = [self.blaster_floor, self.bone_parten_middle, self.blaster_random, self.blaster_circle, self.gravity_bone, self.bone_parten_sideway]
-        # self.attack_patterns = [self.bone_parten_sideway]
+        self.bone_parten_column = BonePatternColumn(self.screen,self.box_rect,player)
+
+        # self.attack_patterns = [self.blaster_floor, self.bone_parten_middle, self.blaster_random, self.blaster_circle, self.gravity_bone, self.bone_parten_sideway]
+        self.attack_patterns = [self.bone_parten_column]
         self.attack_index = 0
         self.mod = self.attack_patterns[self.attack_index]
         self.change_mod = False
@@ -214,6 +218,9 @@ class CallBoss(pygame.sprite.Sprite):
         if isinstance(self.mod, BonePatternSideway):
             self.mod.rect_box(box_rect)
 
+        if isinstance(self.mod, BonePatternColumn):
+            self.mod.rect_box(box_rect)
+
         #cắt ảnh ngoài arena
         if isinstance(self.mod, GravityBone):
             self.mod.rect_box(box_rect)
@@ -226,7 +233,7 @@ class CallBoss(pygame.sprite.Sprite):
             self.screen.set_clip(None)
 
         #gọi gravity
-        if isinstance(self.mod, GravityBone) or isinstance(self.mod, BlasterFloor):
+        if isinstance(self.mod, GravityBone) or isinstance(self.mod, BlasterFloor) or isinstance(self.mod, BonePatternColumn) :
             player.set_gravity(True)
         else:
             player.set_gravity(False)
@@ -284,6 +291,9 @@ class CallBoss(pygame.sprite.Sprite):
             final_box_height = 200
         elif isinstance(self.mod, GravityBone):
             final_box_width = 200
+            final_box_height = 200
+        elif isinstance(self.mod, GravityBone):
+            final_box_width = 400
             final_box_height = 200
         else:
             final_box_width = 400
