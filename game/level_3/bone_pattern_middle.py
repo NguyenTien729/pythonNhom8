@@ -22,7 +22,7 @@ class Bone(pygame.sprite.Sprite):
 
 
 class BonePatternMiddle:
-    """3 cột xương chạy dọc (giữa lên, hai bên xuống)."""
+    """3 cột xương chạy dọc (giữa lên, hai bên xuống) + 1 hàng xương ở dưới box."""
     bone_delay = 0.4  # delay giữa các xương trong cùng 1 cột
 
     def __init__(self, screen, box_rect, player):
@@ -37,20 +37,22 @@ class BonePatternMiddle:
         # Nhóm sprite chứa tất cả xương
         self.bones = pygame.sprite.Group()
 
+        # --- Hàng xương ngang ---
+        self.floor_bones = pygame.sprite.Group()
+        self.floor_image = pygame.image.load("graphics/Sprites/bones/bone_long1-export.png").convert_alpha()
+
+
         # Vị trí x cho 3 cột
         self.spawn_x_positions = [400, 500, 600]
-
-        # Hướng di chuyển tương ứng: ngoài ↓, giữa ↑, ngoài ↓
         self.directions = [1, -1, 1]
-
-        # Bộ đếm thời gian riêng cho từng cột
         self.column_timers = [0, 0, 0]
 
-        # Âm thanh spawn (tùy chọn)
         self.spawn_sound = pygame.mixer.Sound("sound/sans_battle/undertale-impact-slam.mp3")
 
+        self.floor_spawned = False  # chỉ spawn 1 lần
+
     def spawn_bone(self, x, direction):
-        """Sinh 1 xương tại cột cụ thể."""
+        """Sinh 1 xương dọc tại cột cụ thể."""
         if direction == 1:  # đi xuống
             y = self.box_rect.top - 20
         else:  # đi lên
@@ -61,9 +63,25 @@ class BonePatternMiddle:
         self.bones.add(bone)
         self.spawn_sound.play()
 
+    def spawn_floor_bones(self):
+        """Sinh hàng xương ngang ngay dưới arena box."""
+        if self.floor_spawned:
+            return  # tránh spawn trùng
+        floor_rect = self.floor_image.get_rect()
+        floor_rect.midtop = (self.box_rect.centerx, self.box_rect.bottom-35)  # ngay dưới box
+        floor = pygame.sprite.Sprite()
+        floor.image = self.floor_image
+        floor.rect = floor_rect
+        floor.mask = pygame.mask.from_surface(self.floor_image)
+        self.floor_bones.add(floor)
+        self.floor_spawned = True
+
     def update(self, dt):
         """Cập nhật tất cả logic."""
-        # Cập nhật timer cho từng cột và spawn xương
+        # Spawn hàng xương ngang (chỉ 1 lần)
+        self.spawn_floor_bones()
+
+        # Cập nhật timer cho từng cột và spawn xương dọc
         for i in range(3):
             self.column_timers[i] += dt
             if self.column_timers[i] >= self.bone_delay:
@@ -73,19 +91,33 @@ class BonePatternMiddle:
         # Cập nhật vị trí xương
         self.bones.update(dt)
 
-        # Vẽ xương
+        # Vẽ xương dọc
         for bone in self.bones:
             if self.box_rect.colliderect(bone.rect):
                 self.screen.blit(bone.image, bone.rect)
 
+        # Vẽ hàng xương ngang
+        for floor in self.floor_bones:
+            self.screen.blit(floor.image, floor.rect)
+
         # Kiểm tra va chạm pixel-perfect
         player_mask = pygame.mask.from_surface(self.player.image)
+
+        # Va chạm với xương dọc
         for bone in self.bones:
             offset = (bone.rect.x - self.player.rect.x, bone.rect.y - self.player.rect.y)
             if player_mask.overlap(bone.mask, offset):
                 self.player.damaged(5)
                 break
 
+        # Va chạm với hàng xương ngang
+        for floor in self.floor_bones:
+            offset = (floor.rect.x - self.player.rect.x, floor.rect.y - self.player.rect.y)
+            if player_mask.overlap(floor.mask, offset):
+                self.player.damaged(5)
+                break
+
     def rect_box(self, rect):
         """Cập nhật lại vùng box khi thay đổi."""
         self.box_rect = rect
+        self.floor_spawned = False  # để spawn lại nếu box thay đổi
