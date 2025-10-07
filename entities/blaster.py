@@ -75,7 +75,6 @@ class GasterBlaster(pygame.sprite.Sprite):
         if self.fire_sound:
             self.fire_sound.play()
 
-        #unknown
         self.calculate_beam_position()
         self.beam.blasters = True
 
@@ -86,8 +85,6 @@ class GasterBlaster(pygame.sprite.Sprite):
         distance = -44 * self.y_scale
         dx = distance * math.sin(math.radians(self.sprite_rotation))
         dy = -distance * math.cos(math.radians(self.sprite_rotation))
-
-        # beam_last_pos = blaster_center + moved_pos
 
         self.beam.move(dx, dy)
 
@@ -142,7 +139,7 @@ class GasterBlaster(pygame.sprite.Sprite):
             self.sprite_rotation = self.do_rotation
 
         if self.beam:
-            #lock beam
+            #khóa beam
             if not self.beam_frozen and (self.x < -100 or self.x > 1100 or self.y < -100 or self.y > 700):
                 self.beam_frozen = True
 
@@ -153,11 +150,11 @@ class GasterBlaster(pygame.sprite.Sprite):
                     self.beam.sprite.x_scale = max(0, self.beam.sprite.x_scale - 0.1 * self.x_scale)
                     self.beam.sprite.alpha = max(0, self.beam.sprite.alpha - 0.25 * (self.beam_alpha_speed / 0.125))
             else:
-                # FROZEN
+                # beam ko bay ra khỏi màn
                 self.beam.sprite.alpha = max(0, int(self.beam.sprite.alpha - 5 * (self.beam_alpha_speed / 0.125)))
                 self.beam.sprite.x_scale = max(0, self.beam.sprite.x_scale - 0.1 * self.x_scale)
 
-            # destroy
+            #xóa nếu như beam biến mất
             if self.beam.sprite.alpha <= 0 or self.beam.sprite.x_scale <= 0:
                 self.destroy()
                 return
@@ -165,7 +162,7 @@ class GasterBlaster(pygame.sprite.Sprite):
         self.image = pygame.transform.rotate(self.sprite, -self.sprite_rotation)
         self.rect = self.image.get_rect(center=(self.x, self.y))
 
-        #set animation
+        #cập nhật animation theo thời gian
         self.update_position(self.x, self.y)
         if self.update_timer == self.shoot_delay - 12:
             self.set("1")
