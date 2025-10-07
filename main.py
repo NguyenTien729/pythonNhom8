@@ -132,17 +132,7 @@ while True:
 
         # hitbox
         player_mask = pygame.mask.from_surface(player.image)
-        #bonewave
-        # screen.blit(bone_surf, bone_rect)
-        # # screen.blit(bone_surf2, bone_rect2)
-        # bone_rect.x -= bone_speed
-        # # bone_rect2.x -= bone_speed
-        # offset1 = (bone_rect.x - player.rect.x, bone_rect.y - player.rect.y)
-        # if player_mask.overlap(bone_mask, offset1):
-        #     player.damaged(5)
-        # # offset2 = (bone_rect2.x - player.rect.x, bone_rect2.y - player.rect.y)
-        # # if player_mask.overlap(bone_mask2, offset2):
-        # #     player.damaged(5)
+  
         
         #blaster
         for blaster in blasters.blasters:
