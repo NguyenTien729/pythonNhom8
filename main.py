@@ -8,6 +8,7 @@ from entities.stand_floor import MultiFloor
 from game.level_3.Sand import CallBoss
 from game.player.player import Player
 
+
 pygame.init()
 screen_width, screen_height = 1000, 600
 screen = pygame.display.set_mode((screen_width, screen_height))
@@ -52,12 +53,12 @@ player = Player(500, 470)
 # enermy
 
 
-bone_surf = pygame.image.load('graphics/Sprites/bones/wavy_bone_down.png').convert_alpha()
-bone_rect = bone_surf.get_rect(topleft=(1000, 285))
-bone_mask = pygame.mask.from_surface(bone_surf)
-bone_surf2 = pygame.image.load('graphics/Sprites/bones/wavy_bone_up.png').convert_alpha()
-bone_rect2 = bone_surf2.get_rect(topleft=(1000, 360))
-bone_mask2 = pygame.mask.from_surface(bone_surf2)
+# bone_surf = pygame.image.load('graphics/Sprites/bones/wavy_bone_down.png').convert_alpha()
+# bone_rect = bone_surf.get_rect(topleft=(1000, 285))
+# bone_mask = pygame.mask.from_surface(bone_surf)
+# bone_surf2 = pygame.image.load('graphics/Sprites/bones/wavy_bone_up.png').convert_alpha()
+# bone_rect2 = bone_surf2.get_rect(topleft=(1000, 360))
+# bone_mask2 = pygame.mask.from_surface(bone_surf2)
 
 bone_speed = 10
 
@@ -126,22 +127,22 @@ while True:
         # blaster_spawner.pivot = center
 
         boss_lv_3.update(dt, box_rect, player)
-        if bone_rect.colliderect(player.rect):
-            player.damaged(5)
+        # if bone_rect.colliderect(player.rect):
+        #     player.damaged(5)
 
         # hitbox
         player_mask = pygame.mask.from_surface(player.image)
         #bonewave
         # screen.blit(bone_surf, bone_rect)
-        # screen.blit(bone_surf2, bone_rect2)
+        # # screen.blit(bone_surf2, bone_rect2)
         # bone_rect.x -= bone_speed
-        # bone_rect2.x -= bone_speed
+        # # bone_rect2.x -= bone_speed
         # offset1 = (bone_rect.x - player.rect.x, bone_rect.y - player.rect.y)
         # if player_mask.overlap(bone_mask, offset1):
         #     player.damaged(5)
-        # offset2 = (bone_rect2.x - player.rect.x, bone_rect2.y - player.rect.y)
-        # if player_mask.overlap(bone_mask2, offset2):
-        #     player.damaged(5)
+        # # offset2 = (bone_rect2.x - player.rect.x, bone_rect2.y - player.rect.y)
+        # # if player_mask.overlap(bone_mask2, offset2):
+        # #     player.damaged(5)
         
         #blaster
         for blaster in blasters.blasters:

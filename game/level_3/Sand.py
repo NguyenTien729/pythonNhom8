@@ -8,6 +8,7 @@ from game.level_3.gravity_bone import GravityBone
 from game.level_3.random_blaster import RandomBlaster
 from game.level_3.blaster_round import BlasterCircle
 from game.level_3.blaster_floor import BlasterFloor
+from game.level_3.bone_pattern_middle import BonePatternMiddle
 
 import pygame
 
@@ -23,6 +24,7 @@ class CallBoss(pygame.sprite.Sprite):
         self.player_rect = player_rect
         self.center = Vector2(self.player_rect.center)
         self.start_time = pygame.time.get_ticks()
+        
 
         self.blasters = blasters
         self.floors = floors
@@ -85,8 +87,11 @@ class CallBoss(pygame.sprite.Sprite):
 
         self.gravity_bone = GravityBone(self.screen, 100, 1, player, player_rect,self.box_rect)
 
-        self.attack_patterns = [self.blaster_floor, self.blaster_random, self.blaster_circle, self.gravity_bone]
-        self.attack_index = 2
+        self.bone_parten_middle = BonePatternMiddle(self.screen,self.box_rect,player)
+
+        # self.attack_patterns = [self.blaster_floor, self.bone_parten_middle, self.blaster_random, self.blaster_circle, self.gravity_bone]
+        self.attack_patterns = [self.bone_parten_middle]
+        self.attack_index = 0
         self.mod = self.attack_patterns[self.attack_index]
         self.change_mod = False
         self.is_win = False
@@ -198,6 +203,10 @@ class CallBoss(pygame.sprite.Sprite):
     def update(self, dt: float, box_rect: pygame.Rect, player):
         if self.is_win:
             return
+        
+        if isinstance(self.mod, BonePatternMiddle):
+            self.mod.rect_box(box_rect)
+
 
         if isinstance(self.mod, GravityBone):
             self.mod.rect_box(box_rect)
