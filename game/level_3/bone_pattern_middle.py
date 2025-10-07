@@ -54,7 +54,7 @@ class BonePatternMiddle:
         if self.floor_spawned:
             return  
         floor_rect = self.floor_image.get_rect()
-        floor_rect.midtop = (self.box_rect.centerx, self.box_rect.bottom-25)  
+        floor_rect.midtop = (self.box_rect.centerx, self.box_rect.bottom-35)  
         floor = pygame.sprite.Sprite()
         floor.image = self.floor_image
         floor.rect = floor_rect
