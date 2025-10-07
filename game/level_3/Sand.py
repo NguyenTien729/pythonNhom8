@@ -5,6 +5,7 @@ from pygame import Vector2
 from entities.blaster import MultiBlaster
 from entities.stand_floor import MultiFloor
 from game.level_3.gravity_bone import GravityBone
+from game.level_3.more_bone_floor import MoreBoneFloor
 from game.level_3.random_blaster import RandomBlaster
 from game.level_3.blaster_round import BlasterCircle
 from game.level_3.blaster_floor import BlasterFloor
@@ -79,7 +80,7 @@ class CallBoss(pygame.sprite.Sprite):
         #khai gọi dạng tấn công
         self.blaster_floor = BlasterFloor(self.screen, self.player_rect, self.blasters, self.floors, 2)
 
-        self.blaster_circle = BlasterCircle((500, 380), self.blasters, beam_width = self.beam_width)
+        self.blaster_circle = BlasterCircle((500, 380), self.blasters, beam_width = 1)
 
         self.blaster_random = RandomBlaster(self.center,  750, 250, 230, 530, self.blasters)
 
@@ -89,8 +90,10 @@ class CallBoss(pygame.sprite.Sprite):
 
         self.bone_parten_sideway = BonePatternSideway(self.screen,self.box_rect,player)
 
-        self.attack_patterns = [self.blaster_floor, self.bone_parten_middle, self.blaster_random, self.blaster_circle, self.gravity_bone, self.bone_parten_sideway]
-        # self.attack_patterns = [self.bone_parten_sideway]
+        self.more_bone_floor = MoreBoneFloor(self.screen, self.box_rect, player, self.floors)
+
+        # self.attack_patterns = [self.blaster_floor, self.bone_parten_middle, self.blaster_random, self.blaster_circle, self.gravity_bone, self.more_bone_floor ,self.bone_parten_sideway]
+        self.attack_patterns = [self.more_bone_floor]
         self.attack_index = 0
         self.mod = self.attack_patterns[self.attack_index]
         self.change_mod = False
@@ -216,7 +219,7 @@ class CallBoss(pygame.sprite.Sprite):
             if self.mod.box_rect != box_rect:
                 self.mod.rect_box(box_rect)
 
-        if isinstance(self.mod, BonePatternSideway):
+        if isinstance(self.mod, BonePatternSideway) or isinstance(self.mod, MoreBoneFloor):
             self.mod.rect_box(box_rect)
 
         #cắt ảnh ngoài arena
@@ -233,7 +236,7 @@ class CallBoss(pygame.sprite.Sprite):
 
 
         #gọi gravity
-        if isinstance(self.mod, GravityBone) or isinstance(self.mod, BlasterFloor) or isinstance(self.mod, BonePatternMiddle):
+        if isinstance(self.mod, GravityBone) or isinstance(self.mod, BlasterFloor) or isinstance(self.mod, BonePatternMiddle) or isinstance(self.mod, MoreBoneFloor):
             player.set_gravity(True)
         else:
             player.set_gravity(False)
@@ -296,6 +299,9 @@ class CallBoss(pygame.sprite.Sprite):
         elif isinstance(self.mod, BonePatternMiddle):
             final_box_width = 500
             final_box_height = 200
+        elif isinstance(self.mod, MoreBoneFloor):
+            final_box_width = 500
+            final_box_height = 175
         else:
             final_box_width = 400
             final_box_height = 200
