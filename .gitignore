@@ -1,0 +1,10 @@
+# Thư mục cache Python
+__pycache__/
+
+# Các file biên dịch (compiled files)
+*.pyc
+
+# Virtual environments (Môi trường ảo)
+.venv/
+venv/
+env/
