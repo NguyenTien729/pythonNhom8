@@ -20,7 +20,7 @@ class Player(pygame.sprite.Sprite):
         self.center = Vector2(self.rect.center)
 
         self.speed = 5
-        self.gravity = 1
+        self.gravity = 1.25
         self.gravity_direction = 'bottom'
         self.velocity = Vector2(0, 0)
         self.acceleration = Vector2(0, 0)

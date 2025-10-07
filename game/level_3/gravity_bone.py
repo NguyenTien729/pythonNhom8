@@ -49,7 +49,7 @@ class GravityBone:
                 self.is_attack = True
                 self.player.gravity = self.default_gravity
                 self.player.hold_jump_force = 2.15
-                bone_stab = BoneStab(self.screen, self.box_rect, self.current_side, 30, 250)
+                bone_stab = BoneStab(self.screen, self.box_rect, self.current_side, 30, 250, self.player)
                 self.bone_stab.add(bone_stab)
         elif self.float_time <= self.timer:
             self.player.gravity = 0

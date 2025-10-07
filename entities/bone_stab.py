@@ -3,13 +3,14 @@ from pygame import Vector2
 
 
 class BoneStab(pygame.sprite.Sprite):
-    def __init__(self, screen, box_rect, side: str, height, speed):
+    def __init__(self, screen, box_rect, side: str, height, speed, player):
         super().__init__()
         self.screen = screen
         self.box_rect = box_rect
         self.side = side
         self.height = height
         self.speed = speed
+        self.player = player
 
         self.image_wide = pygame.image.load('graphics/sprites/bones/spr_s_bonestab_v_wide_0.png')
         self.image_tall = pygame.image.load('graphics/sprites/bones/spr_s_bonestab_h_tall_0.png')
@@ -133,6 +134,13 @@ class BoneStab(pygame.sprite.Sprite):
             self.rect.center = self.pos
             self.have_played_bone = False
             self.have_played_warning = False
+
+        if self.state in (1, 2):
+            bone_stab_mask = pygame.mask.from_surface(self.image)
+            player_mask = pygame.mask.from_surface(self.player.image)
+            offset = (self.player.rect.x - self.rect.x, self.player.rect.y - self.rect.y)
+            if bone_stab_mask.overlap(player_mask, offset):
+                self.player.damaged(5)
 
     def draw(self):
         if self.state == 0:
