@@ -57,7 +57,7 @@ class BonePatternMiddle:
         # self.spawn_sound.play() 
 
     def spawn_floor(self):
-        self.floor.create_floor(1, 1, self.screen, (290, 400), self.floor_direction, speed=2.5, sprite_prefix=self.floor_image)
+        self.floor.create_floor(1, 1, self.screen, (290, 410), self.floor_direction, speed=2.5, sprite_prefix=self.floor_image)
 
     def spawn_floor_bones(self):
         if self.floor_spawned:
@@ -100,7 +100,7 @@ class BonePatternMiddle:
                 self.spawn_floor()
                 #vị trí player khi vào màn
                 self.player.rect.centerx = 290
-                self.player.rect.centery = 390
+                self.player.rect.centery = 410
                 self.player.is_on_ground = True
                 self.has_spawned_floor = True
 
