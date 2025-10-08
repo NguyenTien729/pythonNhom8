@@ -33,13 +33,13 @@ class BonePatternMiddle:
         self.floor_bones = pygame.sprite.Group()
         self.floor_bone_image = pygame.image.load("graphics/sprites/bones/spr_s_boneloop_0.png").convert_alpha()
 
-        # Hướng di chuyển tương ứng: ngoài ↓, giữa ↑, ngoài ↓
+        # Hướng di chuyển + vị trí
         self.spawn_x_positions = [500, 600, 700]
         self.directions = [1, -1, 1]
         self.column_timers = [0, 0, 0]
 
+        # Floor
         self.floor_spawned = False
-
         self.floor_image = "graphics/sprites/bones/floor1.png"
         self.has_spawned_floor = False
         self.floor_direction = "left"
@@ -54,7 +54,7 @@ class BonePatternMiddle:
         speed = 4
         bone = Bone(self.bone_image, (x, y), speed, direction, self.box_rect)
         self.bones.add(bone)
-        # self.spawn_sound.play()
+        # self.spawn_sound.play() 
 
     def spawn_floor(self):
         self.floor.create_floor(1, 1, self.screen, (290, 410), self.floor_direction, speed=2.5, sprite_prefix=self.floor_image)
@@ -79,7 +79,6 @@ class BonePatternMiddle:
 
         self.screen.set_clip(self.box_rect)
 
-        #bone floor
         self.spawn_floor_bones()
         if self.floor_timer >= self.floor_delay:
             self.floor_bones.update(dt)
@@ -105,7 +104,7 @@ class BonePatternMiddle:
                 self.player.is_on_ground = True
                 self.has_spawned_floor = True
 
-        # Kiểm tra va chạm pixel-perfect
+        # Vẽ
         for floor in self.floor_bones:
             self.screen.blit(floor.image, floor.rect)
         #hitbox
