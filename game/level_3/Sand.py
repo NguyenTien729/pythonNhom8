@@ -3,6 +3,7 @@ import math
 from pygame import Vector2
 
 from entities.blaster import MultiBlaster
+from entities.bone_wave import BoneWave
 from entities.stand_floor import MultiFloor
 from game.level_3.gravity_bone import GravityBone
 from game.level_3.more_bone_floor import MoreBoneFloor
@@ -92,8 +93,10 @@ class CallBoss(pygame.sprite.Sprite):
 
         self.more_bone_floor = MoreBoneFloor(self.screen, self.blasters, player, self.floors)
 
+        self.bone_wave = BoneWave(self.screen, self.box_rect, player, 45)
+
         # self.attack_patterns = [self.blaster_floor, self.bone_parten_middle, self.blaster_random, self.blaster_circle, self.gravity_bone, self.bone_parten_sideway]
-        self.attack_patterns = [self.more_bone_floor]
+        self.attack_patterns = [self.bone_wave]
         self.attack_index = 0
         self.mod = self.attack_patterns[self.attack_index]
         self.change_mod = False
@@ -228,7 +231,7 @@ class CallBoss(pygame.sprite.Sprite):
             if self.mod.box_rect != box_rect:
                 self.mod.rect_box(box_rect)
 
-        if isinstance(self.mod, BonePatternSideway) or isinstance(self.mod, MoreBoneFloor):
+        if isinstance(self.mod, BonePatternSideway) or isinstance(self.mod, MoreBoneFloor) or isinstance(self.mod, BoneWave):
             self.mod.rect_box(box_rect)
 
         #cắt ảnh ngoài arena
@@ -312,6 +315,6 @@ class CallBoss(pygame.sprite.Sprite):
             final_box_width = 500
             final_box_height = 175
         else:
-            final_box_width = 400
-            final_box_height = 200
+            final_box_width = 1050
+            final_box_height = 130
         return final_box_width, final_box_height
