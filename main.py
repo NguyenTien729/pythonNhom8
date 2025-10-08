@@ -1,8 +1,6 @@
 import pygame
 from sys import exit
-
 from pygame import Vector2
-
 from entities.blaster import MultiBlaster
 from entities.stand_floor import MultiFloor
 from game.level_3.Sand import CallBoss
@@ -50,22 +48,11 @@ def draw_background(boxl, boxw):
 # Player
 player = Player(500, 470)
 
-# enermy
-
-
-# bone_surf = pygame.image.load('graphics/Sprites/bones/wavy_bone_down.png').convert_alpha()
-# bone_rect = bone_surf.get_rect(topleft=(1000, 285))
-# bone_mask = pygame.mask.from_surface(bone_surf)
-# bone_surf2 = pygame.image.load('graphics/Sprites/bones/wavy_bone_up.png').convert_alpha()
-# bone_rect2 = bone_surf2.get_rect(topleft=(1000, 360))
-# bone_mask2 = pygame.mask.from_surface(bone_surf2)
-
-bone_speed = 10
-
+# Enemy
 floors = MultiFloor()
 blasters = MultiBlaster()
 boss_lv_3 = CallBoss(screen, player, player.rect, blasters, floors)
-
+#base arena
 arena_width = 400
 arena_height = 200
 final_box_width = 400
@@ -74,8 +61,6 @@ final_box_height = 200
 def draw_health_bar(surface, x, y, current_hp, max_hp, width=40, height=25):
     ratio = current_hp / max_hp
     if ratio < 0: ratio = 0
-    # box_rect = pygame.Rect(0, 0, 1000, 600)
-    # pygame.draw.rect(surface, (0,0,0), box_rect)
     pygame.draw.rect(surface, (255, 255, 0), (x, y, width, height))
     pygame.draw.rect(surface, (255, 0, 0), (x, y, width * ratio, height))
     # HP text
@@ -124,17 +109,10 @@ while True:
       
         # Player
         center = Vector2(player.rect.center)
-        # blaster_spawner.pivot = center
-
         boss_lv_3.update(dt, box_rect, player)
-        # if bone_rect.colliderect(player.rect):
-        #     player.damaged(5)
 
-        # hitbox
+        # blaster chung 
         player_mask = pygame.mask.from_surface(player.image)
-  
-        
-        #blaster
         for blaster in blasters.blasters:
             if blaster.beam and blaster.beam.is_active:
                 beam_img = blaster.beam.sprite.image
