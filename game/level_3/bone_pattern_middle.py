@@ -40,7 +40,7 @@ class BonePatternMiddle:
 
         # Floor
         self.floor_spawned = False
-        self.floor_image = "graphics/sprites/bones/floor1.png"
+        self.floor_image = "graphics/sprites/bones/floor.png"
         self.has_spawned_floor = False
         self.floor_direction = "left"
         self.floor_timer = 0

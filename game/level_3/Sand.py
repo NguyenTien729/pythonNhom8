@@ -92,8 +92,8 @@ class CallBoss(pygame.sprite.Sprite):
 
         self.more_bone_floor = MoreBoneFloor(self.screen, self.blasters, player, self.floors)
 
-        # self.attack_patterns = [self.blaster_floor, self.bone_parten_middle, self.blaster_random, self.blaster_circle, self.gravity_bone, self.bone_parten_sideway]
-        self.attack_patterns = [self.more_bone_floor]
+        self.attack_patterns = [self.blaster_floor, self.bone_parten_middle, self.blaster_random, self.blaster_circle, self.gravity_bone, self.bone_parten_sideway]
+        # self.attack_patterns = [self.more_bone_floor]
         self.attack_index = 0
         self.mod = self.attack_patterns[self.attack_index]
         self.change_mod = False
