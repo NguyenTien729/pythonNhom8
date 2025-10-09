@@ -3,6 +3,7 @@ import math
 from pygame import Vector2
 
 from entities.blaster import MultiBlaster
+from entities.bone_wave import BoneWave
 from entities.stand_floor import MultiFloor
 from game.level_3.gravity_bone import GravityBone
 from game.level_3.more_bone_floor import MoreBoneFloor
@@ -228,7 +229,7 @@ class CallBoss(pygame.sprite.Sprite):
             if self.mod.box_rect != box_rect:
                 self.mod.rect_box(box_rect)
 
-        if isinstance(self.mod, BonePatternSideway) or isinstance(self.mod, MoreBoneFloor):
+        if isinstance(self.mod, BonePatternSideway) or isinstance(self.mod, MoreBoneFloor) or isinstance(self.mod, BoneWave):
             self.mod.rect_box(box_rect)
 
         #cắt ảnh ngoài arena
@@ -312,6 +313,6 @@ class CallBoss(pygame.sprite.Sprite):
             final_box_width = 500
             final_box_height = 175
         else:
-            final_box_width = 400
-            final_box_height = 200
+            final_box_width = 1050
+            final_box_height = 130
         return final_box_width, final_box_height

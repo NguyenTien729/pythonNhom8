@@ -12,19 +12,20 @@ class Bone(pygame.sprite.Sprite):
 
     def update(self, dt):
         self.rect.y += self.speed * self.direction * dt * 60
-        if self.rect.top > self.arena_rect.bottom + 10 or self.rect.bottom < self.arena_rect.top - 10:
+        if self.rect.top > 700 or self.rect.bottom < -100:
             self.kill()
 
 
 class BonePatternSideway:
-    bone_delay = 0.6  
+    bone_delay = 0.4
 
     def __init__(self, screen, box_rect, player):
         self.screen = screen
         self.box_rect = box_rect
         self.player = player
 
-        self.bone_image = pygame.image.load("graphics/sprites/bones/bone_sideway.png").convert_alpha()
+        self.bone_image = pygame.image.load("graphics/sprites/bones/bone_sideway_2.png").convert_alpha()
+
         self.bone_mask = pygame.mask.from_surface(self.bone_image)
         self.bones = pygame.sprite.Group()
 
@@ -37,10 +38,10 @@ class BonePatternSideway:
 
     def spawn_bone(self, x, direction):
         if direction == 1: 
-            y = self.box_rect.top - 20
+            y = -10
         else: 
-            y = self.box_rect.bottom + 20
-        speed = 4
+            y = 610
+        speed = 10
         bone = Bone(self.bone_image, (x, y), speed, direction, self.box_rect)
         self.bones.add(bone)
 
@@ -51,10 +52,10 @@ class BonePatternSideway:
             if self.column_timers[i] >= self.bone_delay:
                 self.spawn_bone(self.spawn_x_positions[i], self.directions[i])
                 self.column_timers[i] = 0
+
         self.bones.update(dt)
         for bone in self.bones:
-            if self.box_rect.colliderect(bone.rect):
-                self.screen.blit(bone.image, bone.rect)
+            self.screen.blit(bone.image, bone.rect)
 
         #hitbox
         player_mask = pygame.mask.from_surface(self.player.image)
