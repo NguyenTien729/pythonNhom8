@@ -13,10 +13,10 @@ from game.level_3.blaster_floor import BlasterFloor
 from game.level_3.bone_pattern_middle import BonePatternMiddle
 from game.level_3.bone_pattern_sideway import BonePatternSideway
 from game.level_3.blaster_opening import BlasterOpen
-
+from game.level_3.special_attack import SpecialAttack
 import pygame
 
-from game.level_3.special_attack import SpecialAttack
+
 
 
 class CallBoss(pygame.sprite.Sprite):
@@ -119,12 +119,11 @@ class CallBoss(pygame.sprite.Sprite):
         self.bone_parten_middle = BonePatternMiddle(self.screen, self.box_rect, player, self.floors)
         self.bone_parten_sideway = BonePatternSideway(self.screen, self.box_rect, player)
         self.more_bone_floor = MoreBoneFloor(self.screen, self.blasters, player, self.floors)
-
         self.blaster_opening = BlasterOpen(self.center,400,600,230,530, self.blasters)
 
         initial_box_rect = pygame.Rect(300, 285, 400, 200)
         self.special_attack = SpecialAttack(screen, initial_box_rect, player, self.player_rect, self.blasters)
-
+        #self.attack_patterns =[self.blaster_floor,self.blaster_circle,self.blaster_random,self.gravity_bone,self.bone_parten_middle,self.bone_parten_sideway,self.more_bone_floor,self.blaster_opening,self.special_attack]
         self.attack_patterns = [self.special_attack]
         self.attack_index = 0
         self.mod = self.attack_patterns[self.attack_index]
@@ -436,7 +435,7 @@ class CallBoss(pygame.sprite.Sprite):
         self.wiggle_animation(dt)
         self.draw()
 
-        # ✅ Vẽ flash effect SAU khi vẽ Sans (che toàn bộ màn hình)
+        #Vẽ flash effect SAU khi vẽ Sans (che toàn bộ màn hình)
         if isinstance(self.mod, SpecialAttack):
             flash_alpha = self.mod.get_flash()
             if flash_alpha > 0:
@@ -503,6 +502,9 @@ class CallBoss(pygame.sprite.Sprite):
                 final_box_width = 200
                 final_box_height = 200
             elif isinstance(self.mod, GravityBone):
+                final_box_width = 200
+                final_box_height = 200
+            elif isinstance(self.mod, BlasterOpen):
                 final_box_width = 200
                 final_box_height = 200
             elif isinstance(self.mod, BonePatternMiddle):
