@@ -15,6 +15,9 @@ from game.level_3.bone_pattern_sideway import BonePatternSideway
 
 import pygame
 
+from game.level_3.special_attack import SpecialAttack
+
+
 class CallBoss(pygame.sprite.Sprite):
     phase_time = 8
     change_phase_time = 2
@@ -27,12 +30,12 @@ class CallBoss(pygame.sprite.Sprite):
         self.player_rect = player_rect
         self.center = Vector2(self.player_rect.center)
         self.start_time = pygame.time.get_ticks()
-        
+
 
         self.blasters = blasters
         self.floors = floors
 
-        self.beam_width = 1
+        self.beam_width = 3
 
         self.legs_idle = pygame.image.load('graphics/characters/sans/spr_sansb_legs_0.png')
         self.legs_idle = pygame.transform.scale_by(self.legs_idle, 2.5)
@@ -78,6 +81,8 @@ class CallBoss(pygame.sprite.Sprite):
         self.body_y = 0
         self.face_y = 0
 
+        self.special_attack_active = False
+
         #khai gọi dạng tấn công
         self.blaster_floor = BlasterFloor(self.screen, self.player_rect, self.blasters, self.floors, 2)
 
@@ -95,8 +100,11 @@ class CallBoss(pygame.sprite.Sprite):
 
         self.bone_wave = BoneWave(self.screen, self.box_rect, player, 45)
 
+        initial_box_rect = pygame.Rect(300, 285, 400, 200)
+        self.special_attack = SpecialAttack(screen, initial_box_rect, player, self.player_rect, self.blasters)
+
         # self.attack_patterns = [self.blaster_floor, self.bone_parten_middle, self.blaster_random, self.blaster_circle, self.gravity_bone, self.bone_parten_sideway]
-        self.attack_patterns = [self.bone_wave]
+        self.attack_patterns = [self.special_attack]
         self.attack_index = 0
         self.mod = self.attack_patterns[self.attack_index]
         self.change_mod = False
@@ -127,6 +135,9 @@ class CallBoss(pygame.sprite.Sprite):
         self.blasters.destroy_all()
         self.attack_index = (self.attack_index + 1) % len(self.attack_patterns)
         self.mod = self.attack_patterns[self.attack_index]
+
+        if hasattr(self.mod, 'start'):
+            self.mod.start()
 
         #reset bone_pattern_middle
         if hasattr(self.mod, 'reset'):
@@ -226,13 +237,14 @@ class CallBoss(pygame.sprite.Sprite):
             self.sound.fadeout(1000)
             self.has_played = False
             return
-        
+
         if isinstance(self.mod, BonePatternMiddle):
             if self.mod.box_rect != box_rect:
                 self.mod.rect_box(box_rect)
 
         if isinstance(self.mod, BonePatternSideway) or isinstance(self.mod, MoreBoneFloor) or isinstance(self.mod, BoneWave):
             self.mod.rect_box(box_rect)
+
 
         #cắt ảnh ngoài arena
         if isinstance(self.mod, GravityBone):
@@ -245,18 +257,19 @@ class CallBoss(pygame.sprite.Sprite):
 
             self.screen.set_clip(None)
 
-
+        self.special_attack.draw(self.box_rect)
 
         #gọi gravity
-        if isinstance(self.mod, GravityBone) or isinstance(self.mod, BlasterFloor) or isinstance(self.mod, BonePatternMiddle) or isinstance(self.mod, MoreBoneFloor):
-            player.set_gravity(True)
-        else:
-            player.set_gravity(False)
+        if not isinstance(self.mod, SpecialAttack):
+            if isinstance(self.mod, GravityBone) or isinstance(self.mod, BlasterFloor) or isinstance(self.mod, BonePatternMiddle) or isinstance(self.mod, MoreBoneFloor):
+                player.set_gravity(True)
+            else:
+                player.set_gravity(False)
 
-        if not isinstance(self.mod, GravityBone):
-            player.change_gravity_direction('bottom')
-            player.gravity = 1.25
-            player.hold_jump_force = 2.25
+            if not isinstance(self.mod, GravityBone):
+                player.change_gravity_direction('bottom')
+                player.gravity = 1.25
+                player.hold_jump_force = 2.25
 
         self.box_rect = box_rect
         self.center = Vector2(self.box_rect.center)
@@ -265,7 +278,20 @@ class CallBoss(pygame.sprite.Sprite):
         self.wiggle_animation(dt)
         self.draw()
 
+        # ✅ Vẽ flash effect SAU khi vẽ Sans (che toàn bộ màn hình)
+        if isinstance(self.mod, SpecialAttack):
+            flash_alpha = self.mod.get_flash()
+            if flash_alpha > 0:
+                flash_surface = pygame.Surface(self.screen.get_size())
+                flash_surface.fill((0, 0, 0))
+                flash_surface.set_alpha(flash_alpha)
+                self.screen.blit(flash_surface, (0, 0))
+
         self.blaster_random.pivot = Vector2(self.player_rect.center)
+
+        if isinstance(self.mod, SpecialAttack):
+            self.special_attack_active = self.mod.is_active
+
         #đổi dạng attack
         if self.change_mod:
             self.swap_time += dt
@@ -276,12 +302,25 @@ class CallBoss(pygame.sprite.Sprite):
                 self.attack_mod()
 
         else:
-            self.mod.update(dt)
-            #thời gian cho 1 attack
-            self.attack_time += dt
-            if self.attack_time >= self.phase_time:
-                self.attack_time = 0
-                self.change_mod = True
+            if isinstance(self.mod, SpecialAttack):
+                self.mod.update(dt, box_rect)
+
+                # QUAN TRỌNG: Không đếm thời gian khi SpecialAttack đang chạy
+                # Chỉ chuyển khi SpecialAttack kết thúc
+                if not self.mod.is_active:
+                    self.attack_time += dt
+                    if self.attack_time >= 1.0:  # Delay nhỏ sau khi kết thúc
+                        self.attack_time = 0
+                        self.change_mod = True
+                # Nếu vẫn đang active, không làm gì cả
+
+            else:
+                self.mod.update(dt)
+                # Thời gian cho các attack khác
+                self.attack_time += dt
+                if self.attack_time >= self.phase_time:
+                    self.attack_time = 0
+                    self.change_mod = True
 
         change_floor_direction = isinstance(self.mod, BonePatternMiddle)
 
@@ -293,28 +332,37 @@ class CallBoss(pygame.sprite.Sprite):
         self.blasters.draw(self.screen)
 
     def arena_state(self):
-        if isinstance(self.mod, BlasterFloor):
-            final_box_width = 400
-            final_box_height = 200
-        elif isinstance(self.mod, RandomBlaster):
-            final_box_width = 400
-            final_box_height = 200
-        elif isinstance(self.mod, BonePatternSideway):
-            final_box_width = 200
-            final_box_height = 200
-        elif isinstance(self.mod, BlasterCircle):
-            final_box_width = 200
-            final_box_height = 200
-        elif isinstance(self.mod, GravityBone):
-            final_box_width = 200
-            final_box_height = 200
-        elif isinstance(self.mod, BonePatternMiddle):
-            final_box_width = 500
-            final_box_height = 200
-        elif isinstance(self.mod, MoreBoneFloor):
-            final_box_width = 500
-            final_box_height = 175
+        if isinstance(self.mod, SpecialAttack) and self.mod.is_active:
+            # Lấy thẳng mục tiêu từ SpecialAttack
+            final_box_width, final_box_height, final_box_x, final_box_y = self.mod.arena_state()
+            return final_box_width, final_box_height, final_box_x, final_box_y
         else:
-            final_box_width = 1050
-            final_box_height = 130
-        return final_box_width, final_box_height
+            if isinstance(self.mod, BlasterFloor):
+                final_box_width = 400
+                final_box_height = 200
+            elif isinstance(self.mod, RandomBlaster):
+                final_box_width = 400
+                final_box_height = 200
+            elif isinstance(self.mod, BonePatternSideway):
+                final_box_width = 200
+                final_box_height = 200
+            elif isinstance(self.mod, BlasterCircle):
+                final_box_width = 200
+                final_box_height = 200
+            elif isinstance(self.mod, GravityBone):
+                final_box_width = 200
+                final_box_height = 200
+            elif isinstance(self.mod, BonePatternMiddle):
+                final_box_width = 500
+                final_box_height = 200
+            elif isinstance(self.mod, MoreBoneFloor):
+                final_box_width = 500
+                final_box_height = 175
+            else:
+                final_box_width = 400
+                final_box_height = 200
+
+            final_box_x = (1000 - final_box_width) // 2
+            final_box_y = 485 - final_box_height
+
+        return final_box_width, final_box_height, final_box_x, final_box_y

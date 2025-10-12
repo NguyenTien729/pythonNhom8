@@ -127,6 +127,7 @@ class Player(pygame.sprite.Sprite):
         else:
             self.image = self.image_normal
             self.velocity = Vector2(0, 0)
+            self.change_gravity_direction('bottom')
 
     def damaged(self, amount):
         current_time = pygame.time.get_ticks()
