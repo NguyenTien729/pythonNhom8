@@ -67,4 +67,7 @@ class BonePatternSideway:
 
     def rect_box(self, rect):
         self.box_rect = rect
-        self.floor_spawned = False 
+        self.floor_spawned = False
+
+    def stop(self):
+        self.bones.empty()

@@ -22,25 +22,19 @@ def lerp (a: float, b: float, t: float) -> float:
 
 # Background
 
-def draw_background(boxl, boxw):
-    wbox = pygame.Surface((boxl, boxw))
+def draw_background(box_rect: pygame.Rect):
+    wbox = pygame.Surface((box_rect.width + 10, box_rect.height + 10))
     wbox.fill('White')
 
-    box_x = ((1000 - boxl) // 2) + 5
-    box_y = 485 - boxw
-    box_width = boxl - 10
-    box_height = boxw - 10
-
-    bbox = pygame.Surface((box_width, box_height))
+    bbox = pygame.Surface((box_rect.width, box_rect.height))
     bbox.fill('Black')
     mainbackground = pygame.Surface((1000, 600))
     mainbackground.fill('Black')
 
-    box_rect = pygame.Rect(box_x, box_y, box_width, box_height)
-
     screen.blit(mainbackground, (0, 0))
-    screen.blit(wbox, (box_x - 5,box_y - 5))
-    screen.blit(bbox, (box_x, box_y))
+    screen.blit(wbox, (box_rect.x - 5, box_rect.y - 5))
+    screen.blit(bbox, (box_rect.x, box_rect.y))
+
 
     return box_rect
 
@@ -53,10 +47,8 @@ floors = MultiFloor()
 blasters = MultiBlaster()
 boss_lv_3 = CallBoss(screen, player, player.rect, blasters, floors)
 #base arena
-arena_width = 400
-arena_height = 200
-final_box_width = 400
-final_box_height = 200
+arena_x, arena_y = 300, 285
+arena_width, arena_height = 400, 200
 
 def draw_health_bar(surface, x, y, current_hp, max_hp, width=40, height=25):
     ratio = current_hp / max_hp
@@ -92,12 +84,16 @@ while True:
     if is_active:
 
         # background
-        final_box_width, final_box_height = boss_lv_3.arena_state()
+        target_w, target_h, target_x, target_y = boss_lv_3.arena_state()
 
-        arena_width = lerp(arena_width, final_box_width, 0.15)
-        arena_height = lerp(arena_height, final_box_height, 0.15)
+        arena_width = lerp(arena_width, target_w, 0.1)
+        arena_height = lerp(arena_height, target_h, 0.1)
+        arena_x = lerp(arena_x, target_x, 0.1)
+        arena_y = lerp(arena_y, target_y, 0.1)
 
-        box_rect = draw_background(arena_width, arena_height)
+        # Tạo Rect và vẽ
+        box_rect = pygame.Rect(arena_x, arena_y, arena_width, arena_height)
+        draw_background(box_rect)
 
         player.update(floors.floors, box_rect)
 

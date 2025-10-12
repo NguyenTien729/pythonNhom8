@@ -7,14 +7,15 @@ from entities.bone import Bone
 class BoneWave(pygame.sprite.Sprite):
     normal_delay = 0.05
 
-    def __init__(self, screen, box_rect, player, gap, speed: Optional[float] = 25, scale: Optional[float] = 1.25):
+    def __init__(self, screen, box_rect, player, gap, speed: Optional[float] = 30, scale: Optional[float] = 1.1):
         super().__init__()
         self.screen = screen
         self.box_rect = box_rect
         self.player = player
         self.speed = speed
 
-        self.image = pygame.image.load("graphics/sprites/bones/bone_test.png").convert_alpha()
+        self.image = pygame.image.load("graphics/sprites/bones/bone_wave.png").convert_alpha()
+
 
         self.max_height = self.image.get_height()
         self.min_height = 5
@@ -49,7 +50,7 @@ class BoneWave(pygame.sprite.Sprite):
         self.spawn_timer += dt
         self.wave_timer += dt
 
-        if self.spawn_timer >= self.normal_delay:
+        while self.spawn_timer >= self.normal_delay:
             self.spawn_timer -= self.normal_delay
 
             scale_factor = (math.sin(self.wave_timer * self.frequency) + 1) / 2
@@ -66,7 +67,6 @@ class BoneWave(pygame.sprite.Sprite):
             self.spawn_bone(self.box_rect.bottom, -1, image_2, self.speed, 'bottom')
 
         self.bones.update(dt)
-        self.bones.draw(self.screen)
 
         player_mask = pygame.mask.from_surface(self.player.image)
         for bone in self.bones:
@@ -77,7 +77,6 @@ class BoneWave(pygame.sprite.Sprite):
 
     def reset(self):
         self.bones.empty()
-        self.row_timer = [0, 0]
 
     def rect_box(self, rect):
         self.box_rect = rect

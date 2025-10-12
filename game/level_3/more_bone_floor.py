@@ -114,13 +114,10 @@ class MovingFloorBone(pygame.sprite.Sprite):
         self.bone_width = image.get_width()
 
     def update(self, dt):
-        #speed floor bone
         self.rect.x += self.speed * dt * 60
         self.rect.centery = self.y
 
-        # Nếu bone ra ngoài hoàn toàn
         if self.rect.left >= self.box_rect.right + 50:
             # tìm bone ngoài cùng bên trái
             leftmost = min(self.group, key=lambda b: b.rect.left)
-            # đặt bone này ngay sau bone bên trái (liền mạch)
             self.rect.left = leftmost.rect.left - self.bone_width - 8
