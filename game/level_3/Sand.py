@@ -12,6 +12,7 @@ from game.level_3.blaster_round import BlasterCircle
 from game.level_3.blaster_floor import BlasterFloor
 from game.level_3.bone_pattern_middle import BonePatternMiddle
 from game.level_3.bone_pattern_sideway import BonePatternSideway
+from game.level_3.blaster_opening import BlasterOpen
 
 import pygame
 
@@ -93,8 +94,10 @@ class CallBoss(pygame.sprite.Sprite):
 
         self.more_bone_floor = MoreBoneFloor(self.screen, self.blasters, player, self.floors)
 
-        self.attack_patterns = [self.blaster_floor, self.bone_parten_middle, self.blaster_random, self.blaster_circle, self.gravity_bone, self.bone_parten_sideway]
-        # self.attack_patterns = [self.more_bone_floor]
+        self.blaster_opening = BlasterOpen(self.center,400,600,230,530, self.blasters)
+
+        # self.attack_patterns = [self.blaster_floor, self.bone_parten_middle, self.blaster_random, self.blaster_circle, self.gravity_bone, self.bone_parten_sideway]
+        self.attack_patterns = [self.blaster_opening]
         self.attack_index = 0
         self.mod = self.attack_patterns[self.attack_index]
         self.change_mod = False
@@ -229,7 +232,7 @@ class CallBoss(pygame.sprite.Sprite):
             if self.mod.box_rect != box_rect:
                 self.mod.rect_box(box_rect)
 
-        if isinstance(self.mod, BonePatternSideway) or isinstance(self.mod, MoreBoneFloor) or isinstance(self.mod, BoneWave):
+        if isinstance(self.mod, BonePatternSideway) or isinstance(self.mod, MoreBoneFloor) or isinstance(self.mod, BoneWave) :
             self.mod.rect_box(box_rect)
 
         #cắt ảnh ngoài arena
@@ -297,13 +300,7 @@ class CallBoss(pygame.sprite.Sprite):
         elif isinstance(self.mod, RandomBlaster):
             final_box_width = 400
             final_box_height = 200
-        elif isinstance(self.mod, BonePatternSideway):
-            final_box_width = 200
-            final_box_height = 200
-        elif isinstance(self.mod, BlasterCircle):
-            final_box_width = 200
-            final_box_height = 200
-        elif isinstance(self.mod, GravityBone):
+        elif isinstance(self.mod, BonePatternSideway) or isinstance(self.mod, BlasterCircle) or isinstance(self.mod, GravityBone) or isinstance(self.mod, BlasterOpen):
             final_box_width = 200
             final_box_height = 200
         elif isinstance(self.mod, BonePatternMiddle):
