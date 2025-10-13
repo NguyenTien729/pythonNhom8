@@ -65,7 +65,7 @@ class BonePatternMiddle:
 
         start_y = self.box_rect.bottom
         image = self.floor_bone_image
-        x = self.box_rect.left
+        x = self.box_rect.left - 200
 
         #lấp đầy box bằng bone tạo thành floor
         while x < self.box_rect.right + 100:
@@ -155,7 +155,7 @@ class MovingFloorBone(pygame.sprite.Sprite):
         self.rect.centery = self.y
 
         # Nếu bone ra ngoài hoàn toàn
-        if self.rect.left >= self.box_rect.right + 50:
+        if self.rect.left >= self.box_rect.right + 150:
             # tìm bone ngoài cùng bên trái
             leftmost = min(self.group, key=lambda b: b.rect.left)
             # đặt bone này ngay sau bone bên trái (liền mạch)

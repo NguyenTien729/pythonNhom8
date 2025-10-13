@@ -34,7 +34,7 @@ class CallBoss(pygame.sprite.Sprite):
         self.blasters = blasters
         self.floors = floors
 
-        self.beam_width = 3
+        self.beam_width = 1
 
         self.legs_idle = pygame.image.load('graphics/characters/sans/spr_sansb_legs_0.png')
         self.legs_idle = pygame.transform.scale_by(self.legs_idle, 2.5)
@@ -123,8 +123,9 @@ class CallBoss(pygame.sprite.Sprite):
         initial_box_rect = pygame.Rect(300, 285, 400, 200)
         self.special_attack = SpecialAttack(screen, initial_box_rect, player, self.player_rect, self.blasters)
 
-        self.attack_patterns = [self.special_attack]
-        self.attack_index = 0
+        self.attack_patterns =[self.blaster_floor,self.blaster_circle,self.blaster_random,self.gravity_bone,self.bone_parten_middle,self.bone_parten_sideway,self.more_bone_floor,self.special_attack]
+        # self.attack_patterns = [self.special_attack]
+        self.attack_index = 3
         self.mod = self.attack_patterns[self.attack_index]
         self.change_mod = False
         self.is_win = False
@@ -288,8 +289,6 @@ class CallBoss(pygame.sprite.Sprite):
                         self.face_image = self.face_variations[self.current_face_index]
 
                     # Update positions with movement offset
-
-
             else:
                 self.phase3_moving = False
                 self.sans_x_position = 0
@@ -399,8 +398,7 @@ class CallBoss(pygame.sprite.Sprite):
             if self.mod.box_rect != box_rect:
                 self.mod.rect_box(box_rect)
 
-        if isinstance(self.mod, BonePatternSideway) or isinstance(self.mod, MoreBoneFloor) or isinstance(self.mod,
-                                                                                                         BoneWave):
+        if isinstance(self.mod, BonePatternSideway) or isinstance(self.mod, MoreBoneFloor) or isinstance(self.mod, BoneWave):
             self.mod.rect_box(box_rect)
 
         # cắt ảnh ngoài arena
@@ -427,6 +425,10 @@ class CallBoss(pygame.sprite.Sprite):
                 player.change_gravity_direction('bottom')
                 player.gravity = 1.25
                 player.hold_jump_force = 2.25
+
+        if isinstance(self.mod, GravityBone):
+            if self.mod.done():
+                self.mod.reset()
 
         self.box_rect = box_rect
         self.center = Vector2(self.box_rect.center)
