@@ -40,7 +40,7 @@ class BonePatternMiddle:
 
         # Floor
         self.floor_spawned = False
-        self.floor_image = "graphics/sprites/bones/floor.png"
+        self.floor_image = "graphics/sprites/bones/floor1.png"
         self.has_spawned_floor = False
         self.floor_direction = "left"
         self.floor_timer = 0
@@ -54,10 +54,9 @@ class BonePatternMiddle:
         speed = 4
         bone = Bone(self.bone_image, (x, y), speed, direction, self.box_rect)
         self.bones.add(bone)
-        # self.spawn_sound.play() 
 
     def spawn_floor(self):
-        self.floor.create_floor(1, 1, self.screen, (290, 410), self.floor_direction, speed=2.5, sprite_prefix=self.floor_image)
+        self.floor.create_floor(1, 1, self.screen, (290, 435), self.floor_direction, speed=2.5, sprite_prefix=self.floor_image)
 
     def spawn_floor_bones(self):
         if self.floor_spawned:
@@ -65,7 +64,7 @@ class BonePatternMiddle:
 
         start_y = self.box_rect.bottom
         image = self.floor_bone_image
-        x = self.box_rect.left
+        x = self.box_rect.left - 200
 
         #lấp đầy box bằng bone tạo thành floor
         while x < self.box_rect.right + 100:
@@ -113,6 +112,7 @@ class BonePatternMiddle:
             offset = (bone.rect.x - self.player.rect.x, bone.rect.y - self.player.rect.y)
             if player_mask.overlap(bone.mask, offset):
                 self.player.damaged(5)
+                # self.spawn_sound.play()
                 break
         for floor in self.floor_bones:
             offset = (floor.rect.x - self.player.rect.x, floor.rect.y - self.player.rect.y)
@@ -155,7 +155,7 @@ class MovingFloorBone(pygame.sprite.Sprite):
         self.rect.centery = self.y
 
         # Nếu bone ra ngoài hoàn toàn
-        if self.rect.left >= self.box_rect.right + 50:
+        if self.rect.left >= self.box_rect.right + 150:
             # tìm bone ngoài cùng bên trái
             leftmost = min(self.group, key=lambda b: b.rect.left)
             # đặt bone này ngay sau bone bên trái (liền mạch)

@@ -23,7 +23,7 @@ class MoreBoneFloor(pygame.sprite.Sprite):
         self.floor_2 = "graphics/sprites/bones/floor3.png"
 
         self.floor_pos_1 = 360
-        self.floor_pos_2 = 415
+        self.floor_pos_2 = 425
 
         self.floor_timer = 0
 

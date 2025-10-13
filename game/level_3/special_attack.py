@@ -76,7 +76,7 @@ class SpecialAttack:
         if hasattr(self.triple_bone, 'reset'): self.triple_bone.reset()
         if hasattr(self.increasing_bone, 'reset'): self.increasing_bone.reset()
 
-    def cleanup_offscreen_bones(self, bone_group):
+    def clean_bone(self, bone_group):
         for bone in list(bone_group):
             if bone.rect.left < -50:
                 bone.kill()
@@ -160,7 +160,7 @@ class SpecialAttack:
 
             if not self.bone_wave_spawning and len(self.bone_wave.bones) > 0:
                 self.bone_wave.bones.update(dt)
-                self.cleanup_offscreen_bones(self.bone_wave.bones)
+                self.clean_bone(self.bone_wave.bones)
 
             if 10.5 <= self.timer < 13:
                 self.triple_bone_spawning = True
@@ -170,7 +170,7 @@ class SpecialAttack:
 
             if not self.triple_bone_spawning and len(self.triple_bone.bones) > 0:
                 self.triple_bone.bones.update(dt)
-                self.cleanup_offscreen_bones(self.triple_bone.bones)
+                self.clean_bone(self.triple_bone.bones)
 
             if 13.5 <= self.timer < 15:
                 self.increasing_bone_spawning = True
@@ -180,7 +180,7 @@ class SpecialAttack:
 
             if not self.increasing_bone_spawning and len(self.increasing_bone.bones) > 0:
                 self.increasing_bone.bones.update(dt)
-                self.cleanup_offscreen_bones(self.increasing_bone.bones)
+                self.clean_bone(self.increasing_bone.bones)
 
             if self.timer >= 15:
                 all_bones_gone = (
@@ -265,7 +265,6 @@ class SpecialAttack:
                         )
 
                         self.phase4_attacks_created = True
-                        print(f"✅ Created pair {self.phase_4_pair_index}: {current_pair}")
 
                     self.multi_bone_stab.update(dt)
                     self.multi_bone_stab.rect_box(pygame.Rect((1000 - 200) / 2, 485 - 200, 200, 200))

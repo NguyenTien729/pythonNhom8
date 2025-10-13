@@ -12,11 +12,10 @@ from game.level_3.blaster_round import BlasterCircle
 from game.level_3.blaster_floor import BlasterFloor
 from game.level_3.bone_pattern_middle import BonePatternMiddle
 from game.level_3.bone_pattern_sideway import BonePatternSideway
-from game.level_3.blaster_opening import BlasterOpen
-from game.level_3.special_attack import SpecialAttack
+
 import pygame
 
-
+from game.level_3.special_attack import SpecialAttack
 
 
 class CallBoss(pygame.sprite.Sprite):
@@ -35,6 +34,7 @@ class CallBoss(pygame.sprite.Sprite):
         self.blasters = blasters
         self.floors = floors
 
+        self.beam_width = 1
         self.beam_width = 1
 
         self.legs_idle = pygame.image.load('graphics/characters/sans/spr_sansb_legs_0.png')
@@ -115,17 +115,18 @@ class CallBoss(pygame.sprite.Sprite):
         self.blaster_floor = BlasterFloor(self.screen, self.player_rect, self.blasters, self.floors, 2)
         self.blaster_circle = BlasterCircle((500, 380), self.blasters, beam_width=self.beam_width)
         self.blaster_random = RandomBlaster(self.center, 750, 250, 230, 530, self.blasters)
-        self.gravity_bone = GravityBone(self.screen, 100, 1, player, player_rect, self.box_rect)
+        self.gravity_bone = GravityBone(self.screen, 100, 1, player, player_rect, self.box_rect, speed=250)
         self.bone_parten_middle = BonePatternMiddle(self.screen, self.box_rect, player, self.floors)
         self.bone_parten_sideway = BonePatternSideway(self.screen, self.box_rect, player)
         self.more_bone_floor = MoreBoneFloor(self.screen, self.blasters, player, self.floors)
-        self.blaster_opening = BlasterOpen(self.center,400,600,230,530, self.blasters)
+        self.bone_wave = BoneWave(self.screen, self.box_rect, player, 45)
 
         initial_box_rect = pygame.Rect(300, 285, 400, 200)
         self.special_attack = SpecialAttack(screen, initial_box_rect, player, self.player_rect, self.blasters)
-        self.attack_patterns =[self.blaster_floor,self.blaster_circle,self.blaster_random,self.gravity_bone,self.bone_parten_middle,self.bone_parten_sideway,self.more_bone_floor,self.blaster_opening,self.special_attack]
+
+        self.attack_patterns =[self.blaster_floor,self.blaster_circle,self.blaster_random,self.gravity_bone,self.bone_parten_middle,self.bone_parten_sideway,self.more_bone_floor,self.special_attack]
         # self.attack_patterns = [self.special_attack]
-        self.attack_index = -1
+        self.attack_index = 2
         self.mod = self.attack_patterns[self.attack_index]
         self.change_mod = False
         self.is_win = False
@@ -289,8 +290,6 @@ class CallBoss(pygame.sprite.Sprite):
                         self.face_image = self.face_variations[self.current_face_index]
 
                     # Update positions with movement offset
-
-
             else:
                 self.phase3_moving = False
                 self.sans_x_position = 0
@@ -400,7 +399,7 @@ class CallBoss(pygame.sprite.Sprite):
             if self.mod.box_rect != box_rect:
                 self.mod.rect_box(box_rect)
 
-        if isinstance(self.mod, BonePatternSideway) or isinstance(self.mod, MoreBoneFloor) or isinstance(self.mod, BoneWave) :
+        if isinstance(self.mod, BonePatternSideway) or isinstance(self.mod, MoreBoneFloor) or isinstance(self.mod, BoneWave):
             self.mod.rect_box(box_rect)
 
         # cắt ảnh ngoài arena
@@ -431,6 +430,10 @@ class CallBoss(pygame.sprite.Sprite):
             if self.mod.done():
                 self.mod.reset()
 
+        if isinstance(self.mod, GravityBone):
+            if self.mod.done():
+                self.mod.reset()
+
         self.box_rect = box_rect
         self.center = Vector2(self.box_rect.center)
 
@@ -438,7 +441,7 @@ class CallBoss(pygame.sprite.Sprite):
         self.wiggle_animation(dt)
         self.draw()
 
-        #Vẽ flash effect SAU khi vẽ Sans (che toàn bộ màn hình)
+        # ✅ Vẽ flash effect SAU khi vẽ Sans (che toàn bộ màn hình)
         if isinstance(self.mod, SpecialAttack):
             flash_alpha = self.mod.get_flash()
             if flash_alpha > 0:
@@ -505,9 +508,6 @@ class CallBoss(pygame.sprite.Sprite):
                 final_box_width = 200
                 final_box_height = 200
             elif isinstance(self.mod, GravityBone):
-                final_box_width = 200
-                final_box_height = 200
-            elif isinstance(self.mod, BlasterOpen):
                 final_box_width = 200
                 final_box_height = 200
             elif isinstance(self.mod, BonePatternMiddle):

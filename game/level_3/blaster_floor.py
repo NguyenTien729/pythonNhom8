@@ -20,7 +20,7 @@ class BlasterFloor:
 
         self.floor = floors
         self.floor_pos_1 = 360
-        self.floor_pos_2 = 415
+        self.floor_pos_2 = 425
 
         self.image = "graphics/sprites/bones/floor2.png"
 

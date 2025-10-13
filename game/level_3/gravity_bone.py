@@ -7,9 +7,8 @@ from entities.bone_stab import BoneStab
 
 
 class GravityBone(pygame.sprite.Sprite):
-    # ... (toàn bộ code __init__ và các hàm khác của bạn giữ nguyên) ...
     def __init__(self, screen, strong_gravity, default_gravity, player, player_rect, box_rect, height: Optional[int] = 30,
-                 duration: Optional[float] = 0.75, side: Optional[List[str]] = None):
+                 duration: Optional[float] = 0.75, side: Optional[List[str]] = None, speed: Optional[float] = 250, ):
         super().__init__()
         self.screen = screen
         self.strong_gravity = strong_gravity
@@ -18,6 +17,7 @@ class GravityBone(pygame.sprite.Sprite):
         self.player_rect = player_rect
         self.box_rect = box_rect
         self.height = height
+        self.speed = speed
 
         self.slam_sound = pygame.mixer.Sound('sound/sans_battle/undertale-impact-slam.mp3')
 
@@ -38,11 +38,8 @@ class GravityBone(pygame.sprite.Sprite):
 
         self.is_attack = False
         self.have_played = False
-        # Dòng này không cần thiết vì nó được xử lý trong update rồi
-        # self.player.gravity = self.strong_gravity
 
     def update(self, dt, on: Optional[bool] = True):
-        # ... (code hàm update của bạn giữ nguyên) ...
         self.timer += dt
 
         if self.pull_start_time <= self.timer < self.attack_time:
@@ -63,8 +60,7 @@ class GravityBone(pygame.sprite.Sprite):
                 self.is_attack = True
                 self.player.gravity = self.default_gravity
                 self.player.hold_jump_force = 2.15
-                # Ở đây bạn có thể truyền self.screen, hoặc không vì BoneStab đã giữ nó rồi
-                bone_stab = BoneStab(self.screen, self.box_rect, self.current_side, self.height, 250, self.player)
+                bone_stab = BoneStab(self.screen, self.box_rect, self.current_side, self.height, self.speed, self.player)
                 self.bone_stab.add(bone_stab)
 
         elif self.float_time <= self.timer < self.duration and on:
@@ -72,11 +68,7 @@ class GravityBone(pygame.sprite.Sprite):
             self.player.velocity.x = 0
             self.player.velocity.y = 0
             self.player.hold_jump_force = 0
-        #
-        # if self.timer >= self.duration:
-        #     self.reset()
 
-        # Ta cần phải update cả sprite bên trong group nữa
         self.bone_stab.update(dt)
 
     def draw(self):
@@ -104,8 +96,8 @@ class MultiBoneStab:
 
 
     def create_bone_stab(self, screen, strong_gravity, default_gravity, player, player_rect, box_rect, height,
-                 duration: Optional[float] = 0.75, side: Optional[List[str]] = None):
-        bone_stab = GravityBone(screen, strong_gravity, default_gravity, player, player_rect, box_rect, height, duration, side)
+                 duration: Optional[float] = 1, side: Optional[List[str]] = None, speed: Optional[float] = 250):
+        bone_stab = GravityBone(screen, strong_gravity, default_gravity, player, player_rect, box_rect, height, duration, side, speed)
         self.bone_stabs.add(bone_stab)
         return bone_stab
 
