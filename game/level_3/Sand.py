@@ -123,8 +123,8 @@ class CallBoss(pygame.sprite.Sprite):
 
         initial_box_rect = pygame.Rect(300, 285, 400, 200)
         self.special_attack = SpecialAttack(screen, initial_box_rect, player, self.player_rect, self.blasters)
-        # self.attack_patterns =[self.blaster_floor,self.blaster_circle,self.blaster_random,self.gravity_bone,self.bone_parten_middle,self.bone_parten_sideway,self.more_bone_floor,self.blaster_opening,self.special_attack]
-        self.attack_patterns = [self.blaster_opening]
+        self.attack_patterns =[self.blaster_opening,self.blaster_floor,self.blaster_circle,self.blaster_random,self.gravity_bone,self.bone_parten_middle,self.bone_parten_sideway,self.more_bone_floor,self.special_attack]
+        # self.attack_patterns = [self.blaster_opening]
         self.attack_index = 0
         self.mod = self.attack_patterns[self.attack_index]
         self.change_mod = False
