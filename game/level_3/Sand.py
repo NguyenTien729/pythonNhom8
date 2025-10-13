@@ -114,7 +114,7 @@ class CallBoss(pygame.sprite.Sprite):
         self.blaster_floor = BlasterFloor(self.screen, self.player_rect, self.blasters, self.floors, 2)
         self.blaster_circle = BlasterCircle((500, 380), self.blasters, beam_width=self.beam_width)
         self.blaster_random = RandomBlaster(self.center, 750, 250, 230, 530, self.blasters)
-        self.gravity_bone = GravityBone(self.screen, 100, 1, player, player_rect, self.box_rect)
+        self.gravity_bone = GravityBone(self.screen, 100, 1, player, player_rect, self.box_rect, speed=250)
         self.bone_parten_middle = BonePatternMiddle(self.screen, self.box_rect, player, self.floors)
         self.bone_parten_sideway = BonePatternSideway(self.screen, self.box_rect, player)
         self.more_bone_floor = MoreBoneFloor(self.screen, self.blasters, player, self.floors)
@@ -125,7 +125,7 @@ class CallBoss(pygame.sprite.Sprite):
 
         self.attack_patterns =[self.blaster_floor,self.blaster_circle,self.blaster_random,self.gravity_bone,self.bone_parten_middle,self.bone_parten_sideway,self.more_bone_floor,self.special_attack]
         # self.attack_patterns = [self.special_attack]
-        self.attack_index = 3
+        self.attack_index = 2
         self.mod = self.attack_patterns[self.attack_index]
         self.change_mod = False
         self.is_win = False

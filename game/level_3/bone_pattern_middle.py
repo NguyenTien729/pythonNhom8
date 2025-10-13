@@ -40,7 +40,7 @@ class BonePatternMiddle:
 
         # Floor
         self.floor_spawned = False
-        self.floor_image = "graphics/sprites/bones/floor.png"
+        self.floor_image = "graphics/sprites/bones/floor1.png"
         self.has_spawned_floor = False
         self.floor_direction = "left"
         self.floor_timer = 0
@@ -54,10 +54,9 @@ class BonePatternMiddle:
         speed = 4
         bone = Bone(self.bone_image, (x, y), speed, direction, self.box_rect)
         self.bones.add(bone)
-        # self.spawn_sound.play() 
 
     def spawn_floor(self):
-        self.floor.create_floor(1, 1, self.screen, (290, 410), self.floor_direction, speed=2.5, sprite_prefix=self.floor_image)
+        self.floor.create_floor(1, 1, self.screen, (290, 435), self.floor_direction, speed=2.5, sprite_prefix=self.floor_image)
 
     def spawn_floor_bones(self):
         if self.floor_spawned:
@@ -113,6 +112,7 @@ class BonePatternMiddle:
             offset = (bone.rect.x - self.player.rect.x, bone.rect.y - self.player.rect.y)
             if player_mask.overlap(bone.mask, offset):
                 self.player.damaged(5)
+                # self.spawn_sound.play()
                 break
         for floor in self.floor_bones:
             offset = (floor.rect.x - self.player.rect.x, floor.rect.y - self.player.rect.y)

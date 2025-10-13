@@ -47,39 +47,39 @@ class BoneStab(pygame.sprite.Sprite):
             #khai báo ví trí gọi và đích của xương
             self.initial_pos.x = self.box_rect.left - self.rect.width / 2
             self.initial_pos.y = self.box_rect.centery
-            self.target_pos = (self.box_rect.left - 20 + self.height / 2, self.box_rect.centery)
+            self.target_pos = (self.box_rect.left - 30 + self.height / 2, self.box_rect.centery)
             #vị trí vẽ cảnh báo
             self.warning_rect.height = self.box_rect.height
             self.warning_rect.width = self.height
             self.warning_rect.topleft = self.box_rect.topleft
-            self.movement = Vector2(2, 0)
+            self.movement = Vector2(1, 0)
         elif self.side == 'right':
             self.initial_pos.x = self.box_rect.right + self.rect.width / 2
             self.initial_pos.y = self.box_rect.centery
-            self.target_pos = (self.box_rect.right + 20 - self.height / 2, self.box_rect.centery)
+            self.target_pos = (self.box_rect.right + 30 - self.height / 2, self.box_rect.centery)
 
             self.warning_rect.height = self.box_rect.height
             self.warning_rect.width = self.height
             self.warning_rect.topright = self.box_rect.topright
-            self.movement = Vector2(-2, 0)
+            self.movement = Vector2(-1, 0)
         elif self.side == 'top':
             self.initial_pos.x = self.box_rect.centerx
             self.initial_pos.y = self.box_rect.top - self.rect.height / 2
-            self.target_pos = (self.box_rect.centerx, self.box_rect.top - 20 + self.height / 2)
+            self.target_pos = (self.box_rect.centerx, self.box_rect.top - 30 + self.height / 2)
 
             self.warning_rect.width = self.box_rect.width
             self.warning_rect.height = self.height
             self.warning_rect.topleft = self.box_rect.topleft
-            self.movement = Vector2(0, 2)
+            self.movement = Vector2(0, 1)
         elif self.side == 'bottom':
             self.initial_pos.x = self.box_rect.centerx
             self.initial_pos.y = self.box_rect.bottom + self.rect.height / 2
-            self.target_pos = (self.box_rect.centerx, self.box_rect.bottom + 20 - self.height / 2)
+            self.target_pos = (self.box_rect.centerx, self.box_rect.bottom + 30 - self.height / 2)
 
             self.warning_rect.width = self.box_rect.width
             self.warning_rect.height = self.height
             self.warning_rect.bottomleft = self.box_rect.bottomleft
-            self.movement = Vector2(0, -2)
+            self.movement = Vector2(0, -1)
 
         self.initial_pos = Vector2(self.initial_pos)
         self.target_pos = Vector2(self.target_pos)
