@@ -27,7 +27,7 @@ class MoreBoneFloor(pygame.sprite.Sprite):
 
         self.floor_timer = 0
 
-        self.spawn_y_positions = [330, 380, 450]
+        self.spawn_y_positions = [330, 400, 450]
 
         #hướng
         self.directions = [-1, 1, -1]
