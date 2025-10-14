@@ -34,6 +34,8 @@ class CallBoss(pygame.sprite.Sprite):
 
         self.blasters = blasters
         self.floors = floors
+        self.max_hp = 500   # máu tối đa
+        self.hp = self.max_hp
 
         self.beam_width = 1
 
