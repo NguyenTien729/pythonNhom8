@@ -1,7 +1,7 @@
 import random
 from typing import Optional
 
-y2 = [305, 380, 455]
+y2 = [325, 390, 460]
 
 class BlasterFloor:
     blaster_delay = 1.5
