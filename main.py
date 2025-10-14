@@ -168,6 +168,7 @@ while True:
         if player.player_hp <= 0:
             open_game_over()   # mở file game_over.py
         if boss_lv_3.hp <= 0:
+            
             open_game_clear()  # mở file game_clear.py
 
 
