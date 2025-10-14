@@ -5,6 +5,7 @@ from entities.blaster import MultiBlaster
 from entities.stand_floor import MultiFloor
 from game.level_3.Sand import CallBoss
 from game.player.player import Player
+from game.player.player_turn import PlayerTurnManager
 
 
 pygame.init()
@@ -46,9 +47,14 @@ player = Player(500, 470)
 floors = MultiFloor()
 blasters = MultiBlaster()
 boss_lv_3 = CallBoss(screen, player, player.rect, blasters, floors)
+player_turn_manager = PlayerTurnManager(screen, player, boss_lv_3) # <-- TẠO INSTANCE
+
+game_state = 'BOSS_ATTACK'
+boss_hp = 1000
 #base arena
 arena_x, arena_y = 300, 285
 arena_width, arena_height = 400, 200
+target_w, target_h, target_x, target_y = arena_width, arena_height, arena_x, arena_y
 
 def draw_health_bar(surface, x, y, current_hp, max_hp, width=40, height=25):
     ratio = current_hp / max_hp
@@ -71,55 +77,63 @@ while True:
         if event.type == pygame.QUIT:
             pygame.quit()
             exit()
-
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            mouse_pos = pygame.mouse.get_pos()
-            print(mouse_pos)
-
-    clock = pygame.time.Clock()
-
+        if game_state == 'PLAYER_TURN':
+            player_turn_manager.handle_input(event)
 
     dt = min(clock.tick(60) * 0.001, 1 / 30)
 
     if is_active:
+        # --- PHẦN 1: CẬP NHẬT LOGIC GAME ---
+        if game_state == 'BOSS_ATTACK':
 
-        # background
-        target_w, target_h, target_x, target_y = boss_lv_3.arena_state()
+            player.update(floors.floors, pygame.Rect(arena_x, arena_y, arena_width, arena_height))
+            if not boss_lv_3.is_attacking:
+                game_state = 'PLAYER_TURN'
+                player_turn_manager.start_turn()
+        elif game_state == 'PLAYER_TURN':
+            target_w, target_h, target_x, target_y = 600, 150, (1000 - 600) / 2, (485 - 150)
+            is_player_turn_continuing = player_turn_manager.update(dt)
+            if not is_player_turn_continuing:
+                game_state = 'BOSS_ATTACK'
+                boss_lv_3.start_next_attack()
 
+        # --- PHẦN 2: CẬP NHẬT VISUAL (ARENA) ---
         arena_width = lerp(arena_width, target_w, 0.1)
         arena_height = lerp(arena_height, target_h, 0.1)
         arena_x = lerp(arena_x, target_x, 0.1)
         arena_y = lerp(arena_y, target_y, 0.1)
-
-        # Tạo Rect và vẽ
         box_rect = pygame.Rect(arena_x, arena_y, arena_width, arena_height)
+
+        # --- PHẦN 3: VẼ MỌI THỨ LÊN MÀN HÌNH ---
         draw_background(box_rect)
 
-        player.update(floors.floors, box_rect)
+        target_w, target_h, target_x, target_y = boss_lv_3.arena_state()
+        boss_lv_3.update(dt, pygame.Rect(arena_x, arena_y, arena_width, arena_height), player)
 
-        if player.rect.left < box_rect.left: player.rect.left = box_rect.left
-        if player.rect.right > box_rect.right: player.rect.right = box_rect.right
-        if player.rect.top < box_rect.top: player.rect.top = box_rect.top
-        if player.rect.bottom > box_rect.bottom: player.rect.bottom = box_rect.bottom
+        if game_state == 'BOSS_ATTACK':
+            # Ràng buộc và vẽ player trong arena
+            if player.rect.left < box_rect.left: player.rect.left = box_rect.left
+            if player.rect.right > box_rect.right: player.rect.right = box_rect.right
+            if player.rect.top < box_rect.top: player.rect.top = box_rect.top
+            if player.rect.bottom > box_rect.bottom: player.rect.bottom = box_rect.bottom
+            player.draw(screen)
 
-      
-        # Player
-        center = Vector2(player.rect.center)
-        boss_lv_3.update(dt, box_rect, player)
+            # Xử lý va chạm blaster
+            player_mask = pygame.mask.from_surface(player.image)
+            for blaster in blasters.blasters:
+                if blaster.beam and blaster.beam.is_active:
+                    beam_img = blaster.beam.sprite.image
+                    beam_rect = beam_img.get_rect(center=(blaster.beam.abs_x, blaster.beam.abs_y))
+                    beam_mask = pygame.mask.from_surface(beam_img)
+                    offset = (player.rect.x - beam_rect.x, player.rect.y - beam_rect.y)
+                    if beam_mask.overlap(player_mask, offset):
+                        player.damaged(10)
 
-        # blaster chung 
-        player_mask = pygame.mask.from_surface(player.image)
-        for blaster in blasters.blasters:
-            if blaster.beam and blaster.beam.is_active:
-                beam_img = blaster.beam.sprite.image
-                beam_rect = beam_img.get_rect(center=(blaster.beam.abs_x, blaster.beam.abs_y))
-                beam_mask = pygame.mask.from_surface(beam_img)
-                offset = (player.rect.x - beam_rect.x, player.rect.y - beam_rect.y)
-                if beam_mask.overlap(player_mask, offset):
-                    player.damaged(10)
+        elif game_state == 'PLAYER_TURN':
+            # Vẽ UI của lượt người chơi
+            player_turn_manager.draw(box_rect)
 
-        # VẼ MỌI THỨ
-        player.draw(screen)
+        # Vẽ thanh máu (luôn hiển thị)
         draw_health_bar(screen, 435, 500, player.player_hp, player.max_hp)
 
     else:

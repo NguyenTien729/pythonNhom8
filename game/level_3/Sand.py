@@ -17,6 +17,8 @@ import pygame
 
 from game.level_3.special_attack import SpecialAttack
 
+def lerp(a: float, b: float, t: float) -> float:
+    return a + (b - a) * t
 
 class CallBoss(pygame.sprite.Sprite):
     phase_time = 8
@@ -125,7 +127,7 @@ class CallBoss(pygame.sprite.Sprite):
 
         self.attack_patterns =[self.blaster_floor,self.blaster_circle,self.blaster_random,self.gravity_bone,self.bone_parten_middle,self.bone_parten_sideway,self.more_bone_floor,self.special_attack]
         # self.attack_patterns = [self.special_attack]
-        self.attack_index = 2
+        self.attack_index = 5
         self.mod = self.attack_patterns[self.attack_index]
         self.change_mod = False
         self.is_win = False
@@ -135,6 +137,45 @@ class CallBoss(pygame.sprite.Sprite):
 
         self.sound = pygame.mixer.Sound('sound/sans_battle/MEGALOVANIA.wav')
         self.has_played = False
+
+        self.hp = 100
+        self.is_attacking = True
+        self.current_dodge_offset = 0.0
+        self.target_dodge_offset = 0.0
+        self.dodge_spd = 10
+        self.return_timer = 0.0
+        self.return_pause = 0.4
+
+    def take_damage(self, amount):
+        self.hp -= amount
+
+    def dodge(self):
+        self.target_dodge_offset = -150
+
+    def end_dodge(self):
+        self.return_timer = self.return_pause
+
+    def update_dodge_position(self, dt):
+        if self.return_timer > 0:
+            self.return_timer -= dt
+            # Khi timer kết thúc, ra lệnh cho Sans quay về
+            if self.return_timer <= 0:
+                self.target_dodge_offset = 0
+
+        self.current_dodge_offset = lerp(
+            self.current_dodge_offset,
+            self.target_dodge_offset,
+            self.dodge_spd * dt
+        )
+
+    def cleanup_attacks(self):
+        self.floors.destroy_all()
+        self.blasters.destroy_all()
+        if hasattr(self.mod, 'reset'):
+            self.mod.reset()
+        # Reset ảnh về idle (để chắc chắn)
+        self.body_image = self.body_idle
+        self.face_image = self.face_idle
 
     # dao động đầu và thân boss
     def wiggle_animation(self, dt: float):
@@ -167,6 +208,24 @@ class CallBoss(pygame.sprite.Sprite):
         self.animation_timer = 0.0
 
     def animation(self, dt: float, player):
+        if not self.is_attacking:
+            leg_x_pos = self.box_rect.midtop[0] + self.current_dodge_offset
+
+            self.leg_rect = self.legs_idle.get_rect(midbottom=(leg_x_pos, self.box_rect.midtop[1] - 20))
+
+            self.body_image = self.body_idle
+            self.body_rect = self.body_image.get_rect(midbottom=(self.leg_rect.midtop[0], self.leg_rect.midtop[1] + 25))
+            self.face_image = self.face_idle
+            self.face_rect = self.face_idle.get_rect(
+                midbottom=(self.body_rect.midtop[0], self.body_rect.midtop[1] + 20))
+
+            # Cập nhật vị trí cho wiggle animation
+            self.body_x = self.body_rect.centerx
+            self.face_x = self.face_rect.centerx
+            self.body_y = self.body_rect.centery
+            self.face_y = self.face_rect.centery
+            return
+
         # Special Attack animations
         if isinstance(self.mod, SpecialAttack):
             # Phase 1: Gravity bone animation
@@ -378,9 +437,11 @@ class CallBoss(pygame.sprite.Sprite):
 
     # vẽ boss
     def draw(self):
-        if not isinstance(self.mod, GravityBone) and not (
-                isinstance(self.mod, SpecialAttack) and self.mod.phase == 1 and self.mod.timer >= 1):
+        if (not self.is_attacking or
+                (not isinstance(self.mod, GravityBone) and
+                 not (isinstance(self.mod, SpecialAttack) and self.mod.phase == 1 and self.mod.timer >= 1))):
             self.screen.blit(self.legs_idle, self.leg_rect)
+
         self.screen.blit(self.body_image, self.body_rect)
         self.screen.blit(self.face_image, self.face_rect)
 
@@ -430,6 +491,7 @@ class CallBoss(pygame.sprite.Sprite):
             if self.mod.done():
                 self.mod.reset()
 
+        self.update_dodge_position(dt)
         self.box_rect = box_rect
         self.center = Vector2(self.box_rect.center)
 
@@ -451,31 +513,25 @@ class CallBoss(pygame.sprite.Sprite):
         if isinstance(self.mod, SpecialAttack):
             self.special_attack_active = self.mod.is_active
 
-        # đổi dạng attack
-        if self.change_mod:
-            self.swap_time += dt
-            # time delay trước khi đổi
-            if self.swap_time >= self.change_phase_time:
-                self.swap_time = 0
-                self.change_mod = False
-                self.attack_mod()
-
-        else:
+        if self.is_attacking:
+            # Nếu đang trong một đòn tấn công đặc biệt (SpecialAttack)
             if isinstance(self.mod, SpecialAttack):
                 self.mod.update(dt, box_rect)
-
-                if not self.mod.is_active:
+                if not self.mod.is_active:  # Khi SpecialAttack kết thúc
                     self.attack_time += dt
-                    if self.attack_time >= 1.0:
+                    if self.attack_time >= 1.0:  # Delay ngắn sau khi kết thúc
                         self.attack_time = 0
-                        self.change_mod = True
-
+                        self.is_attacking = False  # Báo hiệu kết thúc lượt tấn công
+                        self.cleanup_attacks()
+                        # Nếu là các đòn tấn công thông thường
             else:
                 self.mod.update(dt)
                 self.attack_time += dt
                 if self.attack_time >= self.phase_time:
                     self.attack_time = 0
-                    self.change_mod = True
+                    self.is_attacking = False  # Báo hiệu kết thúc lượt tấn công
+                    self.cleanup_attacks()
+        # === KẾT THÚC KHỐI CODE MỚI THAY THẾ ===
 
         change_floor_direction = isinstance(self.mod, BonePatternMiddle)
 
@@ -485,6 +541,24 @@ class CallBoss(pygame.sprite.Sprite):
 
         self.blasters.update()
         self.blasters.draw(self.screen)
+
+    def start_next_attack(self):
+        self.floors.destroy_all()
+        self.blasters.destroy_all()
+        self.has_return = False
+        self.phase3_moving = False
+
+        self.attack_index = (self.attack_index + 1) % len(self.attack_patterns)
+        self.mod = self.attack_patterns[self.attack_index]
+
+        if hasattr(self.mod, 'start'):
+            self.mod.start()
+        if hasattr(self.mod, 'reset'):
+            self.mod.reset()
+
+        self.animation_index = 0
+        self.animation_timer = 0.0
+        self.is_attacking = True
 
     def arena_state(self):
         if isinstance(self.mod, SpecialAttack) and self.mod.is_active:

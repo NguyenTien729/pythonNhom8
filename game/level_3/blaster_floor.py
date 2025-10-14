@@ -19,8 +19,8 @@ class BlasterFloor:
         self.floor_timer = 0
 
         self.floor = floors
-        self.floor_pos_1 = 360
-        self.floor_pos_2 = 425
+        self.floor_pos_1 = 345
+        self.floor_pos_2 = 420
 
         self.image = "graphics/sprites/bones/floor2.png"
 

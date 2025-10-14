@@ -34,7 +34,7 @@ class GravityBone(pygame.sprite.Sprite):
 
         self.pull_start_time = 0.0
         self.attack_time = 0.175
-        self.float_time = 0.6
+        self.float_time = 0.55
 
         self.is_attack = False
         self.have_played = False
@@ -96,7 +96,7 @@ class MultiBoneStab:
 
 
     def create_bone_stab(self, screen, strong_gravity, default_gravity, player, player_rect, box_rect, height,
-                 duration: Optional[float] = 1, side: Optional[List[str]] = None, speed: Optional[float] = 250):
+                 duration: Optional[float] = 0.75, side: Optional[List[str]] = None, speed: Optional[float] = 250):
         bone_stab = GravityBone(screen, strong_gravity, default_gravity, player, player_rect, box_rect, height, duration, side, speed)
         self.bone_stabs.add(bone_stab)
         return bone_stab

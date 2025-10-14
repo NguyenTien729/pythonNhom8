@@ -35,6 +35,23 @@ class Player(pygame.sprite.Sprite):
         self.is_on_ground = False
         self.avatar_face_right = False
 
+        self.inventory = {
+            "Monster Candy": {"quantity": 4, "heal": 10},
+            "Cinnamon Bun": {"quantity": 1, "heal": 25}
+        }
+
+    def use_item(self, item_name):
+        if item_name in self.inventory and self.inventory[item_name]["quantity"] > 0:
+            self.inventory[item_name]["quantity"] -= 1
+            heal_amount = self.inventory[item_name]["heal"]
+            self.player_hp += heal_amount
+            if self.player_hp > self.max_hp:
+                self.player_hp = self.max_hp
+            print(f"Used {item_name}, healed for {heal_amount} HP!")
+            return True
+        print(f"Cannot use {item_name}.")
+        return False
+
     def input(self):
         keys = pygame.key.get_pressed()
 
