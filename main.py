@@ -96,6 +96,9 @@ arena_width, arena_height = 400, 200
 paused = False
 
 while True:
+    dt = min(clock.tick(60) * 0.001, 1 / 30)
+
+    
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
