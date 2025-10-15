@@ -1,17 +1,15 @@
 import pygame
 import sys
-import json
+import subprocess
 import os
+from database import Database  
 
 pygame.init()
 screen = pygame.display.set_mode((1000, 600))
 pygame.display.set_caption("Leaderboard")
 clock = pygame.time.Clock()
-
-# Font Undertale
 font = pygame.font.Font("font/MonsterFriendBack.otf", 32)
 font_small = pygame.font.Font("font/MonsterFriendBack.otf", 20)
-
 
 # Màu sắc
 WHITE = (255, 255, 255)
@@ -19,20 +17,25 @@ YELLOW = (255, 255, 0)
 GRAY = (150, 150, 150)
 BLACK = (0, 0, 0)
 
-
-# ==============================
-# HÀM TẢI DỮ LIỆU BẢNG XẾP HẠNG
-# ==============================
 def load_leaderboard():
-    if os.path.exists("leaderboard.json"):
-        with open("leaderboard.json", "r") as f:
-            return json.load(f)
-    return []
+    db = Database()
+    try:
+        # Lấy top 5 người có điểm cao nhất
+        query = """
+            SELECT u.player_name, s.score
+            FROM scores s
+            JOIN users u ON s.user_id = u.id
+            ORDER BY s.score DESC
+            LIMIT 5
+        """
+        db.cursor.execute(query)
+        rows = db.cursor.fetchall()
+        leaderboard = [{"name": row[0], "score": row[1]} for row in rows]
+        return leaderboard
+    except Exception as e:
+        print("Lỗi khi tải leaderboard:", e)
+        return []
 
-
-# ==============================
-# HÀM VẼ GIAO DIỆN BẢNG XẾP HẠNG
-# ==============================
 def draw_leaderboard(data):
     screen.fill(BLACK)
 
@@ -51,20 +54,16 @@ def draw_leaderboard(data):
             name = entry["name"]
             score = entry["score"]
             text = font.render(f"{i+1}. {name} - {score}", True, WHITE)
-            text_rect = text.get_rect(center=(500, 200 + i * 40))  # căn giữa
+            text_rect = text.get_rect(center=(500, 200 + i * 50))
             screen.blit(text, text_rect)
 
-    # Gợi ý quay lại (đặt góc dưới bên phải)
+    # Gợi ý quay lại (ESC)
     back_text = font_small.render("Press ESC to go back", True, GRAY)
-    back_rect = back_text.get_rect(bottomright=(980, 580))  # góc dưới phải, cách viền 20px
+    back_rect = back_text.get_rect(bottomright=(980, 580))
     screen.blit(back_text, back_rect)
 
     pygame.display.flip()
 
-
-# ==============================
-# HÀM CHÍNH
-# ==============================
 def main():
     data = load_leaderboard()
 
@@ -76,14 +75,12 @@ def main():
                 sys.exit()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
-                    pygame.quit()
-                    sys.exit()
+                    menu_path = os.path.join(os.path.dirname(__file__), "menu1.py")
+                    subprocess.Popen([sys.executable, menu_path])
+                    pygame.display.quit()
+                    return
 
         clock.tick(30)
 
-
-# ==============================
-# CHẠY FILE TRỰC TIẾP
-# ==============================
 if __name__ == "__main__":
     main()

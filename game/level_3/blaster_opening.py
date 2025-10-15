@@ -1,18 +1,16 @@
-import math
 from pygame import Vector2
 from typing import Optional
 
 
 
 class BlasterOpen:
-    time_delay = 0.9
-
+    time_delay = 0.9 
     def __init__(self, pivot: Vector2, blaster,beam_alpha_speed: Optional[int] = 0.125):
         self.pivot = pivot
         self.beam_alpha_speed = beam_alpha_speed
 
         self.spawn_timer = 0
-        self.round = 1  # lượt bắn hiện tại (1, 2, 3)
+        self.round = 1  
         self.blaster = blaster
 
     def spawn_pattern_plus(self):
@@ -34,14 +32,14 @@ class BlasterOpen:
         blaster.beam_alpha_speed = self.beam_alpha_speed
     
     def spawn_pattern_left(self):
-        #--
+        #-->
         blaster = self.blaster.create_blaster(0, 250, 300, 350, -90, start_angle=-45)
         blaster = self.blaster.create_blaster(0, 250, 300, 405, -90, start_angle=-45)
         blaster = self.blaster.create_blaster(0, 250, 300, 460, -90, start_angle=-45)
         blaster.beam_alpha_speed = self.beam_alpha_speed
 
     def spawn_pattern_right(self):
-        #--
+        #<--
         blaster = self.blaster.create_blaster(1000, 250, 700, 310, 90, start_angle=45)
         blaster = self.blaster.create_blaster(1000, 250, 700, 365, 90, start_angle=45)
         blaster = self.blaster.create_blaster(1000, 250, 700, 420, 90, start_angle=45)
@@ -74,9 +72,7 @@ class BlasterOpen:
 
         # sang lượt tiếp theo
         self.round += 1
-        # if self.round > 3:
-        #     self.round = 1  # nếu muốn lặp lại 3 lượt thì giữ dòng này
-            # nếu muốn chỉ bắn 3 lượt rồi dừng, thì có thể bỏ dòng này
+        
 
     def update(self, dt: float):
         self.spawn_timer += dt
