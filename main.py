@@ -101,8 +101,8 @@ arena_x, arena_y = 300, 285
 arena_width, arena_height = 400, 200
 
 paused = False
-
-score = 0
+#điểm
+score = 1000
 
 while True:
     dt = min(clock.tick(60) * 0.001, 1 / 30)
@@ -179,7 +179,7 @@ while True:
 
     else:
         db.save_score(user_id, score)
-        
+
         
 
     pygame.display.update()

@@ -41,7 +41,7 @@ def login_ui():
     password = ""
     active_box = None
     message = ""
-    mode = "login"  # hoặc "register"
+    mode = "login"
 
     input_boxes = {
         "username": pygame.Rect(250, 180, 300, 50),
