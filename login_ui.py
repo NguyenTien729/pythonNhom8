@@ -67,6 +67,7 @@ def login_ui(screen, clock):
 
         #!!!!!!
         draw_text(message, small_font, YELLOW, screen, 400, 420)
+        
         #trangtri
         heart_rect = heart_img.get_rect(topright=(screen.get_width() - 20, 20))
         screen.blit(heart_img, heart_rect)
@@ -111,13 +112,13 @@ def login_ui(screen, clock):
 
             elif event.type == pygame.KEYDOWN:
                 if active_box == "username":
-                    if event.key == pygame.K_BACKSPACE:
+                    if event.key == pygame.K_BACKSPACE:  #xóa
                         username = username[:-1]
                     else:
                         if len(username) < 15 and event.unicode.isprintable():
                             username += event.unicode
                 elif active_box == "password":
-                    if event.key == pygame.K_BACKSPACE:
+                    if event.key == pygame.K_BACKSPACE:  #xóa
                         password = password[:-1]
                     elif len(password) < 15 and event.unicode.isprintable():
                         password += event.unicode
