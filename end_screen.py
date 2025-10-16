@@ -9,6 +9,8 @@ def end_screen(screen, clock, title, color, caption):
     title_font = pygame.font.Font("font/MonsterFriendBack.otf", 80)
     press_font = pygame.font.Font("font/MonsterFriendBack.otf", 20)
 
+    esc_sound = pygame.mixer.Sound("sound/sans_battle/snd_select.wav")
+
     BLACK = (0, 0, 0)
 
     while True:
@@ -29,6 +31,7 @@ def end_screen(screen, clock, title, color, caption):
                 pygame.quit()
                 sys.exit()
             if event.type == pygame.KEYDOWN:
+                esc_sound.play()
                 return "LEADERBOARD"
 
         clock.tick(60)
