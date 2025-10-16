@@ -93,6 +93,7 @@ def login_ui(screen, clock):
                 if login_btn.collidepoint(event.pos):
                     mode = "login"
                     user_id = db.login(username, password)
+                    select_sound.play()
                     if user_id:
                         player_name = db.get_player_name(user_id)
                         return user_id, player_name
@@ -101,6 +102,7 @@ def login_ui(screen, clock):
 
                 elif register_btn.collidepoint(event.pos):
                     mode = "register"
+                    select_sound.play()
                     if username.strip() == "" or password.strip() == "":
                         message = "Please fill all fields!"
                     else:
