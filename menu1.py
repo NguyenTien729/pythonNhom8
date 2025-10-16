@@ -22,8 +22,9 @@ def run_menu(user_id, player_name):
     clock = pygame.time.Clock()
 
     # Font Undertale
+    big_font = pygame.font.Font("font/MonsterFriendBack.otf", 64)
     font = pygame.font.Font("font/MonsterFriendBack.otf", 36)
-    small_font = pygame.font.Font("font/MonsterFriendBack.otf", 18)
+    small_font = pygame.font.Font("font/MonsterFriendBack.otf", 10)
 
     # Màu sắc
     WHITE = (255, 255, 255)
@@ -39,7 +40,7 @@ def run_menu(user_id, player_name):
         screen.blit(background, (0, 0))
 
         # Tiêu đề
-        title = font.render("UNDERTAIL", True, WHITE)
+        title = big_font.render("UNDERTAIL", True, WHITE)
         title_rect = title.get_rect(center=(screen.get_width() // 2, 150))
         screen.blit(title, title_rect)
 
@@ -63,13 +64,11 @@ def run_menu(user_id, player_name):
         return buttons
 
     def run_game():
-        """Chạy main.py và truyền user_id + player_name"""
         pygame.quit()
         main_path = os.path.join(os.path.dirname(__file__), "main.py")
         subprocess.Popen([sys.executable, main_path, str(user_id), player_name])
         sys.exit()
 
-    # --- Main loop ---
     while True:
         mouse_pos = pygame.mouse.get_pos()
         buttons = draw_menu(mouse_pos)
