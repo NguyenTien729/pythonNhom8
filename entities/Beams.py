@@ -1,5 +1,4 @@
 import pygame
-import random
 from pygame.math import Vector2
 
 class Beam:
@@ -60,22 +59,13 @@ class Projectile:
 
         self.abs_x = x
         self.abs_y = y
-
-        self.p_collision = False
-
         self.is_active = True
-
-        self.layer = ""
 
     def move(self, dx: float, dy: float):
         self.x += dx
         self.y += dy
         self.abs_x += dx
         self.abs_y += dy
-
-    def move_to(self, x: float, y: float):
-        self.x = x
-        self.y = y
 
     def move_to_absolute(self, x: float, y: float):
         self.abs_x = x
@@ -119,21 +109,3 @@ class Projectile:
 
 def create_projectile_abs(sprite_path: str, x: float, y: float):
     return Projectile(sprite_path, x, y)
-
-class ScreenShaker:
-    def __init__(self):
-        self.timer = 0
-        self.magnitude = 0
-
-    def shake(self, duration, magnitude):
-        self.magnitude = magnitude
-        self.timer = duration
-
-    def get_offset(self):
-        if self.timer > 0:
-            self.timer -= 1
-            offset_x = random.randint(-self.magnitude, self.magnitude)
-            offset_y = random.randint(-self.magnitude, self.magnitude)
-            return offset_x, offset_y
-
-        return 0, 0

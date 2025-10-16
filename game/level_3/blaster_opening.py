@@ -4,7 +4,7 @@ from typing import Optional
 
 
 class BlasterOpen:
-    time_delay = 0.9 
+    time_delay = 1.8
     def __init__(self, pivot: Vector2, blaster,beam_alpha_speed: Optional[int] = 0.125):
         self.pivot = pivot
         self.beam_alpha_speed = beam_alpha_speed
@@ -56,7 +56,6 @@ class BlasterOpen:
 
 
     def spawn_blaster(self):
-        """Gọi lượt bắn tương ứng"""
         if self.round == 1:
             self.spawn_pattern_plus()
         elif self.round == 2:
@@ -70,7 +69,6 @@ class BlasterOpen:
         elif self.round == 6:
             self.spawn_pattern_final()
 
-        # sang lượt tiếp theo
         self.round += 1
         
 

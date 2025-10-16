@@ -4,8 +4,8 @@ from typing import Optional
 y2 = [325, 390, 460]
 
 class BlasterFloor:
-    blaster_delay = 1.5
-    floor_delay = 0.5
+    blaster_delay = 3
+    floor_delay = 1
 
     def __init__(self, screen, player_rect, blasters, floors, beam_alpha_speed: Optional[int] = 0.125):
         self.screen = screen
@@ -43,8 +43,8 @@ class BlasterFloor:
         blaster.beam_alpha_speed = self.beam_alpha_speed
 
     def spawn_floor(self):
-        floor_left = self.floor.create_floor(1, 1, self.screen, (-50, self.floor_pos_1), "right", speed=5, sprite_prefix=self.image)
-        floor_right = self.floor.create_floor(1, 1, self.screen, (1050, self.floor_pos_2), "left", speed = 5, sprite_prefix = self.image)
+        floor_left = self.floor.create_floor(1, 1, self.screen, (-50, self.floor_pos_1), "right", speed=150, sprite_prefix=self.image)
+        floor_right = self.floor.create_floor(1, 1, self.screen, (1050, self.floor_pos_2), "left", speed = 150, sprite_prefix = self.image)
 
 
     def update(self, dt):
@@ -53,7 +53,7 @@ class BlasterFloor:
 
         if self.blaster_timer >= self.blaster_delay:
             self.spawn_blaster()
-            self.blaster_timer = 0.5
+            self.blaster_timer = 1
 
         if self.floor_timer >= self.floor_delay:
             self.spawn_floor()

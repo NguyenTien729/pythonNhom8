@@ -17,7 +17,7 @@ class Bone(pygame.sprite.Sprite):
 
 
 class BonePatternSideway:
-    bone_delay = 0.5
+    bone_delay = 1
 
     def __init__(self, screen, box_rect, player):
         self.screen = screen
@@ -41,7 +41,7 @@ class BonePatternSideway:
             y = -10
         else: 
             y = 610
-        speed = 10
+        speed = 5
         bone = Bone(self.bone_image, (x, y), speed, direction, self.box_rect)
         self.bones.add(bone)
 

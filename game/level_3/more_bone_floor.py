@@ -2,7 +2,6 @@ import pygame
 from entities.bone import Bone
 
 class MoreBoneFloor(pygame.sprite.Sprite):
-    floor_delay = 1
     def __init__(self, screen, box_rect, players, floors):
         super().__init__()
         self.screen = screen
@@ -22,20 +21,21 @@ class MoreBoneFloor(pygame.sprite.Sprite):
         self.floor_1 = "graphics/sprites/bones/floor4.png"
         self.floor_2 = "graphics/sprites/bones/floor3.png"
 
-        self.floor_pos_1 = 360
+        self.floor_pos_1 = 370
         self.floor_pos_2 = 425
 
-        self.floor_timer = 0
+        self.floor_delay = 2
+        self.floor_timer = 1
 
-        self.spawn_y_positions = [330, 400, 450]
+        self.spawn_y_positions = [335, 400, 455]
 
         #hướng
         self.directions = [-1, 1, -1]
 
-        self.normal_delay = 1
+        self.normal_delay = 1.2
         # khoảng trống sau mỗi 2 xương
-        self.gap_delay = 0.4
-        self.column_timers = [0, 0, 0]
+        self.gap_delay = 0.5
+        self.column_timers = [0.3, 0, -0.2]
         self.pair_count = [0, 0, 0]
 
     def spawn_bone(self, y, direction, image, speed):
@@ -47,8 +47,8 @@ class MoreBoneFloor(pygame.sprite.Sprite):
         self.bones.add(bone)
 
     def spawn_floor(self):
-        floor_left = self.floor.create_floor(1, 1, self.screen, (200, self.floor_pos_1), "right", speed=5, sprite_prefix=self.floor_1)
-        floor_right = self.floor.create_floor(1, 1, self.screen, (800, self.floor_pos_2), "left", speed=5, sprite_prefix=self.floor_2)
+        floor_left = self.floor.create_floor(1, 1, self.screen, (200, self.floor_pos_1), "right", speed=150, sprite_prefix=self.floor_1)
+        floor_right = self.floor.create_floor(1, 1, self.screen, (800, self.floor_pos_2), "left", speed=150, sprite_prefix=self.floor_2)
 
     def update(self, dt):
         self.floor_timer += dt
@@ -63,11 +63,11 @@ class MoreBoneFloor(pygame.sprite.Sprite):
 
             if i == 1:
                 if self.column_timers[i] > self.normal_delay:
-                    self.spawn_bone(self.spawn_y_positions[i], self.directions[i], self.bone_images[i], 1.3)
+                    self.spawn_bone(self.spawn_y_positions[i], self.directions[i], self.bone_images[i], 0.625)
                     self.column_timers[i] = 0
 
             else:
-                speed = (2 if i == 0 else 1.56)
+                speed = (0.625 if i == 0 else 0.75)
                 delay = self.normal_delay if self.pair_count[i] < 2 else self.gap_delay
                 if self.column_timers[i] >= delay:
                     self.spawn_bone(self.spawn_y_positions[i], self.directions[i], self.bone_images[i], speed)

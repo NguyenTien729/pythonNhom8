@@ -19,21 +19,22 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(center = (x, y))
         self.center = Vector2(self.rect.center)
 
-        self.speed = 5
-        self.gravity = 1.25
+        self.speed = 3
+        self.gravity = 0.4
         self.gravity_direction = 'bottom'
         self.velocity = Vector2(0, 0)
-        self.acceleration = Vector2(0, 0)
         self.max_velocity = 18
 
-        self.initial_jump = -5
-        self.hold_jump_force = 2.15
-        self.jump_time_max = 5
+        self.initial_jump = -4
+        self.hold_jump_force = 0.8
+        self.jump_time_max = 6
         self.jump_timer = 0
 
         self.is_gravity = False
         self.is_on_ground = False
         self.avatar_face_right = False
+
+        self.damaged_sound = pygame.mixer.Sound('sound/sans_battle/Undertale-Sound-Effect-Soul-Damaged.wav')
 
     def input(self):
         keys = pygame.key.get_pressed()
@@ -57,6 +58,9 @@ class Player(pygame.sprite.Sprite):
 
             if (keys[pygame.K_UP] or keys[pygame.K_SPACE]) and self.is_on_ground:
                 self.jump()
+
+            if keys[pygame.K_LEFT] or keys[pygame.K_RIGHT]:
+                print(f"velocity.x: {self.velocity.x}, speed: {self.speed}")
 
         else:
             position = Vector2(0, 0)
@@ -135,6 +139,7 @@ class Player(pygame.sprite.Sprite):
             self.player_hp -= amount
             self.last_hit_time = current_time
             self.is_invulnerable = True
+            self.damaged_sound.play()
 
     def collision(self, floors):
         self.rect.x += self.velocity.x
@@ -159,7 +164,7 @@ class Player(pygame.sprite.Sprite):
                         self.is_on_ground = True
                         self.jump_timer = 0
                         offset_x = floor.rect.x - floor.old_rect.x
-                        self.rect.x += offset_x
+                        self.rect.x += offset_x * 2
                     elif self.velocity.y < 0:
                         self.rect.top = floor.rect.bottom
                         self.velocity.y = 0
@@ -193,6 +198,7 @@ class Player(pygame.sprite.Sprite):
                     self.velocity.x += self.hold_jump_force
                 elif self.gravity_direction == 'right':
                     self.velocity.x -= self.hold_jump_force
+
                 self.jump_timer += 1
 
         self.collision(floors)

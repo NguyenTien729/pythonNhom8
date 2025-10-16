@@ -30,8 +30,7 @@ class SpecialAttack:
         self.phase = 0
 
         self.side = None
-        self.gravity_bone = GravityBone(self.screen, 100, 1, self.player, self.player_rect, self.box_rect, 50, 0.6,
-                                        self.side)
+        self.gravity_bone = GravityBone(self.screen, 100, 1, self.player, self.player_rect, self.box_rect, 50, 1.1, self.side)
         self.bone_parten_sideway = BonePatternSideway(self.screen, self.box_rect, self.player)
         self.bone_wave = BoneWave(self.screen, self.box_rect, self.player, 15)
         self.blaster_circle = BlasterCircle((500, 380), self.blasters, beam_width=1)
@@ -106,7 +105,7 @@ class SpecialAttack:
                 if self.gravity_bone.done():
                     self.gravity_bone.reset()
 
-            if self.timer >= 3:
+            if self.timer >= 6:
                 self.phase = 2
                 self.player.set_gravity(False)
 
@@ -118,13 +117,13 @@ class SpecialAttack:
             if self.bone_parten_sideway:
                 self.bone_parten_sideway.update(dt)
 
-            if self.timer >= 6:
+            if self.timer >= 12:
                 if self.bone_parten_sideway:
                     self.bone_parten_sideway.stop()
                 self.player.set_gravity(True)
                 self.player.change_gravity_direction('left')
                 self.player.gravity = 500
-            if self.timer >= 6.2:
+            if self.timer >= 12.4:
                 self.phase = 3
 
         elif self.phase == 3:
@@ -150,9 +149,9 @@ class SpecialAttack:
                     self.player.rect.left = 30
                     self.player.velocity.x = 0
                 else:
-                    self.player.velocity.x = -20
+                    self.player.velocity.x = -10
 
-            if 7.5 <= self.timer < 10.5:
+            if 15 <= self.timer < 20.1:
                 self.bone_wave_spawning = True
                 self.bone_wave.update(dt)
             else:
@@ -162,7 +161,7 @@ class SpecialAttack:
                 self.bone_wave.bones.update(dt)
                 self.clean_bone(self.bone_wave.bones)
 
-            if 10.5 <= self.timer < 13:
+            if 20.1 <= self.timer < 26:
                 self.triple_bone_spawning = True
                 self.triple_bone.update(dt)
             else:
@@ -172,7 +171,7 @@ class SpecialAttack:
                 self.triple_bone.bones.update(dt)
                 self.clean_bone(self.triple_bone.bones)
 
-            if 13.5 <= self.timer < 15:
+            if 26.25 <= self.timer < 30:
                 self.increasing_bone_spawning = True
                 self.increasing_bone.update(dt)
             else:
@@ -182,7 +181,7 @@ class SpecialAttack:
                 self.increasing_bone.bones.update(dt)
                 self.clean_bone(self.increasing_bone.bones)
 
-            if self.timer >= 15:
+            if self.timer >= 30:
                 all_bones_gone = (
                         len(self.bone_wave.bones) == 0 and
                         len(self.triple_bone.bones) == 0 and
@@ -201,14 +200,14 @@ class SpecialAttack:
             if self.phase4_stage == 'right_shrinking':
                 if self.player.rect.left < 30:
                     self.player.rect.left = 35
-                self.player.velocity.x += 25
+                self.player.velocity.x += 12.5
                 if abs(box_rect.right - self.box_rect.right) < 5 and self.player.rect.right >= box_rect.right - 5:
                     self.phase4_stage = 'single_stab'
                     self.gravity_bone.reset()
                     self.gravity_bone.side_options = ['right']
                     self.gravity_bone.current_side = 'right'
 
-            elif self.phase4_stage == 'single_stab' and self.timer >= 15:
+            elif self.phase4_stage == 'single_stab' and self.timer >= 30:
                 self.gravity_bone.update(dt)
 
                 if self.gravity_bone.timer >= self.gravity_bone.duration:
@@ -221,13 +220,13 @@ class SpecialAttack:
                 self.phase_4_pair_index = 0
                 self.flash_active = True
                 self.flash_timer = 0.0
-                self.flash_duration = 0.6
+                self.flash_duration = 1.2
                 self.phase4_stage = 'multi_stab_flash'
 
             elif self.phase4_stage == 'multi_stab_flash':
                 self.flash_timer += dt
 
-                if self.flash_timer >= 0.3:
+                if self.flash_timer >= 0.6:
                     self.phase4_stage = 'multi_stab'
 
             elif self.phase4_stage == 'multi_stab':
@@ -236,7 +235,7 @@ class SpecialAttack:
                     if self.flash_timer >= self.flash_duration:
                         self.flash_active = False
                         self.flash_timer = 0.0
-                        self.flash_duration = 0.3
+                        self.flash_duration = 0.6
 
                 if self.phase_4_pair_index < len(self.last_side):
                     if not self.phase4_attacks_created:
@@ -256,12 +255,12 @@ class SpecialAttack:
 
                         self.multi_bone_stab.create_bone_stab(
                             self.screen, 100, 1, self.player, self.player.rect,
-                            box_rect, height=50, duration=0.7, side=[current_pair[0]]
+                            box_rect, height=50, duration=1.1, side=[current_pair[0]]
                         )
 
                         self.multi_bone_stab.create_bone_stab(
                             self.screen, 100, 1, self.player, self.player.rect,
-                            box_rect, height=50, duration=0.7, side=[current_pair[1]]
+                            box_rect, height=50, duration=1.1, side=[current_pair[1]]
                         )
 
                         self.phase4_attacks_created = True
@@ -285,7 +284,7 @@ class SpecialAttack:
                     self.player.set_gravity(False)
 
         elif self.phase == 5:
-            if self.timer <= 31:
+            if self.timer <= 52:
                 self.blaster_circle.update(dt)
             else:
                 self.stop()

@@ -17,7 +17,6 @@ def fire_vector(pivot: Vector2, pos: Vector2) -> float:
 
 
 class RandomBlaster:
-    time_delay = 0.5
 
     def __init__(self, pivot: Vector2, x_right, x_left, y_top, y_bottom, blaster):
         self.pivot = pivot
@@ -27,6 +26,7 @@ class RandomBlaster:
         self.y_bottom = y_bottom
 
         self.spawn_timer = 0
+        self.time_delay = 1
 
         self.blaster = blaster
 
