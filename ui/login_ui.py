@@ -1,6 +1,6 @@
 import pygame
 import sys
-from database import Database
+from game.db.database import Database
 
 def login_ui(screen, clock):
     username = ""

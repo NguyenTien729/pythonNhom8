@@ -1,6 +1,6 @@
 import pygame
 import sys
-from database import Database
+from game.db.database import Database
 
 def leaderboard_main(screen, clock):
     pygame.display.set_caption("Leaderboard")
