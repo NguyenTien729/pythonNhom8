@@ -1,6 +1,6 @@
 # Thư mục cache Python
-**/__pycache__
-
+__pycache__/
+**/__pycache__/
 # Các file biên dịch (compiled files)
 *.pyc
 

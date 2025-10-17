@@ -121,12 +121,12 @@ def login_ui(screen, clock):
                     if event.key == pygame.K_BACKSPACE:  #xóa
                         username = username[:-1]
                     else:
-                        if len(username) < 15 and event.unicode.isprintable():
+                        if len(username) < 12 and event.unicode.isprintable():
                             username += event.unicode
                 elif active_box == "password":
                     if event.key == pygame.K_BACKSPACE:  #xóa
                         password = password[:-1]
-                    elif len(password) < 15 and event.unicode.isprintable():
+                    elif len(password) < 12 and event.unicode.isprintable():
                         password += event.unicode
 
         clock.tick(30)
