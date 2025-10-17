@@ -1,18 +1,18 @@
 import pygame
 import sys
-from database import Database
+from game.db.database import Database
 
 if len(sys.argv) > 1:
     user_id = int(sys.argv[1])
 else:
     user_id = 1
 
-from login_ui import login_ui
-from enter_name import get_player_name
-from menu_screen import run_menu
-from leaderboard import leaderboard_main
-from end_screen import end_screen
-from pause_menu import pause_menu
+from ui.login_ui import login_ui
+from ui.enter_name import get_player_name
+from ui.menu_screen import run_menu
+from ui.leaderboard import leaderboard_main
+from ui.end_screen import end_screen
+from ui.pause_menu import pause_menu
 
 from pygame import Vector2
 from entities.blaster import MultiBlaster
