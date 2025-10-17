@@ -56,19 +56,16 @@ class Projectile:
         #Position
         self.x = x
         self.y = y
+
         self.abs_x = x
         self.abs_y = y
-
         self.is_active = True
-
-     
 
     def move(self, dx: float, dy: float):
         self.x += dx
         self.y += dy
         self.abs_x += dx
         self.abs_y += dy
-
 
     def move_to_absolute(self, x: float, y: float):
         self.abs_x = x

@@ -1,185 +1,209 @@
 import pygame
 import sys
-import os
-import subprocess
 from database import Database
 
 if len(sys.argv) > 1:
     user_id = int(sys.argv[1])
 else:
-    user_id = 1 
+    user_id = 1
 
-def open_game_over():
-    pygame.quit()
-    over_path = os.path.join(os.path.dirname(__file__), "game_over.py")
-    subprocess.Popen([sys.executable, over_path])
-    sys.exit()
+from login_ui import login_ui
+from enter_name import get_player_name
+from menu_screen import run_menu
+from leaderboard import leaderboard_main
+from end_screen import end_screen
+from pause_menu import pause_menu
 
-def open_game_clear():
-    pygame.quit()
-    clear_path = os.path.join(os.path.dirname(__file__), "game_clear.py")
-    subprocess.Popen([sys.executable, clear_path])
-    sys.exit()
 from pygame import Vector2
-
-
 from entities.blaster import MultiBlaster
 from entities.stand_floor import MultiFloor
 from game.level_3.Sand import CallBoss
 from game.player.player import Player
-from pause_menu import pause_menu  
 
+def game_run(screen, clock, db, game_context):
+    pygame.display.set_caption("Game Run")
+    g_font = pygame.font.Font("font/MonsterFriendBack.otf", 22)
 
-pygame.init()
-screen_width, screen_height = 1000, 600
-screen = pygame.display.set_mode((screen_width, screen_height))
-pygame.display.set_caption("Undertale")
-clock = pygame.time.Clock()
-is_active = True
+    WHITE = (255, 255, 255)
+    RED = (255, 0, 0)
+    BLACK = (0, 0, 0)
+    YELLOW = (255, 255, 0)
 
-g_font = pygame.font.Font("font/MonsterFriendBack.otf", 22)
+    player = Player(500, 470)
+    floors = MultiFloor()
+    blasters = MultiBlaster()
+    boss_lv_3 = CallBoss(screen, player, player.rect, blasters, floors)
+    score = 2000
+    is_active = True
 
+    arena_x, arena_y = 300, 285
+    arena_width, arena_height = 400, 200
 
-WHITE = (255, 255, 255)
-RED = (255, 0, 0)
-BLACK = (0, 0, 0)
-YELLOW = (255, 255, 0)
+    def lerp(a: float, b: float, t: float) -> float:
+        return a + (b - a) * t
 
+    def draw_background(box_rect: pygame.Rect):
+        screen.fill(BLACK)
+        wbox = pygame.Surface((box_rect.width + 10, box_rect.height + 10))
+        wbox.fill(WHITE)
 
-db = Database()
+        bbox = pygame.Surface((box_rect.width, box_rect.height))
+        bbox.fill(BLACK)
 
-def return_to_menu():
-    pygame.quit()
-    menu_path = os.path.join(os.path.dirname(__file__), "menu1.py")
-    subprocess.Popen([sys.executable, menu_path])
-    sys.exit()
+        screen.blit(wbox, (box_rect.x - 5, box_rect.y - 5))
+        screen.blit(bbox, (box_rect.x, box_rect.y))
 
-def open_leaderboard():
-    pygame.quit()
-    lb_path = os.path.join(os.path.dirname(__file__), "leaderboard.py")
-    subprocess.Popen([sys.executable, lb_path])
-    sys.exit()
+    def draw_health_bar(surface, x, y, current_hp, max_hp, width=40, height=25):
+        ratio = max(0, current_hp / max_hp)
 
+        pygame.draw.rect(surface, YELLOW, (x, y, width, height))
+        pygame.draw.rect(surface, RED, (x, y, width * ratio, height))
 
-def lerp(a: float, b: float, t: float) -> float:
-    return a + (b - a) * t
+        hp_text = g_font.render("HP", True, WHITE)
+        hp_rect = hp_text.get_rect(midright=(x - 5, y + height // 2))
+        surface.blit(hp_text, hp_rect)
 
-def draw_background(box_rect: pygame.Rect):
-    wbox = pygame.Surface((box_rect.width + 10, box_rect.height + 10))
-    wbox.fill(WHITE)
+        hp_val = g_font.render(f"{current_hp}/{max_hp}", True, WHITE)
+        hp_val_rect = hp_val.get_rect(midleft=(x + width + 30, y + height // 2))
+        surface.blit(hp_val, hp_val_rect)
 
-    bbox = pygame.Surface((box_rect.width, box_rect.height))
-    bbox.fill(BLACK)
-    mainbackground = pygame.Surface((screen_width, screen_height))
-    mainbackground.fill(BLACK)
+    while True:
+        dt = min(clock.tick(60) * 0.001, 1/ 30)
 
-    screen.blit(mainbackground, (0, 0))
-    screen.blit(wbox, (box_rect.x - 5, box_rect.y - 5))
-    screen.blit(bbox, (box_rect.x, box_rect.y))
-    return box_rect
-
-def draw_health_bar(surface, x, y, current_hp, max_hp, width=40, height=25):
-    ratio = current_hp / max_hp
-    if ratio < 0: ratio = 0
-    pygame.draw.rect(surface, YELLOW, (x, y, width, height))
-    pygame.draw.rect(surface, RED, (x, y, width * ratio, height))
-    hp_text = g_font.render("HP", True, WHITE)
-    hp_rect = hp_text.get_rect(midright=(x - 5, y + height // 2))
-    surface.blit(hp_text, hp_rect)
-    hp_val = g_font.render(f"{current_hp}/{max_hp}", True, WHITE)
-    hp_val_rect = hp_val.get_rect(midleft=(x + width + 30, y + height // 2))
-    surface.blit(hp_val, hp_val_rect)
-
-#player+boss
-player = Player(500, 470)
-floors = MultiFloor()
-blasters = MultiBlaster()
-boss_lv_3 = CallBoss(screen, player, player.rect, blasters, floors)
-
-#base arena
-arena_x, arena_y = 300, 285
-arena_width, arena_height = 400, 200
-
-paused = False
-#điểm
-score = 2000
-
-while True:
-    dt = min(clock.tick(60) * 0.001, 1 / 30)
-
-    
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            sys.exit()
-
-        #pause menu
-        if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-            paused = True
-            choice = pause_menu(screen) 
-            if choice == "RESUME":
-                paused = False
-            elif choice == "MAIN MENU":
-                return_to_menu()
-            elif choice == "LEADERBOARD":
-                open_leaderboard()
-            elif choice == "EXIT":
+        print(dt)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
 
-    if paused:
-        continue  
+            # pause menu
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                choice = pause_menu(screen)
+                if choice == "MAIN MENU":
+                    return "MENU"
+                elif choice == "LEADERBOARD":
+                    return "LEADERBOARD"
+                elif choice == "EXIT":
+                    pygame.quit()
+                    sys.exit()
 
-    dt = min(clock.tick(60) * 0.001, 1 / 30)
+        if is_active:
 
-    if is_active:
-        # background
-        target_w, target_h, target_x, target_y = boss_lv_3.arena_state()
-        arena_width = lerp(arena_width, target_w, 0.1)
-        arena_height = lerp(arena_height, target_h, 0.1)
-        arena_x = lerp(arena_x, target_x, 0.1)
-        arena_y = lerp(arena_y, target_y, 0.1)
-        box_rect = pygame.Rect(arena_x, arena_y, arena_width, arena_height)
-        draw_background(box_rect)
+            target_w, target_h, target_x, target_y = boss_lv_3.arena_state()
+            arena_width = lerp(arena_width, target_w, 0.09)
+            arena_height = lerp(arena_height, target_h, 0.09)
+            arena_x = lerp(arena_x, target_x, 0.09)
+            arena_y = lerp(arena_y, target_y, 0.09)
+            box_rect = pygame.Rect(arena_x, arena_y, arena_width, arena_height)
+            draw_background(box_rect)
 
-        #player
-        player.update(floors.floors, box_rect)
+            # player
+            player.update(floors.floors, box_rect)
 
-        #giới hạn di chuyển trong arena
-        if player.rect.left < box_rect.left: player.rect.left = box_rect.left
-        if player.rect.right > box_rect.right: player.rect.right = box_rect.right
-        if player.rect.top < box_rect.top: player.rect.top = box_rect.top
-        if player.rect.bottom > box_rect.bottom: player.rect.bottom = box_rect.bottom
+            # giới hạn di chuyển trong arena
+            player.rect.clamp_ip(box_rect)
 
-        # beamhit
-        center = Vector2(player.rect.center)
-        boss_lv_3.update(dt, box_rect, player)
-        player_mask = pygame.mask.from_surface(player.image)
-        for blaster in blasters.blasters:
-            if blaster.beam and blaster.beam.is_active:
-                beam_img = blaster.beam.sprite.image
-                beam_rect = beam_img.get_rect(center=(blaster.beam.abs_x, blaster.beam.abs_y))
-                beam_mask = pygame.mask.from_surface(beam_img)
-                offset = (player.rect.x - beam_rect.x, player.rect.y - beam_rect.y)
-                if beam_mask.overlap(player_mask, offset):
-                    player.damaged(10)
+            # beamhit
+            center = Vector2(player.rect.center)
+            boss_lv_3.update(dt, box_rect, player)
 
-        #player + hpbar
-        player.draw(screen)
-        draw_health_bar(screen, 435, 500, player.player_hp, player.max_hp)
-        # 
-        boss_name = g_font.render("SANS", True, WHITE)
-        boss_name_rect = boss_name.get_rect(midtop=(500, 50))
-        screen.blit(boss_name, boss_name_rect)
+            player_mask = pygame.mask.from_surface(player.image)
+            for blaster in blasters.blasters:
+                if blaster.beam and blaster.beam.is_active:
+                    beam_img = blaster.beam.sprite.image
+                    beam_rect = beam_img.get_rect(center=(blaster.beam.abs_x, blaster.beam.abs_y))
+                    beam_mask = pygame.mask.from_surface(beam_img)
+                    offset = (player.rect.x - beam_rect.x, player.rect.y - beam_rect.y)
+                    if beam_mask.overlap(player_mask, offset):
+                        player.damaged(10)
 
-        #status check
-        if player.player_hp <= 0:
-            is_active = False
-        # thêm elì + t.g vào đây để tính cái win
+            # player + hpbar
+            player.draw(screen)
+            draw_health_bar(screen, 435, 500, player.player_hp, player.max_hp)
 
-    else:
-        db.save_score(user_id, score)
-        open_game_over()
-        
+            boss_name = g_font.render("SANS", True, WHITE)
+            boss_name_rect = boss_name.get_rect(midtop=(500, 50))
+            screen.blit(boss_name, boss_name_rect)
 
-    pygame.display.update()
+            if player.player_hp <= -0:
+                boss_lv_3.sound.fadeout(1000)
+                is_active = False
+
+        else:
+            db.save_score(game_context["user_id"], score)
+            return "GAME_OVER"
+
+        # (Thêm điều kiện thắng ở đây nếu có)
+        # if boss_lv_3.is_defeated():
+        #     db.save_score(game_context["user_id"], score)
+        #     return "GAME_CLEAR"
+
+        pygame.display.update()
+
+def main():
+    pygame.init()
+    screen_width, screen_height = 1000, 600
+    screen = pygame.display.set_mode((screen_width, screen_height))
+    pygame.display.set_caption("Undertale")
+    clock = pygame.time.Clock()
+    db = Database()
+
+    game_over_sound = pygame.mixer.Sound("sound/sans_battle/Undertale-Sound-Effect-Flowey-X-Laugh.wav")
+    game_clear_sound = pygame.mixer.Sound("sound/sans_battle/Undertale-Sound-Effect-You-Win_.wav")
+
+    RED = (255, 0, 0)
+    YELLOW = (255, 255, 0)
+
+    game_context = {
+        "user_id": None,
+        "player_name": None
+    }
+
+    current_state = "LOGIN"
+
+    while True:
+        if current_state == "LOGIN":
+            login_result = login_ui(screen, clock)
+            if login_result:
+                game_context["user_id"], game_context["player_name"] = login_result
+                if game_context["player_name"]:
+                    current_state = "MENU"
+                else:
+                    current_state = "ENTER_NAME"
+
+        elif current_state == "ENTER_NAME":
+            player_name = get_player_name(screen, db, game_context["user_id"])
+            if player_name:
+                game_context["player_name"] = player_name
+                current_state = "MENU"
+
+        elif current_state == "MENU":
+            choice = run_menu(screen, clock, game_context)
+            if choice == "START":
+                current_state = "GAMEPLAY"
+            elif choice == "LEADERBOARD":
+                current_state = "LEADERBOARD"
+            elif choice == "EXIT":
+                break
+
+        elif current_state == "GAMEPLAY":
+            current_state = game_run(screen, clock, db, game_context)
+
+        elif current_state == "LEADERBOARD":
+            current_state = leaderboard_main(screen, clock)
+
+
+        elif current_state == "GAME_OVER":
+            game_over_sound.play()
+            current_state = end_screen(screen, clock, "GAME OVER", RED, "Game Over")
+
+
+        elif current_state == "GAME_CLEAR":
+            game_clear_sound.play()
+            current_state = end_screen(screen, clock, "YOU WIN!", YELLOW, "Game Clear")
+
+    pygame.quit()
+    sys.exit()
+
+if __name__ == "__main__":
+    main()

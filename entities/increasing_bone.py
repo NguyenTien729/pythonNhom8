@@ -2,7 +2,7 @@ import pygame
 from entities.bone import Bone
 
 class IncreasingBone:
-    def __init__(self, screen, box_rect, player, speed = 30):
+    def __init__(self, screen, box_rect, player, speed = 20):
         self.screen = screen
         self.box_rect = box_rect
         self.player = player

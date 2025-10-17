@@ -17,7 +17,7 @@ class Bone(pygame.sprite.Sprite):
 
 
 class BonePatternMiddle:
-    bone_delay = 0.4
+    bone_delay = 0.8
 
     def __init__(self, screen, box_rect, players, floors):
         self.screen = screen
@@ -51,12 +51,12 @@ class BonePatternMiddle:
             y = self.box_rect.top - 20
         else:
             y = self.box_rect.bottom + 20
-        speed = 4
+        speed = 2
         bone = Bone(self.bone_image, (x, y), speed, direction, self.box_rect)
         self.bones.add(bone)
 
     def spawn_floor(self):
-        self.floor.create_floor(1, 1, self.screen, (290, 435), self.floor_direction, speed=2.5, sprite_prefix=self.floor_image)
+        self.floor.create_floor(1, 1, self.screen, (290, 435), self.floor_direction, speed=125, sprite_prefix=self.floor_image)
 
     def spawn_floor_bones(self):
         if self.floor_spawned:

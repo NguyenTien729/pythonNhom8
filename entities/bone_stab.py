@@ -32,9 +32,9 @@ class BoneStab(pygame.sprite.Sprite):
 
         self.warning_rect = pygame.Rect(0, 0, 0, 0)
         self.state = 0
-        self.warning_duration = 0.25
+        self.warning_duration = 0.5
         self.warning_timer = self.warning_duration
-        self.delay =0.175
+        self.delay =0.35
         self.delay_timer = self.delay
 
         self.have_played_bone = False

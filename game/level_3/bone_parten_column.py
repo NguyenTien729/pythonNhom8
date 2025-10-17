@@ -17,7 +17,7 @@ class Bone(pygame.sprite.Sprite):
 
 
 class BonePatternColumn:
-    bone_delay = 0.6  # Delay giữa spawn
+    bone_delay = 1.2  # Delay giữa spawn
 
     def __init__(self, screen, box_rect, player):
         self.screen = screen
@@ -36,7 +36,7 @@ class BonePatternColumn:
             {"direction": -1, "timer": 0}   # Phải trái
         ]
 
-        self.speed = 7  # tốc độ di chuyển
+        self.speed = 3.5  # tốc độ di chuyển
 
     def spawn_column(self, direction):
         if direction == 1:  

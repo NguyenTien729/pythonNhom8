@@ -2,7 +2,7 @@ import pygame
 from entities.bone import Bone
 
 class TripleBone:
-    def __init__(self, screen, box_rect, player, speed = 30):
+    def __init__(self, screen, box_rect, player, speed = 20):
         self.screen = screen
         self.box_rect = box_rect
         self.player = player
@@ -12,8 +12,8 @@ class TripleBone:
         self.rect = self.image.get_rect()
         self.bones = pygame.sprite.Group()
 
-        self.row_timer = [0.35, 0]
-        self.delay = 0.7
+        self.row_timer = [0.55, 0]
+        self.delay = 1.1
         self.count = 0
 
 

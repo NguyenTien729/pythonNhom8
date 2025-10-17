@@ -3,7 +3,7 @@ from typing import Optional
 import pygame
 
 class CallFloor(pygame.sprite.Sprite):
-    def __init__(self, height, width, screen, pos, direction: str, speed = 5, sprite_prefix: Optional[str] = None):
+    def __init__(self, height, width, screen, pos, direction: str, speed = 20, sprite_prefix: Optional[str] = None):
         super().__init__()
 
         self.screen = screen
@@ -19,16 +19,16 @@ class CallFloor(pygame.sprite.Sprite):
 
         self.direction = direction
 
-    def move(self):
+    def move(self, dt: float):
 
         if self.direction == "left":
-            self.rect.x -= self.speed
+            self.rect.x -= self.speed * dt
         elif self.direction == "right":
-            self.rect.x += self.speed
+            self.rect.x += self.speed * dt
         elif self.direction == "up":
-            self.rect.y -= self.speed
+            self.rect.y -= self.speed * dt
         elif self.direction == "down":
-            self.rect.y += self.speed
+            self.rect.y += self.speed * dt
 
     def change_direction(self, on: bool):
         if on:
@@ -46,26 +46,26 @@ class CallFloor(pygame.sprite.Sprite):
         if self.rect.right > 1100 or self.rect.left < -100:
             self.kill()
 
-    def update(self):
+    def update(self, dt: float):
         self.old_rect = self.rect.copy()
 
-        self.move()
+        self.move(dt)
         self.draw()
 
 class MultiFloor:
     def __init__(self):
         self.floors = pygame.sprite.Group()
 
-    def create_floor(self, height, width, screen, pos, direction: str, speed = 5, sprite_prefix: Optional[str] = None):
+    def create_floor(self, height, width, screen, pos, direction: str, speed = 500, sprite_prefix: Optional[str] = None):
         floor = CallFloor(height, width, screen, pos, direction, speed, sprite_prefix)
         self.floors.add(floor)
         return floor
 
-    def update(self, on: Optional[bool] = False):
+    def update(self, dt: float, on: Optional[bool] = False):
         for floor in self.floors:
             floor.change_direction(on)
 
-        self.floors.update()
+        self.floors.update(dt)
 
     def destroy_all(self):
         for floor in self.floors:

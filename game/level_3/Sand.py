@@ -20,9 +20,6 @@ import pygame
 
 
 class CallBoss(pygame.sprite.Sprite):
-    phase_time = 8
-    change_phase_time = 2
-
     def __init__(self, screen, player, player_rect, blasters: MultiBlaster, floors: MultiFloor):
         super().__init__()
         self.screen = screen
@@ -91,6 +88,8 @@ class CallBoss(pygame.sprite.Sprite):
         self.animation_paused = False
         self.timer = 0
         self.duration = 1.1
+        self.phase_time = 16
+        self.change_phase_time = 4
 
         self.leg_rect = self.legs_idle.get_rect()
         self.body_rect = self.body_idle.get_rect()
@@ -99,8 +98,8 @@ class CallBoss(pygame.sprite.Sprite):
         self.wiggle_time = 0.0
         self.wiggle_amplitude_head = 1.1
         self.wiggle_amplitude_body = 1.5
-        self.wiggle_speed_x = 8
-        self.wiggle_speed_y = 16
+        self.wiggle_speed_x = 4
+        self.wiggle_speed_y = 8
         self.body_x = 0
         self.face_x = 0
         self.body_y = 0
@@ -110,7 +109,7 @@ class CallBoss(pygame.sprite.Sprite):
 
         # Phase 3 movement variables
         self.sans_x_position = 0
-        self.phase3_movement_speed = 2000
+        self.phase3_movement_speed = 1300
         self.phase3_moving = False
 
         # khai gọi dạng tấn công
@@ -127,12 +126,12 @@ class CallBoss(pygame.sprite.Sprite):
         self.special_attack = SpecialAttack(screen, initial_box_rect, player, self.player_rect, self.blasters)
         self.attack_patterns =[self.blaster_opening,self.blaster_floor,self.blaster_circle,self.blaster_random,self.gravity_bone,self.bone_parten_middle,self.bone_parten_sideway,self.more_bone_floor,self.special_attack]
         # self.attack_patterns = [self.blaster_opening]
-        self.attack_index = 0
+        self.attack_index = 7
         self.mod = self.attack_patterns[self.attack_index]
         self.change_mod = False
         self.is_win = False
 
-        self.attack_time = 8
+        self.attack_time = 0
         self.swap_time = 0
 
         self.sound = pygame.mixer.Sound('sound/sans_battle/MEGALOVANIA.wav')
@@ -427,8 +426,8 @@ class CallBoss(pygame.sprite.Sprite):
 
             if not isinstance(self.mod, GravityBone):
                 player.change_gravity_direction('bottom')
-                player.gravity = 1.25
-                player.hold_jump_force = 2.25
+                player.gravity = 0.4
+                player.hold_jump_force = 0.8
         if isinstance(self.mod, GravityBone):
             if self.mod.done():
                 self.mod.reset()
@@ -469,7 +468,7 @@ class CallBoss(pygame.sprite.Sprite):
 
                 if not self.mod.is_active:
                     self.attack_time += dt
-                    if self.attack_time >= 1.0:
+                    if self.attack_time >= 2.0:
                         self.attack_time = 0
                         self.change_mod = True
 
@@ -483,7 +482,7 @@ class CallBoss(pygame.sprite.Sprite):
         change_floor_direction = isinstance(self.mod, BonePatternMiddle)
 
         # hàm cập nhật vật thể
-        self.floors.update(change_floor_direction)
+        self.floors.update(dt, change_floor_direction)
         self.floors.draw(self.screen)
 
         self.blasters.update()

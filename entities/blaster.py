@@ -31,11 +31,11 @@ class GasterBlaster(pygame.sprite.Sprite):
         self.y2 = y2
         self.x_scale = 1
         self.y_scale = 1
-        self.beam_alpha_speed = 0.125
+        self.beam_alpha_speed = 0.05
         self.beam_width = 1.0
 
-        self.shoot_delay = 40
-        self.speed = 40
+        self.shoot_delay = 80
+        self.speed = 80
         self.hold_fire = 0
         self.update_timer = 0
 
@@ -129,7 +129,7 @@ class GasterBlaster(pygame.sprite.Sprite):
         #blaster move
         if self.update_timer > self.shoot_delay and self.update_timer > (self.shoot_delay + self.hold_fire):
             self.sprite_rotation = self.angle
-            self.builder_spd += 1
+            self.builder_spd += 0.5
             self.x += (self.builder_spd * math.sin(math.radians(self.sprite_rotation)))
             self.y += (-self.builder_spd * math.cos(math.radians(self.sprite_rotation)))
         else:
@@ -148,10 +148,10 @@ class GasterBlaster(pygame.sprite.Sprite):
                     self.beam.sprite.x_scale += 0.1 * self.x_scale
                 if self.update_timer > self.shoot_delay + 8 and self.update_timer > self.shoot_delay + 8 + self.hold_fire:
                     self.beam.sprite.x_scale = max(0, self.beam.sprite.x_scale - 0.1 * self.x_scale)
-                    self.beam.sprite.alpha = max(0, self.beam.sprite.alpha - 0.25 * (self.beam_alpha_speed / 0.125))
+                    self.beam.sprite.alpha = max(0, self.beam.sprite.alpha - 0.2 * (self.beam_alpha_speed / 0.07))
             else:
                 # beam ko bay ra khỏi màn
-                self.beam.sprite.alpha = max(0, int(self.beam.sprite.alpha - 5 * (self.beam_alpha_speed / 0.125)))
+                self.beam.sprite.alpha = max(0, int(self.beam.sprite.alpha - 2 * (self.beam_alpha_speed / 0.07)))
                 self.beam.sprite.x_scale = max(0, self.beam.sprite.x_scale - 0.1 * self.x_scale)
 
             #xóa nếu như beam biến mất
