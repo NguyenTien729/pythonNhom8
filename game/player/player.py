@@ -19,7 +19,7 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(center = (x, y))
         self.center = Vector2(self.rect.center)
 
-        self.speed = 3
+        self.speed = 3.5
         self.gravity = 0.4
         self.gravity_direction = 'bottom'
         self.velocity = Vector2(0, 0)
