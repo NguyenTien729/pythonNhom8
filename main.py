@@ -125,7 +125,7 @@ def game_run(screen, clock, db, game_context):
             boss_name_rect = boss_name.get_rect(midtop=(500, 50))
             screen.blit(boss_name, boss_name_rect)
 
-            if player.player_hp <= -1000:
+            if player.player_hp <= 40:
                 boss_lv_3.sound.fadeout(1000)
                 is_active = False
 
@@ -195,12 +195,14 @@ def main():
 
         elif current_state == "GAME_OVER":
             game_over_sound.play()
-            current_state = end_screen(screen, clock, "GAME OVER", RED, "Game Over")
+            player_name, score = db.get_latest_score(game_context["user_id"])
+            current_state = end_screen(screen, clock, "GAME OVER", RED, "Game Over",player_name,score)
 
 
         elif current_state == "GAME_CLEAR":
             game_clear_sound.play()
-            current_state = end_screen(screen, clock, "YOU WIN!", YELLOW, "Game Clear")
+            player_name, score = db.get_latest_score(game_context["user_id"])
+            current_state = end_screen(screen, clock, "YOU WIN!", YELLOW, "Game Clear",player_name,score)
 
     pygame.quit()
     sys.exit()

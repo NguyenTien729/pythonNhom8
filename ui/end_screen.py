@@ -1,12 +1,13 @@
 import pygame
 import sys
 
-def end_screen(screen, clock, title, color, caption):
+def end_screen(screen, clock, title, color, caption, player_name, score):
 
     pygame.display.set_caption(caption)
 
     # Font Undertale
     title_font = pygame.font.Font("font/MonsterFriendBack.otf", 80)
+    name_font = pygame.font.Font("font/MonsterFriendBack.otf", 40)
     press_font = pygame.font.Font("font/MonsterFriendBack.otf", 20)
 
     esc_sound = pygame.mixer.Sound("sound/sans_battle/snd_select.wav")
@@ -17,8 +18,13 @@ def end_screen(screen, clock, title, color, caption):
         screen.fill(BLACK)
 
         title_text = title_font.render(title, True, color)
-        title_rect = title_text.get_rect(center=(500, 250))
+        title_rect = title_text.get_rect(center=(500, 200))
         screen.blit(title_text, title_rect)
+
+        name_text = name_font.render(f"{player_name}: {score} points", True, color)
+        name_rect = name_text.get_rect(center=(500, 320))
+        screen.blit(name_text, name_rect)
+
 
         press_text = press_font.render("PRESS ANY KEY TO CONTINUE", True, (200, 200, 200))
         press_rect = press_text.get_rect(bottomright=(980, 580))
