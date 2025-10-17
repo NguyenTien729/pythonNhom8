@@ -33,8 +33,9 @@ def game_run(screen, clock, db, game_context):
     floors = MultiFloor()
     blasters = MultiBlaster()
     boss_lv_3 = CallBoss(screen, player, player.rect, blasters, floors)
-    score = 2000
     is_active = True
+    survival_timer = 0
+    win_score = 1000
 
     arena_x, arena_y = 300, 285
     arena_width, arena_height = 400, 200
@@ -68,7 +69,8 @@ def game_run(screen, clock, db, game_context):
         surface.blit(hp_val, hp_val_rect)
 
     while True:
-        dt = min(clock.tick(60) * 0.001, 1/ 30)
+        dt = clock.tick(60) * 0.001
+        survival_timer += dt * 10
 
         print(dt)
         for event in pygame.event.get():
@@ -88,6 +90,7 @@ def game_run(screen, clock, db, game_context):
                     sys.exit()
 
         if is_active:
+
 
             target_w, target_h, target_x, target_y = boss_lv_3.arena_state()
             arena_width = lerp(arena_width, target_w, 0.09)
@@ -125,18 +128,20 @@ def game_run(screen, clock, db, game_context):
             boss_name_rect = boss_name.get_rect(midtop=(500, 50))
             screen.blit(boss_name, boss_name_rect)
 
-            if player.player_hp <= 40:
-                boss_lv_3.sound.fadeout(1000)
+            if player.player_hp <= 0 or boss_lv_3.is_win:
+                boss_lv_3.sound.stop()
                 is_active = False
 
         else:
+            score = survival_timer
             db.save_score(game_context["user_id"], score)
             return "GAME_OVER"
 
-        # (Thêm điều kiện thắng ở đây nếu có)
-        # if boss_lv_3.is_defeated():
-        #     db.save_score(game_context["user_id"], score)
-        #     return "GAME_CLEAR"
+        if boss_lv_3.is_win:
+            hp_factor = 1.0 + (player.player_hp / player.max_hp)
+            score = (survival_timer + win_score) * hp_factor
+            db.save_score(game_context["user_id"], score)
+            return "GAME_CLEAR"
 
         pygame.display.update()
 

@@ -126,7 +126,7 @@ class CallBoss(pygame.sprite.Sprite):
         self.special_attack = SpecialAttack(screen, initial_box_rect, player, self.player_rect, self.blasters)
         self.attack_patterns =[self.blaster_opening,self.blaster_floor,self.blaster_circle,self.blaster_random,self.gravity_bone,self.bone_parten_middle,self.bone_parten_sideway,self.more_bone_floor,self.special_attack]
         # self.attack_patterns = [self.blaster_opening]
-        self.attack_index = 2
+        self.attack_index = 7
         self.mod = self.attack_patterns[self.attack_index]
         self.change_mod = False
         self.is_win = False
@@ -468,9 +468,10 @@ class CallBoss(pygame.sprite.Sprite):
 
                 if not self.mod.is_active:
                     self.attack_time += dt
-                    if self.attack_time >= 2.0:
+                    if self.attack_time >= 5.0:
                         self.attack_time = 0
                         self.change_mod = True
+                        self.is_win = True
 
             else:
                 self.mod.update(dt)
