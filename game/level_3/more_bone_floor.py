@@ -67,7 +67,7 @@ class MoreBoneFloor(pygame.sprite.Sprite):
                     self.column_timers[i] = 0
 
             else:
-                speed = (0.625 if i == 0 else 0.75)
+                speed = (0.625 if i == 0 else 0.65)
                 delay = self.normal_delay if self.pair_count[i] < 2 else self.gap_delay
                 if self.column_timers[i] >= delay:
                     self.spawn_bone(self.spawn_y_positions[i], self.directions[i], self.bone_images[i], speed)

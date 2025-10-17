@@ -1,5 +1,3 @@
-# Mọi thứ trong class GravityBone giữ nguyên, chỉ sửa hàm draw()
-
 import random
 from typing import Optional, List  # Thêm List
 import pygame
@@ -8,7 +6,7 @@ from entities.bone_stab import BoneStab
 
 class GravityBone(pygame.sprite.Sprite):
     def __init__(self, screen, strong_gravity, default_gravity, player, player_rect, box_rect, height: Optional[int] = 30,
-                 duration: Optional[float] = 1.3, side: Optional[List[str]] = None, speed: Optional[float] = 250, ):
+                 duration: Optional[float] = 1.3, side: Optional[List[str]] = None, speed: Optional[float] = 250 ):
         super().__init__()
         self.screen = screen
         self.strong_gravity = strong_gravity
