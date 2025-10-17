@@ -32,6 +32,8 @@ def login_ui(screen, clock):
         "password": pygame.Rect(250, 260, 300, 50)
     }
 
+    pygame.key.set_repeat(500, 50)
+
     def draw_text(text, font, color, surface, x, y):
         text_obj = font.render(text, True, color)
         rect = text_obj.get_rect(center=(x, y))
@@ -77,6 +79,7 @@ def login_ui(screen, clock):
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
+                pygame.key.set_repeat(0)
                 pygame.quit()
                 sys.exit()
 
@@ -95,6 +98,7 @@ def login_ui(screen, clock):
                     user_id = db.login(username, password)
                     select_sound.play()
                     if user_id:
+                        pygame.key.set_repeat(0)
                         player_name = db.get_player_name(user_id)
                         return user_id, player_name
                     else:

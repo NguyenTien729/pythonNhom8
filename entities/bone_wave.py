@@ -7,7 +7,7 @@ from entities.bone import Bone
 class BoneWave(pygame.sprite.Sprite):
     normal_delay = 0.05
 
-    def __init__(self, screen, box_rect, player, gap, speed: Optional[float] = 20, scale: Optional[float] = 1.1):
+    def __init__(self, screen, box_rect, player, gap, speed: Optional[float] = 15, scale: Optional[float] = 1.1):
         super().__init__()
         self.screen = screen
         self.box_rect = box_rect
