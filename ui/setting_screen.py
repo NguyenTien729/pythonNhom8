@@ -23,6 +23,8 @@ def setting_screen(screen, clock, settings):
 
     current_slider = None
 
+    pygame.key.set_repeat(500, 20)
+
     while True:
         esc_sound.set_volume(settings.sfx_volume)
 
@@ -38,6 +40,8 @@ def setting_screen(screen, clock, settings):
 
         for slider in sliders:
             slider.render(screen)
+            if slider == current_slider:
+                pygame.draw.rect(screen, "white", slider.container_rect, 5)
 
         music_label = option_font.render("MUSIC VOLUME", True, WHITE)
         music_rect = music_label.get_rect(center = (screen_center[0], music_slider.pos[1] - 40))
@@ -63,20 +67,21 @@ def setting_screen(screen, clock, settings):
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
+                pygame.key.set_repeat(0)
                 pygame.quit()
                 sys.exit()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
+                    pygame.key.set_repeat(0)
                     esc_sound.play()
                     return "MENU"
 
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 1:  # Left click
+                if event.button == 1:
                     for slider in sliders:
-                        # Kiểm tra xem chuột có trong container không
                         if slider.container_rect.collidepoint(mouse_pos):
                             current_slider = slider
-                            slider.move_slider(mouse_pos)
+                            slider.move_slider_mouse(mouse_pos)
 
                             value = slider.get_value()
                             current_val = max(0.0, min(1.0, value / 100.0))
@@ -85,13 +90,9 @@ def setting_screen(screen, clock, settings):
                             elif slider == sfx_slider:
                                 settings.sfx_volume = current_val
 
-            if event.type == pygame.MOUSEBUTTONUP:
-                if event.button == 1:
-                    current_slider = None
-
             if event.type == pygame.MOUSEMOTION:
-                if current_slider:
-                    current_slider.move_slider(mouse_pos)
+                if mouse[0] and current_slider:
+                    current_slider.move_slider_mouse(mouse_pos)
                     value = current_slider.get_value()
                     current_val = max(0.0, min(1.0, value / 100.0))
                     if current_slider == music_slider:
@@ -99,5 +100,21 @@ def setting_screen(screen, clock, settings):
                     elif current_slider == sfx_slider:
                         settings.sfx_volume = current_val
                         esc_sound.set_volume(settings.sfx_volume)
+
+            if event.type == pygame.KEYDOWN:
+                if current_slider:
+                    if event.key == pygame.K_RIGHT:
+                        current_slider.move_slider_button('right')
+                    if event.key == pygame.K_LEFT:
+                        current_slider.move_slider_button('left')
+
+                    value = current_slider.get_value()
+                    current_val = max(0.0, min(1.0, value / 100.0))
+                    if current_slider == music_slider:
+                        settings.music_volume = current_val
+                    elif current_slider == sfx_slider:
+                        settings.sfx_volume = current_val
+                        esc_sound.set_volume(settings.sfx_volume)
+
 
         clock.tick(60)
