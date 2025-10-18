@@ -81,3 +81,21 @@ class Database:
             LIMIT %s
         """, (limit,))
         return self.cursor.fetchall()
+
+    def get_latest_score(self, user_id):
+        self.cursor.execute("""
+            SELECT u.player_name, s.score
+            FROM scores s
+            JOIN users u ON s.user_id = u.id
+            WHERE s.user_id = %s
+            ORDER BY s.date_time DESC
+            LIMIT 1
+        """, (user_id,))
+        result = self.cursor.fetchone()  
+        player_name, score = result
+        if player_name is None:
+            player_name = "Unknown"
+        if score is None:
+            score = 0
+
+        return (str(player_name), int(score))
