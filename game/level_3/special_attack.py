@@ -14,7 +14,7 @@ def lerp(a: float, b: float, t: float) -> float:
 
 
 class SpecialAttack:
-    def __init__(self, screen, box_rect, player, player_rect, blasters: MultiBlaster):
+    def __init__(self, screen, box_rect, player, player_rect, blasters: MultiBlaster, settings):
         self.end_box_rect = None
         self.current_box_rect = None
         self.screen = screen
@@ -24,23 +24,24 @@ class SpecialAttack:
         self.player = player
         self.player_rect = player_rect
         self.blasters = blasters
+        self.settings = settings
 
         self.is_active = False
         self.timer = 0.0
         self.phase = 0
 
         self.side = None
-        self.gravity_bone = GravityBone(self.screen, 100, 1, self.player, self.player_rect, self.box_rect, 50, 1.1, self.side)
+        self.gravity_bone = GravityBone(self.screen, 100, 1, self.player, self.player_rect, self.box_rect, self.settings, 50, 1.1, self.side)
         self.bone_parten_sideway = BonePatternSideway(self.screen, self.box_rect, self.player)
         self.bone_wave = BoneWave(self.screen, self.box_rect, self.player, 15)
-        self.blaster_circle = BlasterCircle((500, 380), self.blasters, beam_width=1)
+        self.blaster_circle = BlasterCircle((500, 380), self.blasters, 1, self.settings)
         self.triple_bone = TripleBone(self.screen, self.box_rect, self.player)
         self.increasing_bone = IncreasingBone(self.screen, self.box_rect, self.player)
         self.bone_stabs = pygame.sprite.Group()
         self.last_side = [['left', 'top'], ['top', 'bottom'], ['bottom', 'right']]
 
         self.gravity_bones_multi = []
-        self.multi_bone_stab = MultiBoneStab()
+        self.multi_bone_stab = MultiBoneStab(self.settings)
         self.phase4_attacks_created = False
         self.phase_4_pair_index = 0
         self.phase4_stage = None

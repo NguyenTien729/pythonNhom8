@@ -3,7 +3,7 @@ from pygame import Vector2
 
 
 class BoneStab(pygame.sprite.Sprite):
-    def __init__(self, screen, box_rect, side: str, height, speed, player):
+    def __init__(self, screen, box_rect, side: str, height, speed, player, settings):
         super().__init__()
         self.screen = screen
         self.box_rect = box_rect
@@ -11,6 +11,7 @@ class BoneStab(pygame.sprite.Sprite):
         self.height = height
         self.speed = speed
         self.player = player
+        self.settings = settings
 
         self.image_wide = pygame.image.load('graphics/sprites/bones/spr_s_bonestab_v_wide_0.png')
         self.image_tall = pygame.image.load('graphics/sprites/bones/spr_s_bonestab_h_tall_0.png')
@@ -24,6 +25,8 @@ class BoneStab(pygame.sprite.Sprite):
 
         self.bone_sound = pygame.mixer.Sound('sound/sans_battle/bone-undertale-sound-effect.mp3')
         self.warning_sound = pygame.mixer.Sound('sound/sans_battle/warning_undertale_sound.wav')
+        self.bone_sound.set_volume(self.settings.sfx_volume)
+        self.warning_sound.set_volume(self.settings.sfx_volume)
 
         self.movement = Vector2(0, 0)
         self.pos = Vector2(0, 0)
@@ -87,6 +90,9 @@ class BoneStab(pygame.sprite.Sprite):
         self.rect.center = self.pos
 
     def update(self, dt: float):
+        self.bone_sound.set_volume(self.settings.sfx_volume)
+        self.warning_sound.set_volume(self.settings.sfx_volume)
+
         #vẽ cảnh báo ban đầu và chuẩn bị tấn công
         if self.state == 0:
             if not self.have_played_warning:

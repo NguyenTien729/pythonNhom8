@@ -1,7 +1,7 @@
 import pygame
 import sys
 
-def end_screen(screen, clock, title, color, caption):
+def end_screen(screen, clock, title, color, caption, settings):
 
     pygame.display.set_caption(caption)
 
@@ -14,6 +14,7 @@ def end_screen(screen, clock, title, color, caption):
     BLACK = (0, 0, 0)
 
     while True:
+        esc_sound.set_volume(settings.sfx_volume)
         screen.fill(BLACK)
 
         title_text = title_font.render(title, True, color)

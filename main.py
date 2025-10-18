@@ -19,8 +19,14 @@ from entities.blaster import MultiBlaster
 from entities.stand_floor import MultiFloor
 from game.level_3.Sand import CallBoss
 from game.player.player import Player
+from ui.setting_screen import setting_screen
 
-def game_run(screen, clock, db, game_context):
+class SettingsManager:
+    def __init__(self):
+        self.music_volume = 0.5
+        self.sfx_volume = 0.5
+
+def game_run(screen, clock, db, game_context, settings):
     pygame.display.set_caption("Game Run")
     g_font = pygame.font.Font("font/MonsterFriendBack.otf", 22)
 
@@ -31,8 +37,8 @@ def game_run(screen, clock, db, game_context):
 
     player = Player(500, 470)
     floors = MultiFloor()
-    blasters = MultiBlaster()
-    boss_lv_3 = CallBoss(screen, player, player.rect, blasters, floors)
+    blasters = MultiBlaster(settings)
+    boss_lv_3 = CallBoss(screen, player, player.rect, blasters, floors, settings)
     is_active = True
     survival_timer = 0
     win_score = 1000
@@ -80,7 +86,7 @@ def game_run(screen, clock, db, game_context):
 
             # pause menu
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-                choice = pause_menu(screen)
+                choice = pause_menu(screen, settings)
                 if choice == "MAIN MENU":
                     return "MENU"
                 elif choice == "LEADERBOARD":
@@ -152,6 +158,7 @@ def main():
     pygame.display.set_caption("Undertale")
     clock = pygame.time.Clock()
     db = Database()
+    settings = SettingsManager()
 
     game_over_sound = pygame.mixer.Sound("sound/sans_battle/Undertale-Sound-Effect-Flowey-X-Laugh.wav")
     game_clear_sound = pygame.mixer.Sound("sound/sans_battle/Undertale-Sound-Effect-You-Win_.wav")
@@ -167,8 +174,11 @@ def main():
     current_state = "LOGIN"
 
     while True:
+        game_over_sound.set_volume(settings.sfx_volume)
+        game_clear_sound.set_volume(settings.sfx_volume)
+
         if current_state == "LOGIN":
-            login_result = login_ui(screen, clock)
+            login_result = login_ui(screen, clock, settings)
             if login_result:
                 game_context["user_id"], game_context["player_name"] = login_result
                 if game_context["player_name"]:
@@ -183,29 +193,34 @@ def main():
                 current_state = "MENU"
 
         elif current_state == "MENU":
-            choice = run_menu(screen, clock, game_context)
+            choice = run_menu(screen, clock, game_context, settings)
             if choice == "START":
                 current_state = "GAMEPLAY"
             elif choice == "LEADERBOARD":
                 current_state = "LEADERBOARD"
+            elif choice == "SETTINGS":
+                current_state = "SETTINGS"
             elif choice == "EXIT":
                 break
 
         elif current_state == "GAMEPLAY":
-            current_state = game_run(screen, clock, db, game_context)
+            current_state = game_run(screen, clock, db, game_context, settings)
 
         elif current_state == "LEADERBOARD":
-            current_state = leaderboard_main(screen, clock)
+            current_state = leaderboard_main(screen, clock, settings)
+
+        elif current_state == "SETTINGS":
+            current_state = setting_screen(screen, clock, settings)
 
 
         elif current_state == "GAME_OVER":
             game_over_sound.play()
-            current_state = end_screen(screen, clock, "GAME OVER", RED, "Game Over")
+            current_state = end_screen(screen, clock, "GAME OVER", RED, "Game Over", settings)
 
 
         elif current_state == "GAME_CLEAR":
             game_clear_sound.play()
-            current_state = end_screen(screen, clock, "YOU WIN!", YELLOW, "Game Clear")
+            current_state = end_screen(screen, clock, "YOU WIN!", YELLOW, "Game Clear", settings)
 
     pygame.quit()
     sys.exit()

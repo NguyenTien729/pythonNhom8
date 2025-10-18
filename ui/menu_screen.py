@@ -1,6 +1,6 @@
 import pygame
 
-def run_menu(screen, clock, game_context):
+def run_menu(screen, clock, game_context, settings):
     background = pygame.image.load("graphics/sprites/bones/background3.jpg")
 
     font = pygame.font.Font("font/MonsterFriendBack.otf", 36)
@@ -18,10 +18,13 @@ def run_menu(screen, clock, game_context):
     BLACK = (0, 0, 0)
     YELLOW = (255, 255, 0)
 
-    options = ["START", "LEADERBOARD", "EXIT"]
+    options = ["START", "LEADERBOARD", "SETTINGS", "EXIT"]
     selected = 0
 
     while True:
+        select_sound.set_volume(settings.sfx_volume)
+        start_sound.set_volume(settings.sfx_volume)
+
         mouse_pos = pygame.mouse.get_pos()
         screen.fill(BLACK)
         screen.blit(background, (0, 0))
@@ -68,7 +71,10 @@ def run_menu(screen, clock, game_context):
             if event.type == pygame.MOUSEBUTTONDOWN:
                 for opt, rect in buttons_rect:
                     if rect.collidepoint(mouse_pos):
-                        select_sound.play()
+                        if opt == "START":
+                            start_sound.play()
+                        else:
+                            select_sound.play()
                         return opt
 
         clock.tick(30)
