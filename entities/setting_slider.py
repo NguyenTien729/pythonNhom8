@@ -11,18 +11,23 @@ class Slider:
 
         self.min = min
         self.max = max
-        self.initial_val = (self.slider_right_pos - self.slider_left_pos) * initial_val
+
+        self.min_center = self.slider_left_pos + 10 // 2
+        self.max_center = self.slider_right_pos - 10 // 2
 
         self.container_rect = pygame.Rect(self.slider_left_pos, self.slider_top_pos, self.size[0], self.size[1])
-        self.button_rect = pygame.Rect(self.slider_left_pos + self.initial_val - 5, self.slider_top_pos, 10, self.size[1])
+        self.button_rect = pygame.Rect(self.slider_left_pos, self.slider_top_pos, 10, self.size[1])
+
+        self.initial_val = self.min_center + (self.max_center - self.min_center) * initial_val
+        self.button_rect.centerx = self.initial_val
 
     def move_slider_mouse(self, mouse_pos):
         self.button_rect.centerx = mouse_pos[0]
 
-        if self.button_rect.left < self.slider_left_pos:
-            self.button_rect.left = self.slider_left_pos
-        if self.button_rect.right > self.slider_right_pos:
-            self.button_rect.right = self.slider_right_pos
+        if self.button_rect.centerx < self.min_center:
+            self.button_rect.centerx  = self.min_center
+        if self.button_rect.centerx > self.max_center:
+            self.button_rect.centerx = self.max_center
 
     def move_slider_button(self, button):
         if button == 'right':
@@ -30,17 +35,17 @@ class Slider:
         elif button == 'left':
             self.button_rect.centerx -= self.size[0] / 100
 
-        if self.button_rect.left < self.slider_left_pos:
-            self.button_rect.left = self.slider_left_pos
-        if self.button_rect.right > self.slider_right_pos:
-            self.button_rect.right = self.slider_right_pos
+        if self.button_rect.centerx < self.min_center:
+            self.button_rect.centerx = self.min_center
+        if self.button_rect.centerx > self.max_center:
+            self.button_rect.centerx = self.max_center
 
     def render(self, screen: pygame.Surface):
         pygame.draw.rect(screen, "darkgray", self.container_rect)
         pygame.draw.rect(screen, "red", self.button_rect)
 
     def get_value(self):
-        val_range = self.slider_right_pos - self.slider_left_pos - 10
-        button_val = self.button_rect.left - self.slider_left_pos
+        val_range = self.max_center  - self.min_center
+        button_val = self.button_rect.centerx - self.min_center
 
         return (button_val / val_range) * (self.max - self.min) + self.min
