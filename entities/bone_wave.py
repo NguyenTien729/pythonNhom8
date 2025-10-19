@@ -20,16 +20,12 @@ class BoneWave(pygame.sprite.Sprite):
         self.max_height = self.image.get_height()
         self.min_height = 5
         self.rect = self.image.get_rect()
-
         self.wave_timer = 0.0
         self.scale = scale
         self.frequency = 6
-
         self.bones = pygame.sprite.Group()
-
         self.spawn_timer = 0
         self.period = 2.0
-
         self.gap = gap
 
     def spawn_bone(self, y, direction, image, speed, anchor):

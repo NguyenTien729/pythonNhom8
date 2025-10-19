@@ -1,6 +1,5 @@
 from typing import Optional
 from entities.Beams import create_projectile_abs
-
 import pygame
 import math
 
@@ -18,7 +17,6 @@ class GasterBlaster(pygame.sprite.Sprite):
         self.beam = None
         self.sprite_prefix = sprite_prefix or "graphics/Sprites/blasters/spr_gasterblaster_"
         self.beam_sprite = beam_sprite or "graphics/Sprites/blasters/beam1"
-
         self.sprite = pygame.image.load(self.sprite_prefix + "0.png").convert_alpha()
         self.sprite = pygame.transform.scale_by(self.sprite, 2.0)
         self.image = self.sprite.copy()

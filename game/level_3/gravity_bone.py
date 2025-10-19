@@ -1,5 +1,5 @@
 import random
-from typing import Optional, List  # Thêm List
+from typing import Optional, List 
 import pygame
 from entities.bone_stab import BoneStab
 
@@ -39,17 +39,15 @@ class GravityBone(pygame.sprite.Sprite):
 
     def update(self, dt, on: Optional[bool] = True):
         self.timer += dt
-
         if self.pull_start_time <= self.timer < self.attack_time:
             self.player.gravity = self.strong_gravity
             self.player.change_gravity_direction(self.current_side)
             self.player.hold_jump_force = 0
-            is_colliding_wall = (self.current_side == 'bottom' and self.player.rect.bottom >= self.box_rect.bottom) or \
+            colliding_wall = (self.current_side == 'bottom' and self.player.rect.bottom >= self.box_rect.bottom) or \
                                 (self.current_side == 'top' and self.player.rect.top <= self.box_rect.top) or \
                                 (self.current_side == 'left' and self.player.rect.left <= self.box_rect.left) or \
                                 (self.current_side == 'right' and self.player.rect.right >= self.box_rect.right)
-
-            if is_colliding_wall and not self.have_played:
+            if colliding_wall and not self.have_played:
                 self.slam_sound.play()
                 self.have_played = True
 
@@ -92,7 +90,6 @@ class MultiBoneStab:
         self.bone_stabs = pygame.sprite.Group()
         self.reset = reset
 
-
     def create_bone_stab(self, screen, strong_gravity, default_gravity, player, player_rect, box_rect, height,
                  duration: Optional[float] = 1.3, side: Optional[List[str]] = None, speed: Optional[float] = 250):
         bone_stab = GravityBone(screen, strong_gravity, default_gravity, player, player_rect, box_rect, height, duration, side, speed)
@@ -102,7 +99,6 @@ class MultiBoneStab:
     def update(self, dt, on: Optional[bool] = True):
         for bone_stab in self.bone_stabs:
             bone_stab.update(dt, on)
-
         if self.reset:
             remove = [bs for bs in self.bone_stabs if bs.timer > bs.duration]
             for bs in remove:

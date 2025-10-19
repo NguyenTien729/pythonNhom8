@@ -91,7 +91,6 @@ def game_run(screen, clock, db, game_context):
 
         if is_active:
 
-
             target_w, target_h, target_x, target_y = boss_lv_3.arena_state()
             arena_width = lerp(arena_width, target_w, 0.09)
             arena_height = lerp(arena_height, target_h, 0.09)
