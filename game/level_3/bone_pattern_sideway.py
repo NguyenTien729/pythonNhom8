@@ -34,7 +34,7 @@ class BonePatternSideway:
         self.directions = [1, -1]
         self.column_timers = [0, 0]
 
-        self.floor_spawned = False  
+     
 
     def spawn_bone(self, x, direction):
         if direction == 1: 
@@ -67,7 +67,6 @@ class BonePatternSideway:
 
     def rect_box(self, rect):
         self.box_rect = rect
-        self.floor_spawned = False
 
     def stop(self):
         self.bones.empty()

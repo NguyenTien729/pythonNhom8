@@ -230,12 +230,14 @@ def main():
 
         elif current_state == "GAME_OVER":
             game_over_sound.play()
-            current_state = end_screen(screen, clock, "GAME OVER", RED, "Game Over", settings)
+            player_name, score = db.get_latest_score(game_context["user_id"])
+            current_state = end_screen(screen, clock, "GAME OVER", RED, "Game Over",player_name,score)
 
 
         elif current_state == "GAME_CLEAR":
             game_clear_sound.play()
-            current_state = end_screen(screen, clock, "YOU WIN!", YELLOW, "Game Clear", settings)
+            player_name, score = db.get_latest_score(game_context["user_id"])
+            current_state = end_screen(screen, clock, "YOU WIN!", YELLOW, "Game Clear",player_name,score)
 
     pygame.quit()
     sys.exit()

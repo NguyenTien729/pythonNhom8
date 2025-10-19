@@ -39,7 +39,7 @@ class BonePatternMiddle:
         self.column_timers = [0, 0, 0]
 
         # Floor
-        self.floor_spawned = False
+        self.floor_bone_spawned = False
         self.floor_image = "graphics/sprites/bones/floor1.png"
         self.has_spawned_floor = False
         self.floor_direction = "left"
@@ -59,7 +59,7 @@ class BonePatternMiddle:
         self.floor.create_floor(1, 1, self.screen, (290, 435), self.floor_direction, speed=125, sprite_prefix=self.floor_image)
 
     def spawn_floor_bones(self):
-        if self.floor_spawned:
+        if self.floor_bone_spawned:
             return
 
         start_y = self.box_rect.bottom
@@ -71,7 +71,7 @@ class BonePatternMiddle:
             bone = MovingFloorBone(image, (x + 20, start_y), 2, self.box_rect, self.floor_bones)
             self.floor_bones.add(bone)
             x += 20
-        self.floor_spawned = True
+        self.floor_bone_spawned = True
 
     def update(self, dt):
         self.floor_timer += dt
@@ -133,7 +133,7 @@ class BonePatternMiddle:
         # chỉ reset khi thực sự muốn
         self.box_rect = rect
         if reset_spawn:
-            self.floor_spawned = False
+            self.floor_bone_spawned = False
             self.has_spawned_floor = False
 
 class MovingFloorBone(pygame.sprite.Sprite):
