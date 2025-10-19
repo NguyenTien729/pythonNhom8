@@ -23,8 +23,8 @@ class BoneStab(pygame.sprite.Sprite):
 
         self.rect = self.image.get_rect()
 
-        self.bone_sound = pygame.mixer.Sound('sound/sans_battle/bone-undertale-sound-effect.mp3')
-        self.warning_sound = pygame.mixer.Sound('sound/sans_battle/warning_undertale_sound.wav')
+        self.bone_sound = pygame.mixer.Sound('sound/sand_battle/bone-undertail-sound-effect.mp3')
+        self.warning_sound = pygame.mixer.Sound('sound/sand_battle/warning_sound.wav')
         self.bone_sound.set_volume(self.settings.sfx_volume)
         self.warning_sound.set_volume(self.settings.sfx_volume)
 

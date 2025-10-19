@@ -47,8 +47,8 @@ class MoreBoneFloor(pygame.sprite.Sprite):
         self.bones.add(bone)
 
     def spawn_floor(self):
-        floor_left = self.floor.create_floor(1, 1, self.screen, (200, self.floor_pos_1), "right", speed=150, sprite_prefix=self.floor_1)
-        floor_right = self.floor.create_floor(1, 1, self.screen, (800, self.floor_pos_2), "left", speed=150, sprite_prefix=self.floor_2)
+        floor_left = self.floor.create_floor(1, 1, self.screen, (0, self.floor_pos_1), "right", speed=150, sprite_prefix=self.floor_1)
+        floor_right = self.floor.create_floor(1, 1, self.screen, (self.screen.get_width(), self.floor_pos_2), "left", speed=150, sprite_prefix=self.floor_2)
 
     def update(self, dt):
         self.floor_timer += dt

@@ -42,9 +42,13 @@ def game_run(screen, clock, db, game_context, settings):
     is_active = True
     survival_timer = 0
     win_score = 1000
+    game_paused = False
 
     arena_x, arena_y = 300, 285
     arena_width, arena_height = 400, 200
+
+    saved_frame = None
+    box_rect = pygame.Rect(arena_x, arena_y, arena_width, arena_height)
 
     def lerp(a: float, b: float, t: float) -> float:
         return a + (b - a) * t
@@ -75,8 +79,12 @@ def game_run(screen, clock, db, game_context, settings):
         surface.blit(hp_val, hp_val_rect)
 
     while True:
-        dt = clock.tick(60) * 0.001
-        survival_timer += dt * 10
+        if not game_paused:
+            dt = clock.tick(60) * 0.001
+            survival_timer += dt * 10
+        else:
+            clock.tick(60)
+            dt = 0
 
         print(dt)
         for event in pygame.event.get():
@@ -86,14 +94,26 @@ def game_run(screen, clock, db, game_context, settings):
 
             # pause menu
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                if not game_paused:
+                    game_paused = True
+                    saved_frame = screen.copy()
+
                 choice = pause_menu(screen, settings)
                 if choice == "MAIN MENU":
+                    boss_lv_3.sound.stop()
                     return "MENU"
-                elif choice == "LEADERBOARD":
-                    return "LEADERBOARD"
                 elif choice == "EXIT":
                     pygame.quit()
                     sys.exit()
+                elif choice == "RESUME":
+                    game_paused = False
+                    saved_frame = None
+
+        if game_paused:
+            if saved_frame:
+                screen.blit(saved_frame, (0, 0))
+            pygame.display.update()
+            continue
 
         if is_active:
 
@@ -130,7 +150,7 @@ def game_run(screen, clock, db, game_context, settings):
             player.draw(screen)
             draw_health_bar(screen, 435, 500, player.player_hp, player.max_hp)
 
-            boss_name = g_font.render("SANS", True, WHITE)
+            boss_name = g_font.render("SAND", True, WHITE)
             boss_name_rect = boss_name.get_rect(midtop=(500, 50))
             screen.blit(boss_name, boss_name_rect)
 
@@ -155,13 +175,13 @@ def main():
     pygame.init()
     screen_width, screen_height = 1000, 600
     screen = pygame.display.set_mode((screen_width, screen_height))
-    pygame.display.set_caption("Undertale")
+    pygame.display.set_caption("Undertail")
     clock = pygame.time.Clock()
     db = Database()
     settings = SettingsManager()
 
-    game_over_sound = pygame.mixer.Sound("sound/sans_battle/Undertale-Sound-Effect-Flowey-X-Laugh.wav")
-    game_clear_sound = pygame.mixer.Sound("sound/sans_battle/Undertale-Sound-Effect-You-Win_.wav")
+    game_over_sound = pygame.mixer.Sound("sound/sand_battle/Sound-Effect-Laugh.wav")
+    game_clear_sound = pygame.mixer.Sound("sound/sand_battle/Sound-Effect-You-Win_.wav")
 
     RED = (255, 0, 0)
     YELLOW = (255, 255, 0)

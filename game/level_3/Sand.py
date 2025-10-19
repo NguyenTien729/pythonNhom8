@@ -136,7 +136,7 @@ class CallBoss(pygame.sprite.Sprite):
         self.attack_time = 0
         self.swap_time = 0
 
-        self.sound = pygame.mixer.Sound('sound/sans_battle/MEGALOVANIA.wav')
+        self.sound = pygame.mixer.Sound('sound/sand_battle/MEGALOVANILA.wav')
         self.sound.set_volume(self.settings.music_volume)
         self.has_played = False
 

@@ -9,7 +9,7 @@ def end_screen(screen, clock, title, color, caption, settings):
     title_font = pygame.font.Font("font/MonsterFriendBack.otf", 80)
     press_font = pygame.font.Font("font/MonsterFriendBack.otf", 20)
 
-    esc_sound = pygame.mixer.Sound("sound/sans_battle/snd_select.wav")
+    esc_sound = pygame.mixer.Sound("sound/sand_battle/snd_select.wav")
 
     BLACK = (0, 0, 0)
 
