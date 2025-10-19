@@ -79,41 +79,37 @@ def game_run(screen, clock, db, game_context, settings):
         surface.blit(hp_val, hp_val_rect)
 
     while True:
-        if not game_paused:
-            dt = clock.tick(60) * 0.001
-            survival_timer += dt * 10
-        else:
-            clock.tick(60)
-            dt = 0
+        game_resumed = True
 
-        print(dt)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
 
             # pause menu
-            if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-                if not game_paused:
-                    game_paused = True
-                    saved_frame = screen.copy()
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE and not game_paused:
+                saved_frame = screen.copy()
+                game_paused = False
 
-                choice = pause_menu(screen, settings)
-                if choice == "MAIN MENU":
+                choice = pause_menu(screen, settings, saved_frame)
+                if choice == "RESUME":
+                    game_paused = False
+                    game_resumed = True
+                    clock.tick()
+
+                elif choice == "MAIN MENU":
                     boss_lv_3.sound.stop()
                     return "MENU"
                 elif choice == "EXIT":
                     pygame.quit()
                     sys.exit()
-                elif choice == "RESUME":
-                    game_paused = False
-                    saved_frame = None
 
-        if game_paused:
-            if saved_frame:
-                screen.blit(saved_frame, (0, 0))
-            pygame.display.update()
-            continue
+        if game_resumed:
+            dt = clock.tick(60) * 0.001
+            survival_timer += dt * 10
+        else:
+            clock.tick(60)
+            dt = 0
 
         if is_active:
 

@@ -35,7 +35,7 @@ class MoreBoneFloor(pygame.sprite.Sprite):
         self.normal_delay = 1.2
         # khoảng trống sau mỗi 2 xương
         self.gap_delay = 0.5
-        self.column_timers = [0.3, 0, -0.2]
+        self.column_timers = [0.3, 0, -0.5]
         self.pair_count = [0, 0, 0]
 
     def spawn_bone(self, y, direction, image, speed):

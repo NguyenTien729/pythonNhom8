@@ -1,9 +1,8 @@
 import pygame
 import sys
 
-def pause_menu(screen, settings):
+def pause_menu(screen, settings, saved_frame):
     pygame.mixer.pause()
-    paused = True
 
     # Font
     title_font = pygame.font.Font("font/MonsterFriendBack.otf", 48)
@@ -20,9 +19,12 @@ def pause_menu(screen, settings):
 
     pygame.key.set_repeat(500, 75)
 
-    while paused:
+    while True:
         select_sound.set_volume(settings.sfx_volume)
         mouse_pos = pygame.mouse.get_pos()
+
+        if saved_frame:
+            screen.blit(saved_frame, (0, 0))
 
         overlay = pygame.Surface(screen.get_size(), pygame.SRCALPHA)
         overlay.fill((0, 0, 0, 180))
@@ -80,11 +82,13 @@ def pause_menu(screen, settings):
                         from ui.leaderboard import leaderboard_main
                         leaderboard_main(screen, clock, settings)
                     else:
+                        pygame.key.set_repeat(0)
                         pygame.mixer.unpause()
                         return text
 
                 elif event.key == pygame.K_ESCAPE:
                     select_sound.play()
+                    pygame.key.set_repeat(0)
                     pygame.mixer.unpause()
                     return "RESUME"
 
@@ -101,4 +105,6 @@ def pause_menu(screen, settings):
                             leaderboard_main(screen, clock, settings)
                         else:
                             pygame.mixer.unpause()
+                            pygame.key.set_repeat(0)
                             return text
+                        break
