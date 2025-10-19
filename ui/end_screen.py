@@ -1,7 +1,7 @@
 import pygame
 import sys
 
-def end_screen(screen, clock, title, color, caption, settings, player_name,score):
+def end_screen(screen, clock, title, color, caption, settings, player_name, score):
 
     pygame.display.set_caption(caption)
 
@@ -22,7 +22,7 @@ def end_screen(screen, clock, title, color, caption, settings, player_name,score
         title_rect = title_text.get_rect(center=(500, 200))
         screen.blit(title_text, title_rect)
 
-        name_text = name_font.render(f"{player_name}: {score} points", True, color)
+        name_text = name_font.render(f"{player_name}: {int(score)} points", True, color)
         name_rect = name_text.get_rect(center=(500, 320))
         screen.blit(name_text, name_rect)
 

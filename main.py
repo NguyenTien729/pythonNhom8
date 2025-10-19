@@ -156,13 +156,13 @@ def game_run(screen, clock, db, game_context, settings):
         else:
             score = survival_timer
             db.save_score(game_context["user_id"], score)
-            return "GAME_OVER"
+            return "GAME_OVER", score
 
         if boss_lv_3.is_win:
             hp_factor = 1.0 + (player.player_hp / player.max_hp)
             score = (survival_timer + win_score) * hp_factor
             db.save_score(game_context["user_id"], score)
-            return "GAME_CLEAR"
+            return "GAME_CLEAR", score
 
         pygame.display.update()
 
@@ -187,6 +187,7 @@ def main():
     }
 
     current_state = "LOGIN"
+    score = 0
 
     while True:
         game_over_sound.set_volume(settings.sfx_volume)
@@ -219,7 +220,7 @@ def main():
                 break
 
         elif current_state == "GAMEPLAY":
-            current_state = game_run(screen, clock, db, game_context, settings)
+            current_state, score = game_run(screen, clock, db, game_context, settings)
 
         elif current_state == "LEADERBOARD":
             current_state = leaderboard_main(screen, clock, settings)
@@ -230,14 +231,14 @@ def main():
 
         elif current_state == "GAME_OVER":
             game_over_sound.play()
-            player_name, score = db.get_latest_score(game_context["user_id"])
-            current_state = end_screen(screen, clock, "GAME OVER", RED, "Game Over",player_name,score)
+            player_name = game_context["player_name"]
+            current_state = end_screen(screen, clock, "GAME OVER", RED, "Game Over", settings, player_name, score)
 
 
         elif current_state == "GAME_CLEAR":
             game_clear_sound.play()
-            player_name, score = db.get_latest_score(game_context["user_id"])
-            current_state = end_screen(screen, clock, "YOU WIN!", YELLOW, "Game Clear",player_name,score)
+            player_name = game_context["player_name"]
+            current_state = end_screen(screen, clock, "YOU WIN!", YELLOW, "Game Clear",settings, player_name,score)
 
     pygame.quit()
     sys.exit()
