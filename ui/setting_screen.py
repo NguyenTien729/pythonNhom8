@@ -21,7 +21,7 @@ def setting_screen(screen, clock, settings):
     sfx_slider = Slider((screen_center[0], screen_center[1] + 150), (500, 40), settings.sfx_volume, 0, 100)
     sliders = [music_slider, sfx_slider]
 
-    current_slider = None
+    current_slider = music_slider
 
     pygame.key.set_repeat(500, 20)
 
@@ -90,6 +90,7 @@ def setting_screen(screen, clock, settings):
                             elif slider == sfx_slider:
                                 settings.sfx_volume = current_val
 
+
             if event.type == pygame.MOUSEMOTION:
                 if mouse[0] and current_slider:
                     current_slider.move_slider_mouse(mouse_pos)
@@ -115,6 +116,13 @@ def setting_screen(screen, clock, settings):
                     elif current_slider == sfx_slider:
                         settings.sfx_volume = current_val
                         esc_sound.set_volume(settings.sfx_volume)
+
+                if event.key == pygame.K_TAB:
+                    if current_slider == music_slider:
+                        current_slider = sfx_slider
+                    elif current_slider == sfx_slider:
+                        current_slider = music_slider
+
 
 
         clock.tick(60)
