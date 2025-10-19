@@ -15,7 +15,7 @@ class IncreasingBone:
         self.delay = 0.02
         self.current_scale = 0
         self.max_scale = 0.65
-        self.scale_increase = 0.04
+        self.scale_inc = 0.04
 
     def spawn_bone(self):
         height = int(self.image.get_height() * self.current_scale)
@@ -33,7 +33,7 @@ class IncreasingBone:
         bone_bottom.rect = bone_bottom.image.get_rect(center=bone_bottom.rect.center)
         self.bones.add(bone_bottom)
 
-        self.current_scale += self.scale_increase
+        self.current_scale += self.scale_inc
 
     def update(self, dt):
         self.timer += dt

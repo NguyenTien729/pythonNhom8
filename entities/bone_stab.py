@@ -43,9 +43,9 @@ class BoneStab(pygame.sprite.Sprite):
         self.have_played_bone = False
         self.have_played_warning = False
 
-        self.pos_calculate()
+        self.pos_cal()
 
-    def pos_calculate(self):
+    def pos_cal(self):
         if self.side == 'left':
             #khai báo ví trí gọi và đích của xương
             self.initial_pos.x = self.box_rect.left - self.rect.width / 2

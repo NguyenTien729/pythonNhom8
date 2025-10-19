@@ -1,5 +1,4 @@
 import math
-
 import pygame
 from pygame import Vector2
 #hàm tính vị trí đích dựa trên việc xoay quanh 1 tâm
