@@ -5,6 +5,7 @@ import pygame
 def run_menu(screen, clock, game_context, settings):
     background = pygame.image.load("graphics/sprites/bones/background3.jpg")
 
+    big_font = pygame.font.Font("font/MonsterFriendBack.otf", 72)
     font = pygame.font.Font("font/MonsterFriendBack.otf", 36)
     small_font = pygame.font.Font("font/MonsterFriendBack.otf", 18)
 
@@ -35,7 +36,7 @@ def run_menu(screen, clock, game_context, settings):
         screen.blit(background, (0, 0))
 
         # Tiêu đề
-        title = font.render("UNDERTAIL", True, WHITE)
+        title = big_font.render("UNDERTAIL", True, WHITE)
         title_rect = title.get_rect(center=(screen.get_width() // 2, 150))
         screen.blit(title, title_rect)
 
