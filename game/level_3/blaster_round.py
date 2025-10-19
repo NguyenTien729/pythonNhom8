@@ -23,9 +23,10 @@ class BlasterCircle:
     spawn_radius = 700
     spawn_delay = 0.25
 
-    def __init__(self, pivot, blaster, beam_width, start_angle = 0, beam_alpha_speed = 4):
+    def __init__(self, pivot, blaster, beam_width, settings, start_angle = 0, beam_alpha_speed = 4):
         self.pivot = pivot
         self.angle = -15
+        self.settings = settings
 
         spawn_offset = Vector2()
         spawn_offset.from_polar((self.spawn_radius, -start_angle - 30))
@@ -43,7 +44,9 @@ class BlasterCircle:
         self.beam_width = beam_width
 
         self.sound = pygame.mixer.Sound("sound/sans_battle/gaster_round_call.wav")
+        self.sound.set_volume(self.settings.sfx_volume)
         self.fire_sound = pygame.mixer.Sound("sound/sans_battle/gaster_round_fire.wav")
+        self.fire_sound.set_volume(self.settings.sfx_volume)
 
     def spawn_blaster(self):
         #vị trí gọi
@@ -59,6 +62,9 @@ class BlasterCircle:
         blaster.beam_width = self.beam_width
 
     def update(self, dt: float):
+        self.sound.set_volume(self.settings.sfx_volume)
+        self.fire_sound.set_volume(self.settings.sfx_volume)
+
         self.angle += 100 * dt
 
         self.spawn_timer += dt

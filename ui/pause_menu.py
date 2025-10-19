@@ -1,7 +1,7 @@
 import pygame
 import sys
 
-def pause_menu(screen):
+def pause_menu(screen, settings):
     pygame.mixer.pause()
     paused = True
 
@@ -12,6 +12,9 @@ def pause_menu(screen):
     # Danh sách lựa chọn phải TRÙNG với main.py
     options = ["RESUME", "MAIN MENU", "LEADERBOARD", "EXIT"]
     selected = 0
+
+    select_sound = pygame.mixer.Sound("sound/sans_battle/snd_select.wav")
+    select_sound.set_volume(settings.sfx_volume)
 
     clock = pygame.time.Clock()
 

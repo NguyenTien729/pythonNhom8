@@ -9,7 +9,7 @@ def lerp(a: float, b: float, t: float) -> float:
 
 
 class GasterBlaster(pygame.sprite.Sprite):
-    def __init__(self, x: float, y: float, x2: float, y2: float, angle: float, start_angle: Optional[float] = None,
+    def __init__(self, x: float, y: float, x2: float, y2: float, angle: float, settings,  start_angle: Optional[float] = None,
                  sound: Optional[pygame.mixer.Sound] = None, fire_sound: Optional[pygame.mixer.Sound] = None,
                  sprite_prefix: Optional[str] = None, beam_sprite: Optional[str] = None):
 
@@ -50,10 +50,15 @@ class GasterBlaster(pygame.sprite.Sprite):
         if self.angle >= 180:
             self.angle -= 360
 
+        self.settings = settings
+
         self.sound = sound
         self.fire_sound = fire_sound
         self.sound = self.sound or pygame.mixer.Sound("sound/sans_battle/gasterintro.wav")
         self.fire_sound = self.fire_sound or pygame.mixer.Sound("sound/sans_battle/gasterfire.wav")
+        self.sound.set_volume(self.settings.sfx_volume)
+        self.fire_sound.set_volume(self.settings.sfx_volume)
+
         if self.sound is not None:
             self.sound.play()
 
@@ -123,6 +128,9 @@ class GasterBlaster(pygame.sprite.Sprite):
 
 
     def update(self):
+        self.sound.set_volume(self.settings.sfx_volume)
+        self.fire_sound.set_volume(self.settings.sfx_volume)
+
         self.update_timer += 1
         #blaster move
         if self.update_timer > self.shoot_delay and self.update_timer > (self.shoot_delay + self.hold_fire):
@@ -185,13 +193,14 @@ class GasterBlaster(pygame.sprite.Sprite):
 
 
 class MultiBlaster:
-    def __init__(self):
+    def __init__(self, settings):
         self.blasters = pygame.sprite.Group()
+        self.settings = settings
 
-    def create_blaster(self, x: float, y: float, x2: float, y2: float, angle: float, start_angle: Optional[float] = None,
+    def create_blaster(self, x: float, y: float, x2: float, y2: float, angle: float ,start_angle: Optional[float] = None,
                  sound: Optional[pygame.mixer.Sound] = None, fire_sound: Optional[pygame.mixer.Sound] = None,
                  sprite_prefix: Optional[str] = None, beam_sprite: Optional[str] = None):
-        blaster = GasterBlaster(x, y, x2, y2, angle, start_angle, sound, fire_sound, sprite_prefix, beam_sprite)
+        blaster = GasterBlaster(x, y, x2, y2, angle, self.settings, start_angle, sound, fire_sound, sprite_prefix, beam_sprite)
         self.blasters.add(blaster)
         return blaster
 

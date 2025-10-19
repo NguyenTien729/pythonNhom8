@@ -20,7 +20,7 @@ import pygame
 
 
 class CallBoss(pygame.sprite.Sprite):
-    def __init__(self, screen, player, player_rect, blasters: MultiBlaster, floors: MultiFloor):
+    def __init__(self, screen, player, player_rect, blasters: MultiBlaster, floors: MultiFloor, settings):
         super().__init__()
         self.screen = screen
         self.box_rect = pygame.Rect(0, 0, 0, 0)
@@ -112,18 +112,20 @@ class CallBoss(pygame.sprite.Sprite):
         self.phase3_movement_speed = 1300
         self.phase3_moving = False
 
+        self.settings = settings
+
         # khai gọi dạng tấn công
         self.blaster_floor = BlasterFloor(self.screen, self.player_rect, self.blasters, self.floors, 2)
-        self.blaster_circle = BlasterCircle((500, 380), self.blasters, beam_width=self.beam_width)
+        self.blaster_circle = BlasterCircle((500, 380), self.blasters, self.beam_width, self.settings)
         self.blaster_random = RandomBlaster(self.center, 750, 250, 230, 530, self.blasters)
-        self.gravity_bone = GravityBone(self.screen, 100, 1, player, player_rect, self.box_rect)
+        self.gravity_bone = GravityBone(self.screen, 100, 1, player, player_rect, self.box_rect, self.settings)
         self.bone_parten_middle = BonePatternMiddle(self.screen, self.box_rect, player, self.floors)
         self.bone_parten_sideway = BonePatternSideway(self.screen, self.box_rect, player)
         self.more_bone_floor = MoreBoneFloor(self.screen, self.blasters, player, self.floors)
         self.blaster_opening = BlasterOpen(self.center, self.blasters,2)
 
         initial_box_rect = pygame.Rect(300, 285, 400, 200)
-        self.special_attack = SpecialAttack(screen, initial_box_rect, player, self.player_rect, self.blasters)
+        self.special_attack = SpecialAttack(screen, initial_box_rect, player, self.player_rect, self.blasters, self.settings)
         self.attack_patterns =[self.blaster_opening,self.blaster_floor,self.blaster_circle,self.blaster_random,self.gravity_bone,self.bone_parten_middle,self.bone_parten_sideway,self.more_bone_floor,self.special_attack]
         # self.attack_patterns = [self.blaster_opening]
         self.attack_index = 7
@@ -135,6 +137,7 @@ class CallBoss(pygame.sprite.Sprite):
         self.swap_time = 0
 
         self.sound = pygame.mixer.Sound('sound/sans_battle/MEGALOVANIA.wav')
+        self.sound.set_volume(self.settings.music_volume)
         self.has_played = False
 
     # dao động đầu và thân boss
@@ -388,6 +391,8 @@ class CallBoss(pygame.sprite.Sprite):
         self.screen.blit(self.face_image, self.face_rect)
 
     def update(self, dt: float, box_rect: pygame.Rect, player):
+        self.sound.set_volume(self.settings.music_volume)
+
         if not self.has_played:
             self.sound.play(loops=-1)
             self.has_played = True

@@ -2,7 +2,7 @@ import pygame
 import sys
 from game.db.database import Database
 
-def leaderboard_main(screen, clock):
+def leaderboard_main(screen, clock, settings):
     pygame.display.set_caption("Leaderboard")
     font = pygame.font.Font("font/MonsterFriendBack.otf", 32)
     font_small = pygame.font.Font("font/MonsterFriendBack.otf", 20)
@@ -33,6 +33,8 @@ def leaderboard_main(screen, clock):
         print("Lỗi khi tải leaderboard:", e)
 
     while True:
+        esc_sound.set_volume(settings.sfx_volume)
+
         screen.fill(BLACK)
 
         # Tiêu đề

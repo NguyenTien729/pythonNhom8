@@ -2,7 +2,7 @@ import pygame
 import sys
 from game.db.database import Database
 
-def login_ui(screen, clock):
+def login_ui(screen, clock, settings):
     username = ""
     password = ""
     active_box = None
@@ -46,6 +46,8 @@ def login_ui(screen, clock):
         screen.blit(txt_surface, (x + 10, y + 10))
 
     while True:
+        select_sound.set_volume(settings.sfx_volume)
+
         screen.fill(BLACK)
         bg_rect = background.get_rect(topleft=(0,50))
         screen.blit(background, bg_rect)
