@@ -34,7 +34,7 @@ class Player(pygame.sprite.Sprite):
         self.is_on_ground = False
         self.avatar_face_right = False
 
-        self.damaged_sound = pygame.mixer.Sound('sound/sans_battle/Undertale-Sound-Effect-Soul-Damaged.wav')
+        self.damaged_sound = pygame.mixer.Sound('sound/sand_battle/Sound-Effect-Damaged.wav')
 
     def input(self):
         keys = pygame.key.get_pressed()

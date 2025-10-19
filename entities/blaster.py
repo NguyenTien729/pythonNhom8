@@ -54,8 +54,8 @@ class GasterBlaster(pygame.sprite.Sprite):
 
         self.sound = sound
         self.fire_sound = fire_sound
-        self.sound = self.sound or pygame.mixer.Sound("sound/sans_battle/gasterintro.wav")
-        self.fire_sound = self.fire_sound or pygame.mixer.Sound("sound/sans_battle/gasterfire.wav")
+        self.sound = self.sound or pygame.mixer.Sound("sound/sand_battle/gasterintro.wav")
+        self.fire_sound = self.fire_sound or pygame.mixer.Sound("sound/sand_battle/gasterfire.wav")
         self.sound.set_volume(self.settings.sfx_volume)
         self.fire_sound.set_volume(self.settings.sfx_volume)
 

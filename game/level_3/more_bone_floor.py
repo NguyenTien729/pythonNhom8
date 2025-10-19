@@ -35,7 +35,7 @@ class MoreBoneFloor(pygame.sprite.Sprite):
         self.normal_delay = 1.2
         # khoảng trống sau mỗi 2 xương
         self.gap_delay = 0.5
-        self.column_timers = [0.3, 0, -0.2]
+        self.column_timers = [0.3, 0, -0.5]
         self.pair_count = [0, 0, 0]
 
     def spawn_bone(self, y, direction, image, speed):
@@ -47,8 +47,8 @@ class MoreBoneFloor(pygame.sprite.Sprite):
         self.bones.add(bone)
 
     def spawn_floor(self):
-        floor_left = self.floor.create_floor(1, 1, self.screen, (200, self.floor_pos_1), "right", speed=150, sprite_prefix=self.floor_1)
-        floor_right = self.floor.create_floor(1, 1, self.screen, (800, self.floor_pos_2), "left", speed=150, sprite_prefix=self.floor_2)
+        floor_left = self.floor.create_floor(1, 1, self.screen, (0, self.floor_pos_1), "right", speed=150, sprite_prefix=self.floor_1)
+        floor_right = self.floor.create_floor(1, 1, self.screen, (self.screen.get_width(), self.floor_pos_2), "left", speed=150, sprite_prefix=self.floor_2)
 
     def update(self, dt):
         self.floor_timer += dt

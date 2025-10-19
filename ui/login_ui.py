@@ -25,7 +25,7 @@ def login_ui(screen, clock, settings):
     font = pygame.font.Font("font/MonsterFriendBack.otf", 24)
     small_font = pygame.font.Font("font/MonsterFriendBack.otf", 18)
 
-    select_sound = pygame.mixer.Sound("sound/sans_battle/snd_select.wav")
+    select_sound = pygame.mixer.Sound("sound/sand_battle/snd_select.wav")
 
     input_boxes = {
         "username": pygame.Rect(250, 180, 300, 50),

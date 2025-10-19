@@ -20,7 +20,7 @@ class GravityBone(pygame.sprite.Sprite):
         self.speed = speed
         self.settings = settings
 
-        self.slam_sound = pygame.mixer.Sound('sound/sans_battle/undertale-impact-slam.mp3')
+        self.slam_sound = pygame.mixer.Sound('sound/sand_battle/impact-slam.mp3')
         self.slam_sound.set_volume(self.settings.sfx_volume)
 
         self.bone_stab = pygame.sprite.GroupSingle()

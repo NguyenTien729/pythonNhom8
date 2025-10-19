@@ -9,7 +9,7 @@ def setting_screen(screen, clock, settings):
     option_font = pygame.font.Font("font/MonsterFriendBack.otf", 28)
     font_small = pygame.font.Font("font/MonsterFriendBack.otf", 20)
 
-    esc_sound = pygame.mixer.Sound("sound/sans_battle/snd_select.wav")
+    esc_sound = pygame.mixer.Sound("sound/sand_battle/snd_select.wav")
 
 
     # Màu sắc
