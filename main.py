@@ -30,7 +30,7 @@ class SettingsManager:
 
 def game_run(screen, clock, db, game_context, settings):
     pygame.display.set_caption("Game Run")
-    g_font = pygame.font.Font("font/MonsterFriendBack.otf", 22)
+    g_font = pygame.font.Font(resource_path("font/MonsterFriendBack.otf"), 22)
 
     WHITE = (255, 255, 255)
     RED = (255, 0, 0)
@@ -177,8 +177,8 @@ def main():
     db = Database()
     settings = SettingsManager()
 
-    game_over_sound = pygame.mixer.Sound("sound/sand_battle/Sound-Effect-Laugh.wav")
-    game_clear_sound = pygame.mixer.Sound("sound/sand_battle/Sound-Effect-You-Win_.wav")
+    game_over_sound = pygame.mixer.Sound(resource_path("sound/sand_battle/Sound-Effect-Laugh.wav"))
+    game_clear_sound = pygame.mixer.Sound(resource_path("sound/sand_battle/Sound-Effect-You-Win_.wav"))
 
     RED = (255, 0, 0)
     YELLOW = (255, 255, 0)
