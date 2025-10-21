@@ -1,9 +1,10 @@
 import pygame
 import sys
+from entities.utils import resource_path
 
 def get_player_name(screen, db, user_id):
     clock = pygame.time.Clock()
-    font = pygame.font.Font("font/MonsterFriendBack.otf", 24)
+    font = pygame.font.Font(resource_path("font/MonsterFriendBack.otf"), 24)
     name = ""
     input_box = pygame.Rect(350, 250, 300, 50)
     screen_width, screen_height = screen.get_size()

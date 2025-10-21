@@ -1,4 +1,5 @@
 import pygame
+from entities.utils import resource_path
 
 class Bone(pygame.sprite.Sprite):
     def __init__(self, image, start_pos, speed, direction, arena_rect):
@@ -26,12 +27,12 @@ class BonePatternMiddle:
         self.floor = floors
 
         # Load sprite xương
-        self.bone_image = pygame.image.load("graphics/Sprites/bones/spr_s_boneloop_0.png").convert_alpha()
+        self.bone_image = pygame.image.load(resource_path("graphics/Sprites/bones/spr_s_boneloop_0.png")).convert_alpha()
         self.bone_mask = pygame.mask.from_surface(self.bone_image)
         self.bones = pygame.sprite.Group()
         #bonefloor
         self.floor_bones = pygame.sprite.Group()
-        self.floor_bone_image = pygame.image.load("graphics/sprites/bones/spr_s_boneloop_0.png").convert_alpha()
+        self.floor_bone_image = pygame.image.load(resource_path("graphics/sprites/bones/spr_s_boneloop_0.png")).convert_alpha()
 
         # Hướng di chuyển + vị trí
         self.spawn_x_positions = [500, 600, 700]

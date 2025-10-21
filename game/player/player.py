@@ -1,13 +1,14 @@
 import pygame
 from pygame import Vector2
+from entities.utils import resource_path
 
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, x, y):
         super().__init__()
-        self.image_normal = pygame.image.load('graphics/sprites/player/heart.png').convert_alpha()
-        self.image_gravity = pygame.image.load('graphics/sprites/player/heart_blue.png').convert_alpha()
-        self.image_hit = pygame.image.load('graphics/Sprites/player/heart_hit1.png').convert_alpha()
+        self.image_normal = pygame.image.load(resource_path('graphics/sprites/player/heart.png')).convert_alpha()
+        self.image_gravity = pygame.image.load(resource_path('graphics/sprites/player/heart_blue.png')).convert_alpha()
+        self.image_hit = pygame.image.load(resource_path('graphics/Sprites/player/heart_hit1.png')).convert_alpha()
 
         self.max_hp = 50
         self.player_hp = 50
@@ -34,7 +35,7 @@ class Player(pygame.sprite.Sprite):
         self.is_on_ground = False
         self.avatar_face_right = False
 
-        self.damaged_sound = pygame.mixer.Sound('sound/sand_battle/Sound-Effect-Damaged.wav')
+        self.damaged_sound = pygame.mixer.Sound(resource_path('sound/sand_battle/Sound-Effect-Damaged.wav'))
 
     def input(self):
         keys = pygame.key.get_pressed()

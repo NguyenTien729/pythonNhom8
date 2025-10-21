@@ -1,5 +1,6 @@
 import pygame
 from entities.bone import Bone
+from entities.utils import resource_path
 
 class TripleBone:
     def __init__(self, screen, box_rect, player, speed = 15):
@@ -8,7 +9,7 @@ class TripleBone:
         self.player = player
         self.speed = speed
 
-        self.image = pygame.image.load("graphics/sprites/bones/bone_wave_2.png").convert_alpha()
+        self.image = pygame.image.load(resource_path("graphics/sprites/bones/bone_wave_2.png")).convert_alpha()
         self.rect = self.image.get_rect()
         self.bones = pygame.sprite.Group()
 

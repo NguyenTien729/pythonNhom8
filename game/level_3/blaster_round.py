@@ -1,6 +1,8 @@
 import math
 import pygame
 from pygame import Vector2
+from entities.utils import resource_path
+
 #hàm tính vị trí đích dựa trên việc xoay quanh 1 tâm
 def rotate_on_pivot(pivot, angle, origin):
     offset = pivot + (origin - pivot).rotate(-angle)
@@ -43,9 +45,9 @@ class BlasterCircle:
         self.beam_alpha_speed = beam_alpha_speed
         self.beam_width = beam_width
 
-        self.sound = pygame.mixer.Sound("sound/sand_battle/gaster_round_call.wav")
+        self.sound = pygame.mixer.Sound(resource_path("sound/sand_battle/gaster_round_call.wav"))
         self.sound.set_volume(self.settings.sfx_volume)
-        self.fire_sound = pygame.mixer.Sound("sound/sand_battle/gaster_round_fire.wav")
+        self.fire_sound = pygame.mixer.Sound(resource_path("sound/sand_battle/gaster_round_fire.wav"))
         self.fire_sound.set_volume(self.settings.sfx_volume)
 
     def spawn_blaster(self):

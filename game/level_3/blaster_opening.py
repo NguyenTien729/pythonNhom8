@@ -1,7 +1,6 @@
 from pygame import Vector2
 from typing import Optional
-
-
+from entities.utils import resource_path
 
 class BlasterOpen:
     time_delay = 1.8

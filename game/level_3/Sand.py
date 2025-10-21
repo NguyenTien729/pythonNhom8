@@ -15,9 +15,7 @@ from game.level_3.bone_pattern_sideway import BonePatternSideway
 from game.level_3.blaster_opening import BlasterOpen
 from game.level_3.special_attack import SpecialAttack
 import pygame
-
-
-
+from entities.utils import resource_path
 
 class CallBoss(pygame.sprite.Sprite):
     def __init__(self, screen, player, player_rect, blasters: MultiBlaster, floors: MultiFloor, settings):
@@ -36,11 +34,11 @@ class CallBoss(pygame.sprite.Sprite):
 
         self.beam_width = 1
 
-        self.legs_idle = pygame.image.load('graphics/characters/sans/spr_sansb_legs_0.png')
+        self.legs_idle = pygame.image.load(resource_path('graphics/characters/sans/spr_sansb_legs_0.png')).convert_alpha()
         self.legs_idle = pygame.transform.scale_by(self.legs_idle, 2.5)
-        self.body_idle = pygame.image.load('graphics/characters/sans/spr_sansb_torso_0.png')
+        self.body_idle = pygame.image.load(resource_path('graphics/characters/sans/spr_sansb_torso_0.png')).convert_alpha()
         self.body_idle = pygame.transform.scale_by(self.body_idle, 2.5)
-        self.face_idle = pygame.image.load('graphics/characters/sans/spr_sansb_face_0.png')
+        self.face_idle = pygame.image.load(resource_path('graphics/characters/sans/spr_sansb_face_0.png')).convert_alpha()
         self.face_idle = pygame.transform.scale_by(self.face_idle, 2.5)
 
         self.body_image = self.body_idle
@@ -48,31 +46,31 @@ class CallBoss(pygame.sprite.Sprite):
         self.offset_x = 0.0
         self.offset_y = 0.0
 
-        self.hand_down_frames = [pygame.image.load('graphics/characters/sans/spr_sansb_handdown_0.png'),
-                                 pygame.image.load('graphics/characters/sans/spr_sansb_handdown_1.png'),
-                                 pygame.image.load('graphics/characters/sans/spr_sansb_handdown_2.png'),
-                                 pygame.image.load('graphics/characters/sans/spr_sansb_handdown_3.png'),
-                                 pygame.image.load('graphics/characters/sans/spr_sansb_handdown_4.png')]
-        self.hand_right_frames = [pygame.image.load('graphics/characters/sans/spr_sansb_rightstrike_0.png'),
-                                  pygame.image.load('graphics/characters/sans/spr_sansb_rightstrike_1.png'),
-                                  pygame.image.load('graphics/characters/sans/spr_sansb_rightstrike_2.png'),
-                                  pygame.image.load('graphics/characters/sans/spr_sansb_rightstrike_3.png'),
-                                  pygame.image.load('graphics/characters/sans/spr_sansb_rightstrike_4.png')]
+        self.hand_down_frames = [pygame.image.load(resource_path('graphics/characters/sans/spr_sansb_handdown_0.png')).convert_alpha(),
+                                 pygame.image.load(resource_path('graphics/characters/sans/spr_sansb_handdown_1.png')).convert_alpha(),
+                                 pygame.image.load(resource_path('graphics/characters/sans/spr_sansb_handdown_2.png')).convert_alpha(),
+                                 pygame.image.load(resource_path('graphics/characters/sans/spr_sansb_handdown_3.png')).convert_alpha(),
+                                 pygame.image.load(resource_path('graphics/characters/sans/spr_sansb_handdown_4.png')).convert_alpha()]
+        self.hand_right_frames = [pygame.image.load(resource_path('graphics/characters/sans/spr_sansb_rightstrike_0.png')).convert_alpha(),
+                                  pygame.image.load(resource_path('graphics/characters/sans/spr_sansb_rightstrike_1.png')).convert_alpha(),
+                                  pygame.image.load(resource_path('graphics/characters/sans/spr_sansb_rightstrike_2.png')).convert_alpha(),
+                                  pygame.image.load(resource_path('graphics/characters/sans/spr_sansb_rightstrike_3.png')).convert_alpha(),
+                                  pygame.image.load(resource_path('graphics/characters/sans/spr_sansb_rightstrike_4.png')).convert_alpha()]
 
         self.body_variations = [
-            pygame.image.load('graphics/characters/sans/spr_sansb_torso_0.png'),
-            pygame.image.load('graphics/characters/sans/spr_sansb_torso_1.png'),
+            pygame.image.load(resource_path('graphics/characters/sans/spr_sansb_torso_0.png')).convert_alpha(),
+            pygame.image.load(resource_path('graphics/characters/sans/spr_sansb_torso_1.png')).convert_alpha(),
         ]
         for i in range(len(self.body_variations)):
             self.body_variations[i] = pygame.transform.scale_by(self.body_variations[i], 2.5)
 
         self.face_variations = [
-            pygame.image.load('graphics/characters/sans/spr_sansb_face_0.png'),
-            pygame.image.load('graphics/characters/sans/spr_sansb_face_1.png'),
-            pygame.image.load('graphics/characters/sans/spr_sansb_face_2.png'),
-            pygame.image.load('graphics/characters/sans/spr_sansb_face_3.png'),
-            pygame.image.load('graphics/characters/sans/spr_sansb_face_4.png'),
-            pygame.image.load('graphics/characters/sans/spr_sansb_face_5.png')
+            pygame.image.load(resource_path('graphics/characters/sans/spr_sansb_face_0.png')).convert_alpha(),
+            pygame.image.load(resource_path('graphics/characters/sans/spr_sansb_face_1.png')).convert_alpha(),
+            pygame.image.load(resource_path('graphics/characters/sans/spr_sansb_face_2.png')).convert_alpha(),
+            pygame.image.load(resource_path('graphics/characters/sans/spr_sansb_face_3.png')).convert_alpha(),
+            pygame.image.load(resource_path('graphics/characters/sans/spr_sansb_face_4.png')).convert_alpha(),
+            pygame.image.load(resource_path('graphics/characters/sans/spr_sansb_face_5.png').convert_alpha())
         ]
         for i in range(len(self.face_variations)):
             self.face_variations[i] = pygame.transform.scale_by(self.face_variations[i], 2.5)
@@ -136,7 +134,7 @@ class CallBoss(pygame.sprite.Sprite):
         self.attack_time = 0
         self.swap_time = 0
 
-        self.sound = pygame.mixer.Sound('sound/sand_battle/MEGALOVANILA.wav')
+        self.sound = pygame.mixer.Sound(resource_path('sound/sand_battle/MEGALOVANILA.wav'))
         self.sound.set_volume(self.settings.music_volume)
         self.has_played = False
 

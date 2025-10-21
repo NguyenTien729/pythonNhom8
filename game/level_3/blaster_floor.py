@@ -1,5 +1,6 @@
 import random
 from typing import Optional
+from entities.utils import resource_path
 
 y2 = [325, 390, 460]
 

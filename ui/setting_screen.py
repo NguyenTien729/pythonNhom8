@@ -2,14 +2,15 @@ import sys
 
 import pygame
 from entities.setting_slider import Slider
+from entities.utils import resource_path
 
 def setting_screen(screen, clock, settings):
     pygame.display.set_caption("Settings")
-    title_font = pygame.font.Font("font/MonsterFriendBack.otf", 48)
-    option_font = pygame.font.Font("font/MonsterFriendBack.otf", 28)
-    font_small = pygame.font.Font("font/MonsterFriendBack.otf", 20)
+    title_font = pygame.font.Font(resource_path("font/MonsterFriendBack.otf"), 48)
+    option_font = pygame.font.Font(resource_path("font/MonsterFriendBack.otf"), 28)
+    font_small = pygame.font.Font(resource_path("font/MonsterFriendBack.otf"), 20)
 
-    esc_sound = pygame.mixer.Sound("sound/sand_battle/snd_select.wav")
+    esc_sound = pygame.mixer.Sound(resource_path("sound/sand_battle/snd_select.wav"))
 
 
     # Màu sắc

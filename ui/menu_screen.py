@@ -1,19 +1,19 @@
 import sys
-
 import pygame
+from entities.utils import resource_path
 
 def run_menu(screen, clock, game_context, settings):
-    background = pygame.image.load("graphics/sprites/bones/background3.jpg")
+    background = pygame.image.load(resource_path("graphics/sprites/bones/background3.jpg"))
 
-    big_font = pygame.font.Font("font/MonsterFriendBack.otf", 72)
-    font = pygame.font.Font("font/MonsterFriendBack.otf", 36)
-    small_font = pygame.font.Font("font/MonsterFriendBack.otf", 18)
+    big_font = pygame.font.Font(resource_path("font/MonsterFriendBack.otf"), 72)
+    font = pygame.font.Font(resource_path("font/MonsterFriendBack.otf"), 36)
+    small_font = pygame.font.Font(resource_path("font/MonsterFriendBack.otf"), 18)
 
     player_name = game_context["player_name"]
     pygame.display.set_caption("Undertale Menu")
 
-    select_sound = pygame.mixer.Sound("sound/sand_battle/snd_select.wav")
-    start_sound = pygame.mixer.Sound("sound/sand_battle/Sound-Effect-Battle-Start.wav")
+    select_sound = pygame.mixer.Sound(resource_path("sound/sand_battle/snd_select.wav"))
+    start_sound = pygame.mixer.Sound(resource_path("sound/sand_battle/Sound-Effect-Battle-Start.wav"))
 
     # Màu sắc
     WHITE = (255, 255, 255)

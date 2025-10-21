@@ -1,19 +1,20 @@
 import pygame
 import sys
+from entities.utils import resource_path
 
 def pause_menu(screen, settings, saved_frame):
     pygame.mixer.pause()
 
     # Font
-    title_font = pygame.font.Font("font/MonsterFriendBack.otf", 48)
-    option_font = pygame.font.Font("font/MonsterFriendBack.otf", 28)
+    title_font = pygame.font.Font(resource_path("font/MonsterFriendBack.otf"), 48)
+    option_font = pygame.font.Font(resource_path("font/MonsterFriendBack.otf"), 28)
 
     # Danh sách lựa chọn phải TRÙNG với main.py
     options = ["RESUME", "SETTINGS" ,"LEADERBOARD", "MAIN MENU", "EXIT"]
     selected = 0
     pre_choice = -1
 
-    select_sound = pygame.mixer.Sound("sound/sand_battle/snd_select.wav")
+    select_sound = pygame.mixer.Sound(resource_path("sound/sand_battle/snd_select.wav"))
 
     clock = pygame.time.Clock()
 

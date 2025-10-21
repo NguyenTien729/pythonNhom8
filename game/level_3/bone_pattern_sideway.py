@@ -1,4 +1,5 @@
 import pygame
+from entities.utils import resource_path
 
 class Bone(pygame.sprite.Sprite):
     def __init__(self, image, start_pos, speed, direction, arena_rect):
@@ -24,7 +25,7 @@ class BonePatternSideway:
         self.box_rect = box_rect
         self.player = player
 
-        self.bone_image = pygame.image.load("graphics/sprites/bones/bone_sideway_2.png").convert_alpha()
+        self.bone_image = pygame.image.load(resource_path("graphics/sprites/bones/bone_sideway_2.png")).convert_alpha()
 
         self.bone_mask = pygame.mask.from_surface(self.bone_image)
         self.bones = pygame.sprite.Group()

@@ -1,13 +1,14 @@
 import pygame
 import sys
 from game.db.database import Database
+from entities.utils import resource_path
 
 def leaderboard_main(screen, clock, settings):
     pygame.display.set_caption("Leaderboard")
-    font = pygame.font.Font("font/MonsterFriendBack.otf", 32)
-    font_small = pygame.font.Font("font/MonsterFriendBack.otf", 20)
+    font = pygame.font.Font(resource_path("font/MonsterFriendBack.otf"), 32)
+    font_small = pygame.font.Font(resource_path("font/MonsterFriendBack.otf"), 20)
 
-    esc_sound = pygame.mixer.Sound("sound/sand_battle/snd_select.wav")
+    esc_sound = pygame.mixer.Sound(resource_path("sound/sand_battle/snd_select.wav"))
 
     # Màu sắc
     BLACK = (0, 0, 0)

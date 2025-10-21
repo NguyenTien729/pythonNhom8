@@ -1,10 +1,8 @@
-# Mọi thứ trong class GravityBone giữ nguyên, chỉ sửa hàm draw()
-
 import random
 from typing import Optional, List 
 import pygame
 from entities.bone_stab import BoneStab
-
+from entities.utils import resource_path
 
 class GravityBone(pygame.sprite.Sprite):
     def __init__(self, screen, strong_gravity, default_gravity, player, player_rect, box_rect, settings, height: Optional[int] = 30,
@@ -20,7 +18,7 @@ class GravityBone(pygame.sprite.Sprite):
         self.speed = speed
         self.settings = settings
 
-        self.slam_sound = pygame.mixer.Sound('sound/sand_battle/impact-slam.mp3')
+        self.slam_sound = pygame.mixer.Sound(resource_path('sound/sand_battle/impact-slam.mp3'))
         self.slam_sound.set_volume(self.settings.sfx_volume)
 
         self.bone_stab = pygame.sprite.GroupSingle()

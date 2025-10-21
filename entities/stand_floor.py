@@ -1,6 +1,7 @@
 from typing import Optional
 
 import pygame
+from entities.utils import resource_path
 
 class CallFloor(pygame.sprite.Sprite):
     def __init__(self, height, width, screen, pos, direction: str, speed = 20, sprite_prefix: Optional[str] = None):
@@ -10,7 +11,7 @@ class CallFloor(pygame.sprite.Sprite):
         self.speed = speed
 
         self.sprite_prefix = sprite_prefix or "graphics/sprites/bones/floor2.png"
-        self.sprite = pygame.image.load(self.sprite_prefix).convert_alpha()
+        self.sprite = pygame.image.load(resource_path(self.sprite_prefix)).convert_alpha()
         self.sprite = pygame.transform.scale_by(self.sprite,(width, height))
         self.image = self.sprite
 

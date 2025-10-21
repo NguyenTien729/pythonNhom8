@@ -2,6 +2,7 @@ import math
 import random
 
 from pygame import Vector2
+from entities.utils import resource_path
 
 
 def fire_vector(pivot: Vector2, pos: Vector2) -> float:

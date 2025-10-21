@@ -1,6 +1,7 @@
 import pygame
 import sys
 from game.db.database import Database
+from entities.utils import resource_path
 
 def login_ui(screen, clock, settings):
     username = ""
@@ -20,12 +21,12 @@ def login_ui(screen, clock, settings):
 
     pygame.display.set_caption("Login System")
 
-    heart_img = pygame.image.load("graphics/sprites/player/heart.png").convert_alpha()
-    background = pygame.image.load("graphics/sprites/bones/background3.jpg")
-    font = pygame.font.Font("font/MonsterFriendBack.otf", 24)
-    small_font = pygame.font.Font("font/MonsterFriendBack.otf", 18)
+    heart_img = pygame.image.load(resource_path("graphics/sprites/player/heart.png")).convert_alpha()
+    background = pygame.image.load(resource_path("graphics/sprites/bones/background3.jpg"))
+    font = pygame.font.Font(resource_path("font/MonsterFriendBack.otf"), 24)
+    small_font = pygame.font.Font(resource_path("font/MonsterFriendBack.otf"), 18)
 
-    select_sound = pygame.mixer.Sound("sound/sand_battle/snd_select.wav")
+    select_sound = pygame.mixer.Sound(resource_path("sound/sand_battle/snd_select.wav"))
 
     input_boxes = {
         "username": pygame.Rect(250, 180, 300, 50),

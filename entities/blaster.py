@@ -2,7 +2,7 @@ from typing import Optional
 from entities.Beams import create_projectile_abs
 import pygame
 import math
-
+from entities.utils import resource_path
 
 def lerp(a: float, b: float, t: float) -> float:
     return a + (b - a) * t
@@ -17,7 +17,7 @@ class GasterBlaster(pygame.sprite.Sprite):
         self.beam = None
         self.sprite_prefix = sprite_prefix or "graphics/Sprites/blasters/spr_gasterblaster_"
         self.beam_sprite = beam_sprite or "graphics/Sprites/blasters/beam1"
-        self.sprite = pygame.image.load(self.sprite_prefix + "0.png").convert_alpha()
+        self.sprite = pygame.image.load(resource_path(self.sprite_prefix + "0.png")).convert_alpha()
         self.sprite = pygame.transform.scale_by(self.sprite, 2.0)
         self.image = self.sprite.copy()
         self.rect = self.image.get_rect(center = (x, y))
@@ -54,8 +54,8 @@ class GasterBlaster(pygame.sprite.Sprite):
 
         self.sound = sound
         self.fire_sound = fire_sound
-        self.sound = self.sound or pygame.mixer.Sound("sound/sand_battle/gasterintro.wav")
-        self.fire_sound = self.fire_sound or pygame.mixer.Sound("sound/sand_battle/gasterfire.wav")
+        self.sound = self.sound or pygame.mixer.Sound(resource_path("sound/sand_battle/gasterintro.wav"))
+        self.fire_sound = self.fire_sound or pygame.mixer.Sound(resource_path("sound/sand_battle/gasterfire.wav"))
         self.sound.set_volume(self.settings.sfx_volume)
         self.fire_sound.set_volume(self.settings.sfx_volume)
 
@@ -106,7 +106,7 @@ class GasterBlaster(pygame.sprite.Sprite):
         if hasattr(self, 'current_frame_index'):
             current_frame = self.current_frame_index
 
-        original = pygame.image.load(self.sprite_prefix + current_frame + ".png").convert_alpha()
+        original = pygame.image.load(resource_path(self.sprite_prefix + current_frame + ".png")).convert_alpha()
         self.sprite = pygame.transform.scale_by(original, (2 * x, 2 * y))
 
     def update_position(self, x: float, y: float):
@@ -117,7 +117,7 @@ class GasterBlaster(pygame.sprite.Sprite):
 
     def set(self, index: str):
         self.current_frame_index = index
-        self.sprite = pygame.image.load(self.sprite_prefix + index + ".png").convert_alpha()
+        self.sprite = pygame.image.load(resource_path(self.sprite_prefix + index + ".png")).convert_alpha()
         self.sprite = pygame.transform.scale_by(self.sprite, (2.0 * self.x_scale, 2.0 * self.y_scale))
 
     def start_animation(self, frames: list[str], frame_time: float):

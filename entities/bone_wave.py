@@ -3,6 +3,7 @@ from typing import Optional
 
 import pygame
 from entities.bone import Bone
+from entities.utils import resource_path
 
 class BoneWave(pygame.sprite.Sprite):
     normal_delay = 0.05
@@ -14,7 +15,7 @@ class BoneWave(pygame.sprite.Sprite):
         self.player = player
         self.speed = speed
 
-        self.image = pygame.image.load("graphics/sprites/bones/bone_wave.png").convert_alpha()
+        self.image = pygame.image.load(resource_path("graphics/sprites/bones/bone_wave.png")).convert_alpha()
 
 
         self.max_height = self.image.get_height()

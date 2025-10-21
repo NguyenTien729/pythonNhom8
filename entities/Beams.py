@@ -1,5 +1,6 @@
 import pygame
 from pygame.math import Vector2
+from entities.utils import resource_path
 
 class Beam:
     def __init__(self, image: pygame.Surface):
@@ -50,7 +51,7 @@ class Beam:
 
 class Projectile:
     def __init__(self, sprite_path: str, x: float, y: float):
-        image = pygame.image.load(sprite_path + ".png").convert_alpha()
+        image = pygame.image.load(resource_path(sprite_path + ".png")).convert_alpha()
         self.sprite = Beam(image)
 
         #Position

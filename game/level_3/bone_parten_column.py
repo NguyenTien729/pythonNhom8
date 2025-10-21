@@ -1,4 +1,5 @@
 import pygame
+from entities.utils import resource_path
 
 class Bone(pygame.sprite.Sprite):
     def __init__(self, image, start_pos, speed, direction, arena_rect):
@@ -25,8 +26,8 @@ class BonePatternColumn:
         self.player = player
 
         #image
-        self.bone_top_img = pygame.image.load("graphics/Sprites/bones/bone_gap_below2.png").convert_alpha()
-        self.bone_bottom_img = pygame.image.load("graphics/Sprites/bones/bone_gap_upper2.png").convert_alpha()
+        self.bone_top_img = pygame.image.load(resource_path("graphics/Sprites/bones/bone_gap_below2.png")).convert_alpha()
+        self.bone_bottom_img = pygame.image.load(resource_path("graphics/Sprites/bones/bone_gap_upper2.png")).convert_alpha()
         self.bones = pygame.sprite.Group()
 
         # Vị trí sinh so vs y=0 của arena

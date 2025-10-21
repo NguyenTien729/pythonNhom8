@@ -7,7 +7,7 @@ from entities.triple_bone import TripleBone
 from game.level_3.blaster_round import BlasterCircle
 from game.level_3.gravity_bone import GravityBone, MultiBoneStab
 from game.level_3.bone_pattern_sideway import BonePatternSideway
-
+from entities.utils import resource_path
 
 def lerp(a: float, b: float, t: float) -> float:
     return a + (b - a) * t

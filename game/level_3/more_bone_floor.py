@@ -1,5 +1,6 @@
 import pygame
 from entities.bone import Bone
+from entities.utils import resource_path
 
 class MoreBoneFloor(pygame.sprite.Sprite):
     def __init__(self, screen, box_rect, players, floors):
@@ -9,9 +10,9 @@ class MoreBoneFloor(pygame.sprite.Sprite):
         self.player = players
 
         self.bone_images = [
-            pygame.image.load("graphics/sprites/bones/spr_s_boneloop_in_0.png").convert_alpha(),
-            pygame.image.load("graphics/sprites/bones/spr_s_boneloop_out_0.png").convert_alpha(),
-            pygame.image.load("graphics/sprites/bones/spr_s_bonewall_0.png").convert_alpha(),
+            pygame.image.load(resource_path("graphics/sprites/bones/spr_s_boneloop_in_0.png")).convert_alpha(),
+            pygame.image.load(resource_path("graphics/sprites/bones/spr_s_boneloop_out_0.png")).convert_alpha(),
+            pygame.image.load(resource_path("graphics/sprites/bones/spr_s_bonewall_0.png")).convert_alpha(),
         ]
 
         self.bones = pygame.sprite.Group()

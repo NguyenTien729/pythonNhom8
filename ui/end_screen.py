@@ -1,16 +1,17 @@
 import pygame
 import sys
+from entities.utils import resource_path
 
 def end_screen(screen, clock, title, color, caption, settings, player_name, score):
 
     pygame.display.set_caption(caption)
 
     # Font Undertale 
-    title_font = pygame.font.Font("font/MonsterFriendBack.otf", 80)
-    name_font = pygame.font.Font("font/MonsterFriendBack.otf", 40)
-    press_font = pygame.font.Font("font/MonsterFriendBack.otf", 20)
+    title_font = pygame.font.Font(resource_path("font/MonsterFriendBack.otf"), 80)
+    name_font = pygame.font.Font(resource_path("font/MonsterFriendBack.otf"), 40)
+    press_font = pygame.font.Font(resource_path("font/MonsterFriendBack.otf"), 20)
 
-    esc_sound = pygame.mixer.Sound("sound/sand_battle/snd_select.wav")
+    esc_sound = pygame.mixer.Sound(resource_path("sound/sand_battle/snd_select.wav"))
 
     BLACK = (0, 0, 0)
 

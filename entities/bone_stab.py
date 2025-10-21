@@ -1,6 +1,6 @@
 import pygame
 from pygame import Vector2
-
+from entities.utils import resource_path
 
 class BoneStab(pygame.sprite.Sprite):
     def __init__(self, screen, box_rect, side: str, height, speed, player, settings):
@@ -13,8 +13,8 @@ class BoneStab(pygame.sprite.Sprite):
         self.player = player
         self.settings = settings
 
-        self.image_wide = pygame.image.load('graphics/sprites/bones/spr_s_bonestab_v_wide_0.png')
-        self.image_tall = pygame.image.load('graphics/sprites/bones/spr_s_bonestab_h_tall_0.png')
+        self.image_wide = pygame.image.load(resource_path('graphics/sprites/bones/spr_s_bonestab_v_wide_0.png')).convert_alpha()
+        self.image_tall = pygame.image.load(resource_path('graphics/sprites/bones/spr_s_bonestab_h_tall_0.png')).convert_alpha()
 
         if self.side in ('left', 'right'):
             self.image = self.image_tall
@@ -23,8 +23,8 @@ class BoneStab(pygame.sprite.Sprite):
 
         self.rect = self.image.get_rect()
 
-        self.bone_sound = pygame.mixer.Sound('sound/sand_battle/bone-undertail-sound-effect.mp3')
-        self.warning_sound = pygame.mixer.Sound('sound/sand_battle/warning_sound.wav')
+        self.bone_sound = pygame.mixer.Sound(resource_path('sound/sand_battle/bone-undertail-sound-effect.mp3'))
+        self.warning_sound = pygame.mixer.Sound(resource_path('sound/sand_battle/warning_sound.wav'))
         self.bone_sound.set_volume(self.settings.sfx_volume)
         self.warning_sound.set_volume(self.settings.sfx_volume)
 

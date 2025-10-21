@@ -1,5 +1,6 @@
 import pygame
 import sys
+import os
 from game.db.database import Database
 
 if len(sys.argv) > 1:
@@ -20,6 +21,7 @@ from entities.stand_floor import MultiFloor
 from game.level_3.Sand import CallBoss
 from game.player.player import Player
 from ui.setting_screen import setting_screen
+from entities.utils import resource_path
 
 class SettingsManager:
     def __init__(self):
@@ -99,7 +101,7 @@ def game_run(screen, clock, db, game_context, settings):
 
                 elif choice == "MAIN MENU":
                     boss_lv_3.sound.stop()
-                    return "MENU"
+                    return "MENU", 0
                 elif choice == "EXIT":
                     pygame.quit()
                     sys.exit()
