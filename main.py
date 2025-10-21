@@ -149,7 +149,7 @@ def game_run(screen, clock, db, game_context, settings):
             boss_name_rect = boss_name.get_rect(midtop=(500, 50))
             screen.blit(boss_name, boss_name_rect)
 
-            if player.player_hp <= 0 or boss_lv_3.is_win:
+            if player.player_hp <= -1000 or boss_lv_3.is_win:
                 boss_lv_3.sound.stop()
                 is_active = False
 
