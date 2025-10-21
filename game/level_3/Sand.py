@@ -65,12 +65,12 @@ class CallBoss(pygame.sprite.Sprite):
             self.body_variations[i] = pygame.transform.scale_by(self.body_variations[i], 2.5)
 
         self.face_variations = [
-            pygame.image.load(resource_path('graphics/characters/sans/spr_sansb_face_0.png')).convert_alpha(),
-            pygame.image.load(resource_path('graphics/characters/sans/spr_sansb_face_1.png')).convert_alpha(),
-            pygame.image.load(resource_path('graphics/characters/sans/spr_sansb_face_2.png')).convert_alpha(),
-            pygame.image.load(resource_path('graphics/characters/sans/spr_sansb_face_3.png')).convert_alpha(),
-            pygame.image.load(resource_path('graphics/characters/sans/spr_sansb_face_4.png')).convert_alpha(),
-            pygame.image.load(resource_path('graphics/characters/sans/spr_sansb_face_5.png').convert_alpha())
+            pygame.image.load(resource_path('graphics/characters/sans/spr_sansb_face_0.png')),
+            pygame.image.load(resource_path('graphics/characters/sans/spr_sansb_face_1.png')),
+            pygame.image.load(resource_path('graphics/characters/sans/spr_sansb_face_2.png')),
+            pygame.image.load(resource_path('graphics/characters/sans/spr_sansb_face_3.png')),
+            pygame.image.load(resource_path('graphics/characters/sans/spr_sansb_face_4.png')),
+            pygame.image.load(resource_path('graphics/characters/sans/spr_sansb_face_5.png'))
         ]
         for i in range(len(self.face_variations)):
             self.face_variations[i] = pygame.transform.scale_by(self.face_variations[i], 2.5)
