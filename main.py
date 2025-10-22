@@ -170,7 +170,7 @@ def main():
     pygame.init()
     screen_width, screen_height = 1000, 600
     screen = pygame.display.set_mode((screen_width, screen_height))
-    pygame.display.set_caption("Undertail")
+    pygame.display.set_caption("Undertell")
     clock = pygame.time.Clock()
     db = Database()
     settings = SettingsManager()
