@@ -30,7 +30,7 @@ class BonePatternColumn:
         self.bones = pygame.sprite.Group()
 
         # Vị trí sinh so vs y=0 của arena
-        self.column_y_offsets = [-50, 65]
+        self.column_y_offsets = [-50, 75]
         self.columns = [
             {"direction": 1, "timer": 0},   # Trái phải
             {"direction": -1, "timer": 0}   # Phải trái

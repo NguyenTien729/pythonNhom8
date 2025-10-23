@@ -3,7 +3,7 @@ from datetime import datetime
 
 class Database:
     def __init__(self):
-        self.conn = mysql.connector.connect(
+        self.conn = mysql.connector.connect(  #thay đổi thành sql của bản thân
             host="localhost",      
             user="root",           
             password="max1236987",
